@@ -1,7 +1,12 @@
 <script lang="ts" setup>
 import { TagStatus } from "@/enum/tag-status";
 import { findOne } from "@/apis/classes";
-findOne(1).then(console.log);
+import {useUserStore} from "@/store/user";
+const userStore = useUserStore();
+const token =  userStore.user;
+console.log(token)
+
+// findOne(1).then(console.log);
 </script>
 
 <template>

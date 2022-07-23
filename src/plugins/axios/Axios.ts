@@ -1,9 +1,11 @@
-import store from "@/utils/store";
-import router from "@/router/register";
 import axios, { AxiosRequestConfig } from "axios";
 import errorStore from "@/store/errorStore";
 import { ElLoading, ElMessage } from "element-plus";
-
+interface Resp<T> {
+  data: T,
+  message:string,
+  statusCode:number;
+}
 export default class Axios {
   private instance;
   private loading: any;
@@ -11,16 +13,15 @@ export default class Axios {
     this.instance = axios.create(config);
     this.interceptors();
   }
-
-  public async request<T, D = any>(config: AxiosRequestConfig) {
+  public async request<T, D = Resp<T>>(config: AxiosRequestConfig) {
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await this.instance.request<D>(config);
-        resolve(response.data);
+        const response = await this.instance.request<D>(config)
+        resolve(response.data)
       } catch (error) {
-        reject(error);
+        reject(error)
       }
-    }) as Promise<D>;
+    }) as Promise<D>
   }
 
   private interceptors() {
@@ -66,12 +67,6 @@ export default class Axios {
         } = error;
         const { message } = data;
         switch (status) {
-          case 401:
-            ElMessage({
-              type: "error",
-              message: "未登录，请去登录！",
-            });
-            break;
           case 422:
             errorStore().setErrors(error.response.data.errors);
             break;
