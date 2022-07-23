@@ -12,11 +12,7 @@ import {
 } from "@icon-park/vue-next";
 import { Home } from "@icon-park/vue-next";
 import { h, Component } from "vue";
-
-function renderIcon(icon: Component) {
-  return () => h(NIcon, null, { default: () => h(icon) });
-}
-
+import { renderIcon } from "@/utils/tools";
 export default [
   {
     label: () =>

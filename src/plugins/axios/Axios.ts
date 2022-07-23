@@ -65,16 +65,17 @@ export default class Axios {
           response: { status, data },
         } = error;
         const { message } = data;
-
         switch (status) {
           case 401:
-            store.remove(CacheEnum.TOKEN_NAME);
-            router.push({ name: RouteEnum.LOGIN });
+            ElMessage({
+              type: "error",
+              message: "未登录，请去登录！",
+            });
             break;
           case 422:
             errorStore().setErrors(error.response.data.errors);
             break;
-          case 403:
+          case 401:
             ElMessage({ type: "error", message: message ?? "没有操作权限" });
             break;
           case 404:

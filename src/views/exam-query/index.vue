@@ -1,7 +1,10 @@
 <template>
-  <div>
-    <h1>成绩查询</h1>
-  </div>
+  <n-card title="卡片插槽示例">
+    <template #header-extra> #header-extra </template>
+    卡片内容
+    <template #footer> #footer </template>
+    <template #action> #action </template>
+  </n-card>
 </template>
 
 <script setup></script>
