@@ -18,5 +18,6 @@ declare module 'vue-router' {
     enterClass?: string
     leaveClass?: string
     permission?: string
+    publicRoute?:boolean
   }
 }

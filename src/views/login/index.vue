@@ -1,22 +1,21 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import { Form as VForm, Field as VField, ErrorMessage } from "vee-validate";
-import useLogin from '@/composables/useLogin';
+import useLogin from "@/composables/useLogin";
 
-const {username,password,usernameRule,passwordRule,onSubmit} = useLogin();
+const { username, password, usernameRule, passwordRule, onSubmit } = useLogin();
 
 const eyeShow = ref(false);
-
 </script>
 
 <template>
-  <div class="min-h-full flex items-center justify-center px-4 sm:px-6 lg:px-8">
-    <div class="max-w-xs w-full space-y-6 -translate-y-1/3">
+  <div class="flex items-center justify-center min-h-full px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-xs space-y-6 -translate-y-1/3">
       <div>
-        <h3 class="text-3xl text-center font-bold">在线考试系统</h3>
+        <h3 class="text-3xl font-bold text-center">在线考试系统</h3>
       </div>
       <VForm class="mt-8 space-y-2" @submit="onSubmit">
-        <div class="rounded-md shadow-sm space-y-3">
+        <div class="space-y-3 rounded-md shadow-sm">
           <div>
             <label for="email-address" class="sr-only">手机号码/邮箱</label>
             <VField
@@ -26,12 +25,12 @@ const eyeShow = ref(false);
               autocomplete="email"
               :rules="usernameRule"
               v-model="username"
-              class="flomo-input on-active"
+              class="exam-input on-active"
               placeholder="手机号码/邮箱"
             />
             <ErrorMessage
               name="email"
-              class="text-red-500 text-xs italic"
+              class="text-xs italic text-red-500"
             ></ErrorMessage>
           </div>
           <div class="relative">
@@ -43,13 +42,13 @@ const eyeShow = ref(false);
               autocomplete="current-password"
               :rules="passwordRule"
               v-model="password"
-              class="flomo-input on-active"
+              class="exam-input on-active"
               placeholder="密码"
             />
 
             <ErrorMessage
               name="password"
-              class="text-red-500 text-xs italic"
+              class="text-xs italic text-red-500"
             ></ErrorMessage>
             <div class="eye_open" @click="eyeShow = false" v-show="eyeShow">
               <svg
@@ -71,11 +70,10 @@ const eyeShow = ref(false);
                 />
               </svg>
             </div>
-
             <div class="eye_close" @click="eyeShow = true" v-show="!eyeShow">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6"
+                class="w-6 h-6"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="gray"
@@ -99,7 +97,7 @@ const eyeShow = ref(false);
             登录
           </button>
         </div>
-        <div class="w-full flex justify-center gap-x-5">
+        <div class="flex justify-center w-full gap-x-5">
           <router-link to="/register" class="text-blue-400"> 注册 </router-link>
           <router-link to="/reset" class="text-blue-400">
             忘记密码
@@ -118,9 +116,9 @@ const eyeShow = ref(false);
     @apply w-4 h-4 absolute top-1/2 right-2 -translate-y-1/2;
   }
 }
-.flomo-input {
+.exam-input {
   @apply appearance-none relative block w-full px-3 py-2 border border-gray-200 placeholder-gray-300 text-gray-900 rounded-md sm:text-sm h-10;
-  &:on-active {
+  &:active {
     @apply focus:outline-white focus:ring-indigo-500 focus:border-indigo-500 focus:z-10;
   }
 }

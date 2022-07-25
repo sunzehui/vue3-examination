@@ -1,11 +1,25 @@
-import { http } from "@/plugins/axios";
+import {http} from "@/plugins/axios";
+import {AxiosRequestConfig} from "axios";
 
-export function ApiLogin(username:string,password:string) {
-  return http.request<null>({
-    url: `auth/login`,
-    method: "POST",
-    data:{
-        username,password
-    }
-  });
+interface IUser {
+    username: string,
+    password: string
 }
+
+export function ApiLogin(user: IUser) {
+    return http.request<LoginResult>(<AxiosRequestConfig>{
+        url: `auth/login`,
+        method: "POST",
+        data: user
+    });
+}
+
+
+export function ApiRegister(user: IUser) {
+    return http.request<LoginResult>(<AxiosRequestConfig>{
+        url: `user/register`,
+        method: "POST",
+        data: user
+    });
+}
+
