@@ -23,8 +23,7 @@ export default (router: Router) => {
     //根据权限过滤
     return route;
   });
-
   //过滤掉children为空的路由
-  routes = routes.filter((r) => r.children.length);
+  routes = routes.filter((r) => r.children?.length);
   routes.forEach((r) => router.addRoute(r as RouteRecordRaw));
 };
