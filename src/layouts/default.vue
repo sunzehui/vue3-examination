@@ -1,47 +1,48 @@
 <template>
-  <n-space vertical class="main-layout">
+  <n-space class="main-layout" vertical>
     <n-layout>
       <n-layout has-sider>
         <n-layout-sider
-          bordered
-          show-trigger
-          :trigger-style="{ transform: 'scale(2) translateX(25%)' }"
-          :collapsed-trigger-style="{
+            :collapsed-trigger-style="{
             transform: 'scale(2) translateX(90%)',
           }"
-          collapse-mode="transform"
-          :show-collapsed-content="false"
-          :collapsed-width="0"
-          :width="240"
-          class="sidebar__menu-container"
-          :native-scrollbar="false"
-          :inverted="inverted"
+            :collapsed-width="0"
+            :inverted="inverted"
+            :native-scrollbar="false"
+            :position="responsivePos"
+            :show-collapsed-content="false"
+            :trigger-style="{ transform: 'scale(2) translateX(25%)' }"
+            :width="240"
+            bordered
+            class="sidebar__menu-container"
+            collapse-mode="transform"
+            show-trigger
         >
           <n-space class="logo-wrap" justify="center">
             Study Day Day Up
           </n-space>
           <n-menu
-            :inverted="inverted"
-            :collapsed="collapsed"
-            v-model:value="activeKey"
-            :collapsed-icon-size="0"
-            :options="menuOptions"
+              v-model:value="activeKey"
+              :collapsed="collapsed"
+              :collapsed-icon-size="0"
+              :inverted="inverted"
+              :options="menuOptions"
           />
         </n-layout-sider>
         <n-layout>
-          <n-layout-header class="main-header" :inverted="inverted" bordered>
+          <n-layout-header :inverted="inverted" bordered class="main-header">
             <h1>在线考试系统</h1>
             <div class="right-bar">
               <span class="notify">
-                <Bell />
+                <Bell/>
               </span>
               <div class="avatar">
-                <img src="/images/xj.jpg" />
+                <img src="/images/xj.jpg"/>
               </div>
             </div>
           </n-layout-header>
           <n-layout-content class="main-content">
-            <router-view />
+            <router-view/>
           </n-layout-content>
         </n-layout>
       </n-layout>
@@ -51,31 +52,52 @@
 
 <script lang="ts" setup>
 import menuOptions from "./menu-option";
-import { Bell } from "@element-plus/icons-vue";
+import {Bell} from "@element-plus/icons-vue";
+import {useMediaQuery} from "@vueuse/core";
+import {useRoute} from 'vue-router'
 
+const route = useRoute()
+const responsivePos = ref("static")
 const inverted = ref(false);
 const collapsed = ref(false);
 const activeKey = ref<string | null>("exam-panel");
+watch(() => route.path, (value: string) => {
+  const path = value.split("/")
+  console.log(path)
+  activeKey.value = path[2] || 'exam-panel';
+}, {immediate: true})
+
+const isXlScreen = useMediaQuery('(min-width: 1000px)')
+watch(isXlScreen, () => {
+  if (!isXlScreen.value) {
+    responsivePos.value = 'absolute'
+  } else {
+    responsivePos.value = 'static'
+  }
+}, {immediate: true})
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .sidebar__menu-container {
   height: 100vh;
 }
+
 .logo-wrap {
   height: 85px;
   font-size: 1.4rem;
   color: gray;
   display: flex;
   align-items: center;
-  cursor: nomal;
+  cursor: auto;
   user-select: none;
 }
+
 .main-header {
   height: 80px;
   display: flex;
   text-indent: 2rem;
   align-items: center;
+
   h1 {
     font-size: 2rem;
   }
@@ -87,18 +109,21 @@ const activeKey = ref<string | null>("exam-panel");
     align-items: center;
     gap: 30px;
     margin-right: 2rem;
+
     .avatar {
       height: 50px;
       width: 50px;
       border-radius: 50%;
       overflow: hidden;
       cursor: pointer;
+
       img {
         height: 100%;
         width: 100%;
         object-fit: cover;
       }
     }
+
     .notify {
       height: 30px;
       width: 30px;
@@ -106,6 +131,7 @@ const activeKey = ref<string | null>("exam-panel");
     }
   }
 }
+
 .main-content {
   height: calc(100vh - 80px);
   background-color: #f5f5f5;

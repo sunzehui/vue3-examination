@@ -1,5 +1,6 @@
-<script setup lang="ts">
-import { ElLoading } from 'element-plus'
+<script lang="ts" setup>
+import {ElLoading} from 'element-plus'
+
 const loadingInstance = ElLoading.service({
   background: 'rgba(255,255,255,.5)',
 })
@@ -11,12 +12,15 @@ const resolve = () => {
 
 <template>
   <el-config-provider :locale="zhCn">
-    <router-view #default="{ Component }">
-      <suspense @resolve="resolve">
-        <template #default>
-          <component :is="Component" />
-        </template>
-      </suspense>
-    </router-view>
+    <n-dialog-provider>
+      <router-view #default="{ Component }">
+        <suspense @resolve="resolve">
+          <template #default>
+            <component :is="Component"/>
+          </template>
+        </suspense>
+      </router-view>
+    </n-dialog-provider>
+
   </el-config-provider>
 </template>
