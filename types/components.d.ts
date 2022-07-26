@@ -8,6 +8,7 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     ClassesAction: typeof import('./../src/components/classes-action.tsx')['default']
+    ClassesSelect: typeof import('./../src/components/classes-select.vue')['default']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     NAvatar: typeof import('naive-ui')['NAvatar']
     NBreadcrumb: typeof import('naive-ui')['NBreadcrumb']

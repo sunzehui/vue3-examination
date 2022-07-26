@@ -8,7 +8,7 @@ export default {
             name: "exam-panel",
             path: "exam-panel",
             alias: "考试面板",
-            component: () => import("@/views/front/index.vue"),
+            component: () => import("@/views/exam-room/index.vue"),
 
         },
         {
