@@ -2,6 +2,7 @@ interface ClassesResult {
     id: number;
     name: string;
     create_time: string;
+    created_by: Users;
     users: Users[];
 }
 
@@ -13,4 +14,9 @@ interface IUsers {
     user_type: number;
 }
 
-export type Users = Partial<IUsers>
+export type Users = Partial<IUsers>;
+
+export interface nameOption {
+    label: string;
+    value: string;
+}

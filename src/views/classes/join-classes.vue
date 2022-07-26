@@ -1,4 +1,6 @@
 <template>
+
+
   <n-card title="搜索您的班级">
     <n-input-group>
       <n-input
@@ -28,6 +30,7 @@ import {ApiFindClassesList, ApiJoinClass} from "@/apis/classes";
 import ClassesAction from "@/components/classes-action";
 import {ClassesResult} from "@/types/api-classes";
 import {get, isEmpty} from "lodash";
+
 
 type Classes = {
   id: number,

@@ -16,7 +16,7 @@
       "@/*": ["./src/*"],
       "#/*": ["./types/*"]
     },
-    "types": ["element-plus/global", "echarts", "lodash", "web-bluetooth", "naive-ui/volar"]
+    "types": ["@pinia/nuxt","element-plus/global", "echarts", "lodash", "web-bluetooth", "naive-ui/volar"]
   },
   "include": [
     "vite.config.ts",

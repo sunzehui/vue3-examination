@@ -1,107 +1,42 @@
-<script lang="ts" setup>
-import {ref} from 'vue'
-import {useClassesStore} from "@/store/classes";
-import {isEmpty} from "lodash";
-
-const classesStore = useClassesStore();
-const options = ref(null)
-const value = ref('');
-const columns = classesStore.tableColumn;
-
-onMounted(async () => {
-  const classesList = await classesStore.getClassesList();
-  options.value = classesStore.nameOption;
-  console.log(classesList)
-  if (!isEmpty(classesList)) {
-    console.log({classesList})
-    // await classesStore.getClassesDetail(unref(options)[0].id);
-  }
-})
-
+<script setup lang="ts">
+const router = useRouter();
+let handleBack = ref<any>(null);
+let breadcrumb = ref<string[]>([])
+const back2Info = () => {
+  router.push({name: 'info'})
+}
+const nameRoute = {
+  'class-panel': '班级管理',
+  'info': "班级信息",
+  'join': "加入班级"
+}
+const getPathLabel = (path: string) => {
+  const pathArray = path.split('/').slice(2)
+  return pathArray.map(item => nameRoute[item as keyof typeof nameRoute]);
+}
+const route = useRoute();
+watch(() => route.name, () => {
+  const isJoinClasses = route.name === 'join';
+  handleBack.value = isJoinClasses ? back2Info : null;
+  breadcrumb.value = getPathLabel(route.path)
+}, {immediate: true})
 </script>
+
 <template>
-  <n-layout>
-    <n-layout-header embedded style="padding: 24px;display:flex;">
-      <h2>选择班级：</h2>
-      <n-popselect
-          v-model:value="value"
-          :options="options"
-          scrollable
-          size="medium"
-      >
-        <n-button style="margin-right: 8px">
-          {{ value || '未选择' }}
-        </n-button>
-      </n-popselect>
-    </n-layout-header>
-
-    <n-layout-content class="classes-layout-content">
-
-      <n-card hoverable>
-        <n-descriptions label-placement="left" title="17大专软件2班">
-          <n-descriptions-item>
-            <template #label>
-              早餐
-            </template>
-            苹果
-          </n-descriptions-item>
-          <n-descriptions-item label="早午餐">
-            苹果
-          </n-descriptions-item>
-          <n-descriptions-item label="午餐">
-            苹果
-          </n-descriptions-item>
-          <n-descriptions-item label="晚餐">
-            苹果
-          </n-descriptions-item>
-          <n-descriptions-item label="夜宵">
-            苹果
-          </n-descriptions-item>
-        </n-descriptions>
-      </n-card>
-
-
-      <n-data-table
-          :border="true"
-          :columns="columns"
-          :data="classesMate"
-          :max-height="550"
-      />
-
-    </n-layout-content>
-
-  </n-layout>
-
+  <n-page-header @back="handleBack" class="mb-4">
+    <template #title>
+      <h4
+      >{{ route.meta.title }}</h4>
+    </template>
+    <template #header>
+      <n-breadcrumb>
+        <n-breadcrumb-item v-for="item in breadcrumb">{{ item }}</n-breadcrumb-item>
+      </n-breadcrumb>
+    </template>
+  </n-page-header>
+  <router-view v-slot="{ Component }">
+    <keep-alive>
+      <component :is="Component" :key="$route.name"/>
+    </keep-alive>
+  </router-view>
 </template>
-
-<style lang="scss" scoped>
-h2 {
-  @apply text-lg;
-}
-
-.classes-layout-content {
-  padding: 20px;
-
-  :deep(.n-layout-scroll-container) {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-}
-
-.light-green {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
-  background-color: rgba(0, 128, 0, 0.12);
-}
-
-.green {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
-  background-color: rgba(0, 128, 0, 0.24);
-}
-</style>

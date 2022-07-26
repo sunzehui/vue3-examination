@@ -1,55 +1,71 @@
 import {defineStore} from "pinia";
-import {ApiFindClassesDetail, ApiFindClassesList} from "@/apis/classes";
+import {
+    ApiFindClassesList,
+    ApiFindClassesStudent,
+} from "@/apis/classes";
 import {ClassesResult} from "@/types/api-classes";
 
-const store = {
+export const useClassesStore = defineStore("classes", {
     state: () => {
         return {
-            classesList: [] as ClassesResult[]
-        }
+            classesList: [] as ClassesResult[],
+        };
     },
     actions: {
         async getClassesList() {
-            const list = await ApiFindClassesList()
+            const list = await ApiFindClassesList();
             this.classesList = list.data;
             return this.classesList;
         },
     },
     getters: {
-        getClassesDetail: (state) => {
-            return async (id) => {
-                const classes = await ApiFindClassesDetail(id)
-                console.log({classes})
-            }
+        getClassesStudent: () => {
+            return async (id: number) => {
+                const studentResult = await ApiFindClassesStudent(id);
+
+                return studentResult.data;
+            };
         },
-        nameOption() {
-            return this.classesList.map(
-                item => {
-                    const value = `${item.name}-${item.id}`
-                    console.log(value)
-                    return {
-                        label: value, value
-                    }
-                }
-            )
+        nameOption(state) {
+            return state.classesList.map((item) => {
+                const value = `${item.name}-${item.id}`;
+                return {
+                    label: value,
+                    value,
+                };
+            });
+        },
+        studentColumn() {
+            return [
+                {
+                    title: "No",
+                    key: "id",
+                },
+                {
+                    title: "名称",
+                    key: "nickname",
+                },
+                {
+                    title: "创建时间",
+                    key: "create_time",
+                },
+            ];
         },
         tableColumn() {
             return [
                 {
-                    title: 'No',
-                    key: 'id'
+                    title: "No",
+                    key: "id",
                 },
                 {
-                    title: '名称',
-                    key: 'name'
+                    title: "名称",
+                    key: "name",
                 },
                 {
-                    title: '创建时间',
-                    key: 'create_time'
-                }
-            ]
-        }
-    }
-}
-
-export const useClassesStore = defineStore("classes", store);
+                    title: "创建时间",
+                    key: "create_time",
+                },
+            ];
+        },
+    },
+});
