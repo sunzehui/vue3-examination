@@ -6,14 +6,17 @@ import {ApiGetExamRoom} from "@/apis/exam-room";
 import {ExamRoom} from "@/types/api-exam-room";
 import {getLocalTime, getTagStatus} from "@/utils/tools";
 import {ElMessage} from "element-plus";
+import {useExamStore} from "@/store/exam";
+import {useRouter} from 'vue-router'
 
+const router = useRouter();
 
 const userStore = useUserStore();
 
-const handleSelectClasses = async (val) => {
+const handleSelectClasses = async (val: string) => {
   try {
-    const classId = val.split('-')[1]
-    const examRoomResult = await ApiGetExamRoom(classId)
+    const classesId = Number(val.split('-')[1]);
+    const examRoomResult = await ApiGetExamRoom(classesId)
     examRoomList.value = (examRoomResult.data)
   } catch (e: any) {
     ElMessage.error({
@@ -28,6 +31,9 @@ onMounted(async () => {
 })
 const localTime = computed(() => getLocalTime)
 const tagStatus = computed(() => getTagStatus)
+const goExamRoom = (id: number) => {
+  router.push({name: 'exam', params: {id}})
+}
 </script>
 
 <template>
@@ -57,7 +63,7 @@ const tagStatus = computed(() => getTagStatus)
           <n-space justify="space-between">
             <SwitchTag :status="tagStatus(exam.begin_time,exam.end_time)"/>
             <n-space justify="end">
-              <n-button>进入考试</n-button>
+              <n-button @click="goExamRoom(exam.id)">进入考试</n-button>
             </n-space>
           </n-space>
         </template>

@@ -32,3 +32,18 @@ export function getTagStatus(start: string, end: string) {
     }
     return TagStatus.on;
 }
+
+export function splitByIndex(str: string, idxArr: number[]) {
+    let strArr: string[] = []
+    idxArr.reduce((acc, cur, idx, arr) => {
+        let subStr = ''
+        if (idx === arr.length - 1) {
+            subStr = str.slice(acc, cur) + str.slice(cur)
+        } else {
+            subStr = str.slice(acc, cur)
+        }
+        strArr.push(subStr)
+        return cur;
+    }, 0);
+    return strArr;
+}

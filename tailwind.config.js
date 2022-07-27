@@ -3,6 +3,11 @@ const {default: plugin} = require('tailwindcss')
 module.exports = {
     content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
     theme: {
+        colors: {
+            'active': "#0F40F5",
+            'complete': "#2ED573",
+            'half': "#1E90FF",
+        },
         screens: {
             'none': '0px',
             'sm': '640px',

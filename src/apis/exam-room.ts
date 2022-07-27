@@ -12,3 +12,17 @@ export function ApiGetExamRoom(classesId?: number): ApiResult<ExamRoom[]> {
         }
     });
 }
+
+export function ApiGetExamDetail(examId: number): ApiResult<ExamRoom> {
+    return http.request({
+        url: "exam-room/" + examId,
+        method: "get"
+    })
+}
+
+export function ApiGetExamPaper(paperId: number) {
+    return http.request({
+        url: "exam-paper/" + paperId,
+        method: "get"
+    })
+}
