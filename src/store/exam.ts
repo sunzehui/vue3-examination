@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import {ApiGetExamDetail, ApiGetExamPaper} from "@/apis/exam-room";
-import {get, isEmpty, isNil} from "lodash";
-import {ExamPaper, FillBlank, QType} from "@/types/api-exam-paper";
+import {get, isEmpty, isNil, keyBy} from "lodash";
+import {ExamPaper, FillBlank, QStatus, QType, Question} from "@/types/api-exam-paper";
 import {AnswerRecord, ChoiceRecord, ExamRoom, FillBlankRecord} from "@/types/api-exam-room";
 import {useLocalStorage} from "@vueuse/core";
 
@@ -96,6 +96,30 @@ export const useExamStore = defineStore('exam', {
                 if (!choiceQ) return []
                 return choiceQ.answer;
             }
+        },
+        userAnswerStatus(state) {
+            const allQ = state.examPaper.question as (Question & { status: QStatus })[];
+            if (!allQ) return []
+            const recordQById = keyBy(state.userAnswer, 'qId');
+            return allQ.map(q => {
+                let status = QStatus.none;
+                const useAnswerCount = recordQById[q.id].answer.length
+                const everyAnswerEmpty = (recordQById[q.id].answer as FillBlankRecord['answer']).every(a => a.content === '')
+                if (q.type === QType.choice) {
+                    status = useAnswerCount > 0 ? QStatus.complete : QStatus.none
+                } else if (q.type === QType.fill_blank) {
+                    status = useAnswerCount === 0 ? QStatus.none : QStatus.half;
+                    if (everyAnswerEmpty) {
+                        status = QStatus.none
+                    }
+                    if (q.answer.length === useAnswerCount) {
+                        status = QStatus.complete
+                    }
+                }
+                return {
+                    ...q, status
+                }
+            })
         }
     }
 })

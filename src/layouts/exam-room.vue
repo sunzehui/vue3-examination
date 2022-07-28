@@ -24,8 +24,9 @@
             <h3 class="text-lg">选择题</h3>
             <n-card class="answer-panel">
               <div class="grid-card">
-                <div class="item half"></div>
-                <div class="item complete"></div>
+                <template v-for="q in choiceQStatus">
+                  <div class="item" :class="statusMap[q.status]"></div>
+                </template>
               </div>
             </n-card>
             <n-divider/>
@@ -35,8 +36,9 @@
             <h3 class="text-lg">填空题</h3>
             <n-card class="answer-panel">
               <div class="grid-card">
-                <div class="item on-active"></div>
-                <div class="item half"></div>
+                <template v-for="q in fillBlankQStatus">
+                  <div class="item" :class="statusMap[q.status]"></div>
+                </template>
               </div>
             </n-card>
             <n-divider/>
@@ -86,9 +88,23 @@
 
 <script lang="ts" setup>
 import {useExamStore} from "@/store/exam";
+import {QStatus, QType} from "@/types/api-exam-paper";
 
+const statusMap = {
+  [QStatus.none]: "",
+  [QStatus.half]: "half",
+  [QStatus.complete]: 'complete',
+  [QStatus["on-active"]]: "on-active"
+}
 const examStore = useExamStore();
 const isQEmpty = computed(() => examStore.isQListEmpty)
+const choiceQStatus = ref();
+const fillBlankQStatus = ref();
+watch(() => examStore.userAnswerStatus, () => {
+  choiceQStatus.value = examStore.userAnswerStatus.filter(q => q.type === QType.choice)
+  fillBlankQStatus.value = examStore.userAnswerStatus.filter(q => q.type === QType.fill_blank)
+
+}, {immediate: true})
 </script>
 
 <style lang="scss" scoped>

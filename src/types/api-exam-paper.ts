@@ -9,6 +9,13 @@ export enum QType {
     fill_blank = 1,
 }
 
+export enum QStatus {
+    none,
+    half,
+    complete,
+    'on-active'
+}
+
 interface QuestionBase {
     id: number;
     content: string;

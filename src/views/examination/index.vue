@@ -45,7 +45,6 @@ onMounted(async () => {
   model.value = examStore.examQList;
   choiceQ.value = unref(model).filter((Q: Question) => Q.type === QType.choice);
   fillBlankQ.value = unref(model).filter((Q: Question) => Q.type === QType.fill_blank);
-  console.log(unref(fillBlankQ))
 })
 
 
