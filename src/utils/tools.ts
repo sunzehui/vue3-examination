@@ -4,7 +4,8 @@ import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import {TagStatus} from "@/enum/tag-status";
-import {ElLoading} from "element-plus";
+import {FillBlank, QType, Question} from "@/types/api-exam-paper";
+import {head} from "lodash";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -33,17 +34,27 @@ export function getTagStatus(start: string, end: string) {
     return TagStatus.on;
 }
 
-export function splitByIndex(str: string, idxArr: number[]) {
-    let strArr: string[] = []
-    idxArr.reduce((acc, cur, idx, arr) => {
+export function splitByIndex(Q: Question, blankPos: FillBlank[]) {
+    let strArr: (FillBlank & { content: string })[] = []
+    if (Q.type !== QType.fill_blank) return;
+    const content = Q.content
+    blankPos.reduce((acc, cur, idx, arr) => {
         let subStr = ''
+        if (!acc || !cur) throw new Error()
+        const lastPos = Number(acc.pos);
+        const curPos = Number(cur.pos);
         if (idx === arr.length - 1) {
-            subStr = str.slice(acc, cur) + str.slice(cur)
+            subStr = content.slice(lastPos, curPos) + content.slice(curPos)
+        } else if (idx === 0) {
+            subStr = content.slice(0, lastPos)
         } else {
-            subStr = str.slice(acc, cur)
+            subStr = content.slice(lastPos, curPos)
         }
-        strArr.push(subStr)
+        strArr.push({
+            ...cur,
+            content: subStr
+        })
         return cur;
-    }, 0);
+    }, head(blankPos));
     return strArr;
 }

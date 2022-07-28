@@ -1,5 +1,3 @@
-import FillblankQ from "@/components/fillblank-q";
-
 export interface ExamPaper {
     id: number,
     name: string,
@@ -21,6 +19,9 @@ interface QuestionBase {
 
 export interface FillBlank {
     pos: string;
+    score?: number,
+    id: number,
+    content?: string,
 }
 
 export interface Choice {
@@ -39,3 +40,4 @@ export type Question = (
     answer: FillBlank[];
 }
     ) & QuestionBase;
+

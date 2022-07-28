@@ -19,18 +19,10 @@ interface ExamPaper {
     create_time: string;
 }
 
-export class Choice {
-    content: string;
-}
-
-export class FillBlank {
-    pos: string;
-    content: string;
-}
 
 export interface ChoiceRecord {
-    type: QType.choice
-    answer: Choice[]
+    type: QType.choice;
+    answer: number[]
 }
 
 export interface FillBlankRecord {
@@ -38,7 +30,7 @@ export interface FillBlankRecord {
     answer: FillBlank[]
 }
 
-export type AnswerRecord = ChoiceRecord | FillBlankRecord & {
+export type AnswerRecord = (ChoiceRecord | FillBlankRecord) & {
     qId: number;
 };
 
