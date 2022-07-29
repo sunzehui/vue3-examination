@@ -5,11 +5,21 @@ export default {
     component: () => import("@/layouts/default.vue"),
     children: [
         {
+            name: "exam-edit",
+            path: "exam-edit",
+            alias: "编辑考试",
+            component: () => import("@/views/exam-edit/index.vue"),
+        }, {
+            name: "exam-paper-edit",
+            path: "exam-paper-edit",
+            alias: "编辑试卷",
+            component: () => import("@/views/exam-paper-edit/index.vue"),
+        },
+        {
             name: "exam-panel",
             path: "exam-panel",
             alias: "考试面板",
             component: () => import("@/views/exam-room/index.vue"),
-
         },
         {
             name: "exam-query",

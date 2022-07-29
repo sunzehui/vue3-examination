@@ -1,11 +1,13 @@
 import {defineStore} from "pinia";
 import {useLocalStorage} from "@vueuse/core";
 import {get, isNil, now} from "lodash";
+import {LoginResult,} from "@/types/api-user";
 
-const store = {
+
+export const useUserStore = defineStore("user", {
     state: () => {
         return {
-            user: useLocalStorage('user', {})
+            user: useLocalStorage('user', {} as LoginResult)
         }
     },
     actions: {
@@ -25,12 +27,13 @@ const store = {
             return tokenVal !== "" && tokenExp > Date.now();
         },
         username: (state) => {
-            return state.userInfo.username;
+            return state.user.userInfo.username;
         },
         token: (state) => {
-            return state.userInfo.token.value;
+            return state.user.token.value;
+        },
+        role: (state) => {
+            return state.user.userInfo.role;
         }
     }
-}
-
-export const useUserStore = defineStore("user", store);
+});

@@ -8,10 +8,10 @@ import {getLocalTime, getTagStatus} from "@/utils/tools";
 import {ElMessage} from "element-plus";
 import {useExamStore} from "@/store/exam";
 import {useRouter} from 'vue-router'
+import {Role} from '@/types/api-user'
 
 const router = useRouter();
 
-const userStore = useUserStore();
 
 const handleSelectClasses = async (val: string) => {
   try {
@@ -33,6 +33,9 @@ const localTime = computed(() => getLocalTime)
 const tagStatus = computed(() => getTagStatus)
 const goExamRoom = (id: number) => {
   router.push({name: 'exam', params: {id}})
+}
+const goEditExamRoom = (id: number) => {
+  router.push({name: 'exam-edit'})
 }
 </script>
 
@@ -63,7 +66,8 @@ const goExamRoom = (id: number) => {
           <n-space justify="space-between">
             <SwitchTag :status="tagStatus(exam.begin_time,exam.end_time)"/>
             <n-space justify="end">
-              <n-button @click="goExamRoom(exam.id)">进入考试</n-button>
+              <n-button @click="goExamRoom(exam.id)" v-role="Role.student">进入考试</n-button>
+              <n-button @click="goEditExamRoom(exam.id)" v-role="Role.teacher">编辑考试</n-button>
             </n-space>
           </n-space>
         </template>

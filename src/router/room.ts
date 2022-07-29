@@ -9,6 +9,11 @@ export default {
             path: "room/:id",
             alias: "在线考场",
             component: () => import("@/views/examination/index.vue")
+        },
+        {
+            name: "edit",
+            path: "paper/:id",
+            component: () => import("@/views/exam-paper-edit/index.vue")
         }
     ]
 }

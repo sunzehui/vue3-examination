@@ -19,10 +19,3 @@ export function ApiGetExamDetail(examId: number): ApiResult<ExamRoom> {
         method: "get"
     })
 }
-
-export function ApiGetExamPaper(paperId: number) {
-    return http.request({
-        url: "exam-paper/" + paperId,
-        method: "get"
-    })
-}

@@ -1,6 +1,7 @@
 export interface ExamPaper {
     id: number,
     name: string,
+    create_time: string,
     question: Question[],
 }
 
@@ -25,9 +26,9 @@ interface QuestionBase {
 
 
 export interface FillBlank {
-    pos: string;
+    pos: number;
     score?: number,
-    id: number,
+    id?: number,
     content?: string,
 }
 
@@ -47,4 +48,5 @@ export type Question = (
     answer: FillBlank[];
 }
     ) & QuestionBase;
+
 

@@ -1,5 +1,6 @@
 import {http} from "@/plugins/axios";
 import {AxiosRequestConfig} from "axios";
+import {LoginResult} from "@/types/api-user";
 
 interface IUser {
     username: string,

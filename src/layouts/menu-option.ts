@@ -11,8 +11,11 @@ import {
 } from "@icon-park/vue-next";
 import {h} from "vue";
 import {renderIcon} from "@/utils/tools";
+import {useUserStore} from "@/store/user";
+import {Role} from "@/types/api-user";
 
-export default [
+
+const studentOpt = [
     {
         label: () =>
             h(
@@ -90,3 +93,85 @@ export default [
         ],
     },
 ] as MenuOption[];
+
+const teacherOpt = [
+    {
+        label: () =>
+            h(
+                RouterLink,
+                {
+                    to: {
+                        name: "home",
+                    },
+                },
+                {default: () => "考试面板"}
+            ),
+        key: "exam-panel",
+        icon: renderIcon(Home),
+    },
+    {
+        label: () =>
+            h(
+                RouterLink,
+                {
+                    to: {
+                        name: "exam-paper-edit",
+                    },
+                },
+                {default: () => "试卷管理"}
+            ),
+        key: "exam-edit",
+        icon: renderIcon(Aiming),
+    }, {
+        label: "题目管理",
+        key: "question-edit",
+        icon: renderIcon(Aiming),
+    },
+    {
+        label: () =>
+            h(
+                RouterLink,
+                {
+                    to: {
+                        name: "exam-query",
+                    },
+                },
+                {default: () => "成绩查询"}
+            ),
+        key: "score-query",
+        icon: renderIcon(EmotionHappy),
+    },
+
+    {
+        label: () =>
+            h(
+                RouterLink,
+                {
+                    to: {
+                        name: "class-panel",
+                    },
+                },
+                {default: () => "班级信息"}
+            ),
+        key: "class-panel",
+        icon: renderIcon(EveryUser),
+    }, {
+        label: "个人信息",
+        key: "user-info",
+        icon: renderIcon(Aiming),
+    },
+    {
+        label: "考试记录",
+        key: "exam-record",
+        icon: renderIcon(UserPositioning),
+    },
+] as MenuOption[];
+const userStore = useUserStore()
+const role = userStore.role;
+let exportOpt = null
+if (role === Role.teacher) {
+    exportOpt = teacherOpt
+} else if (role === Role.student) {
+    exportOpt = studentOpt
+}
+export default exportOpt;

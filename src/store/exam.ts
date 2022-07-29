@@ -1,5 +1,6 @@
 import {defineStore} from "pinia";
-import {ApiGetExamDetail, ApiGetExamPaper} from "@/apis/exam-room";
+import {ApiGetExamDetail} from "@/apis/exam-room";
+import {ApiGetExamPaper} from "@/apis/exam-paper";
 import {get, isEmpty, isNil, keyBy} from "lodash";
 import {ExamPaper, FillBlank, QStatus, QType, Question} from "@/types/api-exam-paper";
 import {AnswerRecord, ChoiceRecord, ExamRoom, FillBlankRecord} from "@/types/api-exam-room";
