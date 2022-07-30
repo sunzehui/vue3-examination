@@ -21,16 +21,20 @@ export const useExamStore = defineStore('exam', {
             this.examRoom = result.data;
             return get(result, 'data.use_exam_paper.id', null);
         },
-        async getExamPaper(examRoomId: number) {
+        async getExamPaperByRoomId(examRoomId: number) {
             const examPaperId = await this.getExamPaperId(examRoomId);
             if (!examPaperId) {
                 return null;
             }
-            const result = await ApiGetExamPaper(examRoomId)
+            const result = await ApiGetExamPaper(examPaperId)
             this.examPaper = result.data;
             return result.data;
         },
-
+        async getExamPaper(examPaperId: number) {
+            const result = await ApiGetExamPaper(examPaperId)
+            this.examPaper = result.data;
+            return result.data;
+        },
         async updateFBQ(qId: number, item: FillBlank /*answer*/, input: string) {
             const oldQIdx = this.userAnswer.findIndex(Q => Q.qId === qId);
             const oldQ = this.userAnswer[oldQIdx] as FillBlankRecord;
@@ -84,7 +88,7 @@ export const useExamStore = defineStore('exam', {
             return (isNil(qList)) || (isEmpty(qList));
         },
         thisBlankContent(state) {
-            return (qId: number, blankId: number) => {
+            return (qId: number, blankId: number | undefined) => {
                 const blankQ = state.userAnswer.find(q => q.qId === qId) as (FillBlankRecord | null);
                 if (!blankQ) return ''
                 const blankA = blankQ.answer.find(a => a.id === blankId) || {content: ""};
@@ -104,7 +108,12 @@ export const useExamStore = defineStore('exam', {
             const recordQById = keyBy(state.userAnswer, 'qId');
             return allQ.map(q => {
                 let status = QStatus.none;
-                const useAnswerCount = recordQById[q.id].answer.length
+                const useAnswerCount = get(recordQById[q.id], 'answer.length')
+                if (!useAnswerCount) {
+                    return {
+                        ...q, status
+                    }
+                }
                 const everyAnswerEmpty = (recordQById[q.id].answer as FillBlankRecord['answer']).every(a => a.content === '')
                 if (q.type === QType.choice) {
                     status = useAnswerCount > 0 ? QStatus.complete : QStatus.none

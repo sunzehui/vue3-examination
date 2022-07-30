@@ -9,7 +9,9 @@
         </template>
         下方输入题目，点击 + 添加选项，按照 [ 是否答案、 分值、 选项内容 ] 添加
       </n-alert>
-      <n-input type="textarea" v-model:value="content"/>
+      <n-input type="textarea" v-model:value="content"
+               ref="contentInputRef"
+               :validation-status="inputContentValidationStatus"/>
       <n-dynamic-input :max="10" :min="2" v-model:value="customValue" :on-create="handleChoiceCreate">
         <template #create-button-default>
           添加选项
@@ -46,19 +48,18 @@ import {ApiCreateQuestion} from "@/apis/question";
 import {QType} from "@/types/api-exam-paper";
 import {CreateQResult} from '@/types/api-question';
 import {TipsOne} from "@icon-park/vue-next";
-import {head} from "lodash";
+import {head, isEmpty, isNil, last} from "lodash";
+import {getPaperIdFromKey} from "@/utils/tools";
+import {ElMessage} from "element-plus";
+import {ApiAddQuestion2Paper} from "@/apis/exam-paper";
 
+const emit = defineEmits(['save'])
 const props = defineProps<{
   selectPaper: String
+  uid: String
 }>()
 const content = ref('')
 const resolution = ref('')
-const options = [
-  {
-    label: "空1",
-    value: "",
-  }
-]
 const handleChoiceCreate = () => {
   return {
     is_answer: false,
@@ -68,18 +69,31 @@ const handleChoiceCreate = () => {
 }
 
 const customValue = ref([])
-
+const validate = () => {
+  if (isEmpty(unref(content))) {
+    ElMessage.error("请输入内容")
+    return false;
+  } else if (unref(customValue).length < 2) {
+    ElMessage.error("最少输入两个选项")
+    return false
+  }
+  return true;
+}
 const buildQuestion = () => {
+
   return {
     type: QType.choice,
     resolution: unref(resolution),
     content: unref(content),
     answer: unref(customValue)
   }
-
 }
 const saveChoiceQ = async () => {
   const Q = buildQuestion();
+  const isValid = validate();
+  if (!isValid) {
+    return
+  }
   const createResult = await ApiCreateQuestion(Q);
   return createResult.data;
 }
@@ -91,9 +105,16 @@ const saveChoiceQAndJoinPaper = async () => {
   if (!headQ) {
     throw new Error()
   }
-  // const qId = headQ.id
-  // const roomId = route.params.id;
+  const qId = headQ.id
+  const paperId = getPaperIdFromKey(props.selectPaper as string);
+  if (isNil(paperId)) {
+    ElMessage.error('错误的试卷')
+    return;
+  }
+  const result = await ApiAddQuestion2Paper(paperId, qId);
 
+  emit('save', props.uid)
+  console.log(result)
 }
 </script>
 

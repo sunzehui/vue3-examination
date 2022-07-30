@@ -41,7 +41,7 @@ const fillBlankQ = ref<Question[]>([])
 onMounted(async () => {
   const examRoomId = get(route, 'params.id', null);
   if (isNil(examRoomId)) return;
-  await examStore.getExamPaper(39);
+  await examStore.getExamPaperByRoomId(examRoomId);
   model.value = examStore.examQList;
   choiceQ.value = unref(model).filter((Q: Question) => Q.type === QType.choice);
   fillBlankQ.value = unref(model).filter((Q: Question) => Q.type === QType.fill_blank);

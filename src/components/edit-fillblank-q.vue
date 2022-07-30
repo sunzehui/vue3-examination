@@ -7,43 +7,37 @@
             <TipsOne/>
           </n-icon>
         </template>
-        <span>在此输入问题题干,在分割线下用鼠标选取挖空</span>
+        <span>在此输入问题题干,在分割线下填写答案</span>
       </n-alert>
       <n-input type="textarea" v-model:value="content"/>
-      <n-divider/>
-      <article @mouseup="findSelection" @mousedown="recordStart" class="min-h-[20px]">
-        <p ref="qContentRef">
-          {{ content || '请输入题干' }}
-        </p>
-      </article>
+      <n-space justify="start" class="items-center">
+        <span>分值：</span>
+        <n-input-number
+            v-model:value="score"
+            style="margin-right: 12px; width: 160px"
+        />
+      </n-space>
       <n-divider/>
 
-      <div v-show="isFormShow" class="grid gap-2 grid-cols-[50px_100px_100px_1fr]">
-        <span>删除</span>
-        <span>位置</span>
-        <span>分值</span>
-        <span>答案</span>
-        <template v-for="value in answer" :key="value.uid">
-          <n-button type="primary" @click="delAnswer(value.uid)">
-            <Close/>
-          </n-button>
-          <n-input-number
-              v-model:value="value.pos"
-              placeholder="请选择"
-              disabled
-          />
-          <n-input-number
-              v-model:value="value.score"
-              placeholder="分值"
-          />
-          <n-input v-model:value="value.content" type="text"
-                   placeholder="答案"
-          />
+      <n-dynamic-input
+          v-model:value="dInputValue"
+          show-sort-button
+          placeholder="请输入"
+          :on-create="createDInputValue"
+      >
+        <template #default="{ value,index }">
+          <div style="display: flex; align-items: center; width: 100%">
+            <n-input-number
+                :value="index"
+                style="margin-right: 12px; width: 160px"
+                disabled
+            />
+            <n-input v-model:value="value.content" type="text"/>
+          </div>
         </template>
+      </n-dynamic-input>
+      <pre>{{ JSON.stringify(dInputValue, null, 2) }}</pre>
 
-      </div>
-
-      <pre>{{ JSON.stringify(value, null, 2) }}</pre>
       <n-input
           v-model:value="resolution"
           type="textarea"
@@ -61,103 +55,75 @@
 import {Close, TipsOne} from "@icon-park/vue-next";
 import * as rb from "rangeblock"
 import {ElMessage} from "element-plus";
-import {isEmpty, omit, sortedUniqBy, uniqBy} from "lodash";
+import {head, isEmpty, isNil, omit, sortedUniqBy, uniqBy} from "lodash";
 import {FillBlank, QType} from "@/types/api-exam-paper";
 import {v4 as uuidv4} from 'uuid';
 import {ApiCreateQuestion} from "@/apis/question";
-import {Ref} from "vue";
+import {getPaperIdFromKey} from "@/utils/tools";
+import {ApiAddQuestion2Paper} from "@/apis/exam-paper";
+
+const createDInputValue = () => {
+  return {
+    content: ""
+  }
+}
 
 const resolution = ref('')
-let mouseStart = (0);
-const recordStart = (e) => {
-  mouseStart = e.screenX
-}
-
-const fillTextColor = async (textRef: Ref<HTMLParagraphElement | null>, text: string) => {
-  if (!textRef.value && !textRef.value) {
-    return
-  }
-
-  await nextTick()
-
-  const originText = textRef.value.innerText;
-  const ret = originText.replace(text, `<span class="text-select">${text}</span>`)
-  textRef.value.innerHTML = ret
-}
-const createTag = (event, block, id) => {
-
-  const scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
-
-  // Get cursor position
-  let posX = event.clientX - block.dimensions[0].Width;
-  if (event.clientX - mouseStart < 0) {
-    posX = event.clientX;
-  }
-  const posY = event.clientY + 20 + scrollTop;
-  console.log(posX)
-
-  const tag = document.createElement('div')
-  tag.className = 'pos_tag'
-
-  tag.style = 'color:red;position: absolute; top: ' + posY + 'px; left: ' + posX + 'px;'
-  tag.innerText = '^'
-  tag.id = 't' + id.split('-')[0];
-  document.body.insertAdjacentElement('beforeend', tag);
-
-}
-const findSelection = (event) => {
-  let block = rb.extractSelectedBlock(window, document);
-  if (isEmpty(unref(content))) {
-    ElMessage.error("请先输入内容！")
-    return
-  }
-  if (!block) {
-    ElMessage.error("请使用鼠标在题干中选取！");
-    return;
-  }
-
-  const {startCharIndex, text} = block.rangeMeta;
-  const uid = uuidv4()
-  const newAnswer = [...unref(answer), ({
-    uid, score: 2, pos: Number(startCharIndex), content: text
-  })]
-  createTag(event, block, uid);
-  answer.value = uniqBy(Array.from(newAnswer), item => {
-    return unref(item).pos
-  }).sort((a, b) => a.pos - b.pos)
-
-  ElMessage.info("选中：" + text);
-}
-const cleanTag = () => {
-  const tags = Array.from(document.querySelectorAll('.pos_tag'))
-  tags.forEach(el => document.body.removeChild(el))
-}
-const qContentRef = ref(null);
+const props = defineProps<{
+  selectPaper: String,
+  uid: String
+}>()
+const emit = defineEmits(['save'])
+const score = ref(2)
+const dInputValue = ref<string[]>([])
 const content = ref('')
-const answer = ref<(FillBlank & { uid: string })[]>([]);
-const isFormShow = computed(() => !isEmpty([...unref(answer)]))
-
-const delAnswer = (uid: string) => {
-  answer.value = unref(answer).filter(a => a.uid !== uid)
-  const tag = document.querySelector('#t' + uid.split('-')[0])
-  document.body.removeChild(tag)
+const validate = () => {
+  if (isEmpty(unref(content))) {
+    ElMessage.error("请输入内容")
+    return false;
+  } else if (unref(dInputValue).length < 1) {
+    ElMessage.error("最少挖一个空！")
+    return false
+  }
+  return true;
 }
-
 const buildQuestion = () => {
-  const _answer = (unref(answer)).map(a => omit(a, 'uid'));
+  const answer = (unref(dInputValue)).map((content, pos) => ({content, pos}));
+
   return {
     type: QType.fill_blank,
     resolution: unref(resolution),
     content: unref(content),
-    answer: _answer
+    score: unref(score),
+    answer
   }
 }
 
 const saveFBQ = async () => {
   const Q = buildQuestion();
+  const isValid = validate();
+  if (!isValid) {
+    return
+  }
   const createResult = await ApiCreateQuestion(Q);
-  cleanTag();
   return createResult.data;
+}
+
+const saveFBQAndJoinPaper = async () => {
+  const createdQ = await saveFBQ();
+  const headQ = head(createdQ)
+  if (!headQ) {
+    throw new Error()
+  }
+  const qId = headQ.id
+  const paperId = getPaperIdFromKey(props.selectPaper as string);
+  if (isNil(paperId)) {
+    ElMessage.error('错误的试卷')
+    return;
+  }
+  const result = await ApiAddQuestion2Paper(paperId, qId);
+
+  emit('save', props.uid)
 }
 </script>
 

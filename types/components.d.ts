@@ -52,6 +52,7 @@ declare module '@vue/runtime-core' {
     NMention: typeof import('naive-ui')['NMention']
     NMenu: typeof import('naive-ui')['NMenu']
     NPageHeader: typeof import('naive-ui')['NPageHeader']
+    NPopconfirm: typeof import('naive-ui')['NPopconfirm']
     NPopselect: typeof import('naive-ui')['NPopselect']
     NScrollbar: typeof import('naive-ui')['NScrollbar']
     NSpace: typeof import('naive-ui')['NSpace']
