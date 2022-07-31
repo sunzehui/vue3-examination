@@ -16,14 +16,17 @@
 import {ref} from "vue";
 import {nameOption} from "@/types/api-classes";
 import {useClassesStore} from "@/store/classes";
+import {ApiFindMyClasses} from "@/apis/classes";
 
-const classesStore = useClassesStore();
 const options = ref<nameOption[]>([]);
 const value = ref("");
 
 onMounted(async () => {
-  await classesStore.getClassesList();
-  options.value = classesStore.nameOption;
+  const classesListResult = await ApiFindMyClasses()
+  const classesListData = classesListResult.data || [];
+  options.value = classesListData.map(item => ({
+    label: `${item.name}-${item.id}`, value: `${item.name}-${item.id}`
+  }));
 });
 </script>
 

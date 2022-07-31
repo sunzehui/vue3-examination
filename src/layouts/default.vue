@@ -63,7 +63,6 @@ const collapsed = ref(false);
 const activeKey = ref<string | null>("exam-panel");
 watch(() => route.path, (value: string) => {
   const path = value.split("/")
-  console.log(path)
   activeKey.value = path[2] || 'exam-panel';
 }, {immediate: true})
 

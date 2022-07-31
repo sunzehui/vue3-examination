@@ -25,6 +25,13 @@ export function ApiFindClassesList(): ApiResult<ClassesResult[]> {
     });
 }
 
+export function ApiFindMyClasses(): ApiResult<ClassesResult[]> {
+    return http.request({
+        url: "classes/mine",
+        method: 'get'
+    })
+}
+
 export function ApiJoinClass(id: number): ApiResult<ClassesResult> {
     return http.request({
         url: "classes/join/" + id,

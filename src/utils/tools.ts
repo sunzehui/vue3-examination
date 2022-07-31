@@ -14,7 +14,7 @@ export function renderIcon(icon: Component) {
     return () => h(NIcon, null, {default: () => h(icon)});
 }
 
-export function getPaperIdFromKey(key: string): number | null {
+export function getIdFromKey(key: string): number | null {
     try {
         return Number(last(key.split('-')));
     } catch (e) {
@@ -22,8 +22,18 @@ export function getPaperIdFromKey(key: string): number | null {
     }
 }
 
-export function getLocalTime(time: string) {
+export function getLocalTimeUnix(time: string) {
     return +dayjs(time).tz("Asia/Shanghai")
+}
+
+export function getLocalTimeFormat(time: string) {
+    return dayjs(time).tz("Asia/Shanghai").format('YYYY-MM-DD hh:mm:ss')
+}
+
+export function getTime(time: string): [string, number] {
+    const format = getLocalTimeFormat(time);
+    const timestamp = getLocalTimeUnix(time);
+    return [format, timestamp]
 }
 
 export function getTagStatus(start: string, end: string) {

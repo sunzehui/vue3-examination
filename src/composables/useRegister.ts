@@ -12,6 +12,7 @@ export default function useRegister() {
     const router = useRouter();
 
     const usernameRule = (value) => {
+        return true;
         // 用户名可能是邮箱也可能是手机号
         const isEmail = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value);
         if (isEmail) {
@@ -25,6 +26,7 @@ export default function useRegister() {
     }
 
     const passwordRule = (value) => {
+        return true
         const isValid = /(?=^.{6,18}$).*$/.test(value);
         if (!isValid) {
             return "密码长度为6-18位！";

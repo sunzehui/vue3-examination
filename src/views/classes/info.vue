@@ -4,6 +4,8 @@ import {useClassesStore} from "@/store/classes";
 import {get, head, isEmpty, isNil} from "lodash";
 import {ClassesResult, nameOption} from "@/types/api-classes";
 import {ElMessage} from "element-plus";
+import {getIdFromKey} from "@/utils/tools";
+import
 
 const classesStore = useClassesStore();
 const options = ref<nameOption[]>([]);
@@ -27,13 +29,11 @@ const fetchFirstClasses = async (list: ClassesResult[]) => {
   value.value = `${result.name}-${result.id}`;
 };
 const onSelectClasses = (val: string) => {
-  try {
-    const id = Number(val.split("-")[1])
-    fetchClasses(id);
-  } catch (e: any) {
-    ElMessage.error({message: e.message})
+  const id = getIdFromKey(val);
+  if (!id) {
+    return
   }
-
+  fetchClasses(id);
 }
 
 onMounted(async () => {
@@ -45,17 +45,18 @@ onMounted(async () => {
 <template>
   <n-layout>
     <n-layout-header embedded style="padding: 24px; display: flex">
-      <n-popselect
-          @update:value="onSelectClasses"
-          v-model:value="value"
-          :options="options"
-          scrollable
-          size="medium"
-      >
-        <n-button style="margin-right: 8px">
-          {{ value || "未选择" }}
-        </n-button>
-      </n-popselect>
+<!--      <n-popselect-->
+<!--          @update:value="onSelectClasses"-->
+<!--          v-model:value="value"-->
+<!--          :options="options"-->
+<!--          scrollable-->
+<!--          size="medium"-->
+<!--      >-->
+<!--        <n-button style="margin-right: 8px">-->
+<!--          {{ value || "未选择" }}-->
+<!--        </n-button>-->
+<!--      </n-popselect>-->
+      <ClassesSelect @selectUpdate="onSelectClasses"/>
       <n-button @click="$router.push('join')">加入班级</n-button>
     </n-layout-header>
 

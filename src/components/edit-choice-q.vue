@@ -49,7 +49,7 @@ import {QType} from "@/types/api-exam-paper";
 import {CreateQResult} from '@/types/api-question';
 import {TipsOne} from "@icon-park/vue-next";
 import {head, isEmpty, isNil, last} from "lodash";
-import {getPaperIdFromKey} from "@/utils/tools";
+import {getIdFromKey} from "@/utils/tools";
 import {ElMessage} from "element-plus";
 import {ApiAddQuestion2Paper} from "@/apis/exam-paper";
 
@@ -106,7 +106,7 @@ const saveChoiceQAndJoinPaper = async () => {
     throw new Error()
   }
   const qId = headQ.id
-  const paperId = getPaperIdFromKey(props.selectPaper as string);
+  const paperId = getIdFromKey(props.selectPaper as string);
   if (isNil(paperId)) {
     ElMessage.error('错误的试卷')
     return;

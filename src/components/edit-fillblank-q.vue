@@ -59,7 +59,7 @@ import {head, isEmpty, isNil, omit, sortedUniqBy, uniqBy} from "lodash";
 import {FillBlank, QType} from "@/types/api-exam-paper";
 import {v4 as uuidv4} from 'uuid';
 import {ApiCreateQuestion} from "@/apis/question";
-import {getPaperIdFromKey} from "@/utils/tools";
+import {getIdFromKey} from "@/utils/tools";
 import {ApiAddQuestion2Paper} from "@/apis/exam-paper";
 
 const createDInputValue = () => {
@@ -116,7 +116,7 @@ const saveFBQAndJoinPaper = async () => {
     throw new Error()
   }
   const qId = headQ.id
-  const paperId = getPaperIdFromKey(props.selectPaper as string);
+  const paperId = getIdFromKey(props.selectPaper as string);
   if (isNil(paperId)) {
     ElMessage.error('错误的试卷')
     return;

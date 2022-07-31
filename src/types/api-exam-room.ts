@@ -12,6 +12,9 @@ export interface ExamRoom {
     use_exam_paper?: ExamPaper;
 }
 
+type Override<P, S> = Omit<P, keyof S> & S;
+
+// export type ExamRoomReq = Override<ExamRoom, {}>
 
 interface ExamPaper {
     id: number;

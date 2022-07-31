@@ -79,7 +79,7 @@ import ChoiceQ from '@/components/choice-q.vue'
 import FillBlankQ from "@/components/fillblank-q";
 import {NLayoutContent} from "naive-ui";
 import {isNil, last} from "lodash";
-import {getPaperIdFromKey} from "@/utils/tools";
+import {getIdFromKey} from "@/utils/tools";
 import {v4 as uuidv4} from 'uuid';
 
 const appendQ = (type: "fillblank" | 'choice') => {
@@ -106,7 +106,7 @@ const choiceQ = ref<Question[]>([]);
 const fillBlankQ = ref<Question[]>([])
 
 const loadPaperQList = async () => {
-  const paperId = getPaperIdFromKey(selectPaper.value as string);
+  const paperId = getIdFromKey(selectPaper.value as string);
   if (isNil(paperId)) return;
   await examStore.getExamPaper(paperId);
   model.value = examStore.examQList;

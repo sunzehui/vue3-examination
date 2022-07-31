@@ -1,4 +1,4 @@
-interface ClassesResult {
+export interface ClassesResult {
     id: number;
     name: string;
     create_time: string;

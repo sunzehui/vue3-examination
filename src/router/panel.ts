@@ -5,11 +5,6 @@ export default {
     component: () => import("@/layouts/default.vue"),
     children: [
         {
-            name: "exam-edit",
-            path: "exam-edit",
-            alias: "编辑考试",
-            component: () => import("@/views/exam-edit/index.vue"),
-        }, {
             name: "exam-paper-edit",
             path: "exam-paper-edit",
             alias: "编辑试卷",
@@ -20,6 +15,25 @@ export default {
             path: "exam-panel",
             alias: "考试面板",
             component: () => import("@/views/exam-room/index.vue"),
+        },
+        {
+            name: "exam-room-edit",
+            path: "exam-room-edit",
+            component: () => import("@/views/exam-room-edit/index.vue"),
+            redirect: {name: "exam-list"},
+            children: [
+                {
+                    name: "exam-list",
+                    path: "",
+                    component: () => import("@/views/exam-room-edit/list.vue")
+                },
+                {
+                    name: 'exam-create',
+                    path: 'create',
+                    component: () => import("@/views/exam-room-edit/create.vue")
+                }
+
+            ]
         },
         {
             name: "exam-query",

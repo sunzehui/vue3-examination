@@ -4,7 +4,7 @@ import {useUserStore} from "@/store/user";
 import ClassesSelect from '@/components/classes-select.vue';
 import {ApiGetExamRoom} from "@/apis/exam-room";
 import {ExamRoom} from "@/types/api-exam-room";
-import {getLocalTime, getTagStatus} from "@/utils/tools";
+import {getLocalTimeUnix, getTagStatus} from "@/utils/tools";
 import {ElMessage} from "element-plus";
 import {useExamStore} from "@/store/exam";
 import {useRouter} from 'vue-router'
@@ -12,7 +12,9 @@ import {Role} from '@/types/api-user'
 
 const router = useRouter();
 
-
+const go2CreateExam = () => {
+  router.push({name: 'exam-create'});
+}
 const handleSelectClasses = async (val: string) => {
   try {
     const classesId = Number(val.split('-')[1]);
@@ -28,14 +30,15 @@ const examRoomList = ref<ExamRoom[] | null>(null);
 onMounted(async () => {
   const examRoomResult = await ApiGetExamRoom()
   examRoomList.value = (examRoomResult.data)
+  console.log(examRoomList.value)
 })
-const localTime = computed(() => getLocalTime)
+const localTime = computed(() => getLocalTimeUnix)
 const tagStatus = computed(() => getTagStatus)
 const goExamRoom = (id: number) => {
   router.push({name: 'exam', params: {id}})
 }
 const goEditExamRoom = (id: number) => {
-  router.push({name: 'exam-edit'})
+  router.push({name: 'exam-room-edit'})
 }
 </script>
 
@@ -43,6 +46,7 @@ const goEditExamRoom = (id: number) => {
 
   <n-scrollbar>
     <ClassesSelect @selectUpdate="handleSelectClasses"/>
+    <n-button @click="go2CreateExam" v-role="Role.teacher">创建考试</n-button>
     <div class="card-container">
 
       <n-card v-for="exam in examRoomList" class="exam-card" :title="exam.name+'-'+exam.id">

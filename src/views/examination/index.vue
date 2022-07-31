@@ -22,6 +22,11 @@
 
   </n-form>
   <n-empty class="mt-20" description="老师未添加题目" v-if="examStore.isQListEmpty">
+    <template #extra>
+      <n-button size="small" @click="$router.push({name:'exam-panel'})">
+        返回面板
+      </n-button>
+    </template>
   </n-empty>
 </template>
 
