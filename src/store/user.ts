@@ -34,6 +34,9 @@ export const useUserStore = defineStore("user", {
         },
         role: (state) => {
             return state.user.userInfo.role;
+        },
+        roleFormat: state => {
+            return state.user.userInfo.role === 1 ? '教师' : '学生'
         }
     }
 });

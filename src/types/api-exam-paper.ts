@@ -3,6 +3,7 @@ export interface ExamPaper {
     name: string,
     create_time: string,
     question: Question[],
+    desc: string,
 }
 
 export enum QType {

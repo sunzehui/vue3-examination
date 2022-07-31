@@ -1,5 +1,5 @@
 <template>
-  <n-card title="创建考试">
+  <n-card title="填写考试信息">
 
     <n-form
         ref="formRef"

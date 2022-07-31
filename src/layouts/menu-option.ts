@@ -133,12 +133,12 @@ const teacherOpt = [
                         RouterLink,
                         {
                             to: {
-                                name: "exam-paper-edit",
+                                name: "exam-paper",
                             },
                         },
                         {default: () => "编辑试卷"}
                     ),
-                key: "exam-paper-edit",
+                key: "exam-paper",
                 icon: renderIcon(Aiming),
             }, {
                 label: "题目管理",

@@ -36,3 +36,11 @@ export function ApiAddQuestion2Paper(p_id: number, q_id: number) {
         params: {q_id}
     })
 }
+
+export function ApiCreatePaper(createPaperReq) {
+    return http.request({
+        url: "exam-paper",
+        method: "post",
+        data: createPaperReq
+    })
+}

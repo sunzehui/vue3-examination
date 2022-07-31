@@ -31,7 +31,7 @@
         </n-layout-sider>
         <n-layout>
           <n-layout-header :inverted="inverted" bordered class="main-header">
-            <h1>在线考试系统</h1>
+            <h1>在线考试系统-{{ clientType }}</h1>
             <div class="right-bar">
               <span class="notify">
                 <Bell/>
@@ -55,6 +55,7 @@ import menuOptions from "./menu-option";
 import {Bell} from "@element-plus/icons-vue";
 import {useMediaQuery} from "@vueuse/core";
 import {useRoute} from 'vue-router'
+import {useUserStore} from "@/store/user";
 
 const route = useRoute()
 const responsivePos = ref("static")
@@ -65,7 +66,8 @@ watch(() => route.path, (value: string) => {
   const path = value.split("/")
   activeKey.value = path[2] || 'exam-panel';
 }, {immediate: true})
-
+const userStore = useUserStore()
+const clientType = userStore.roleFormat + '端'
 const isXlScreen = useMediaQuery('(min-width: 1000px)')
 watch(isXlScreen, () => {
   if (!isXlScreen.value) {

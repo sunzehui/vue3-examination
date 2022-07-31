@@ -1,7 +1,6 @@
 import {defineComponent, PropType} from "vue";
 import {NFormItem, NInput, NSpace} from "naive-ui";
 import {FillBlank, QType, Question} from "@/types/api-exam-paper";
-import {splitByIndex} from "@/utils/tools";
 import {useExamStore} from "@/store/exam";
 import {omit} from "lodash";
 
@@ -31,7 +30,7 @@ export default defineComponent({
                                 <>
                                     <NFormItem>
                                         <sapn>第{Number(item.pos) + 1}空：</sapn>
-                                        <NInput placeholder={`${item.score}分`}
+                                        <NInput placeholder={item.content ?? ""}
                                                 value={examStore.thisBlankContent(Q.id, item.id)}
                                                 onInput={(input) => handleBlankInput(omit(item, 'content'), input)}
                                                 style={{width: '300px'}}/>

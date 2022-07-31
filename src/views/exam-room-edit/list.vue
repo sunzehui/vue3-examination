@@ -1,5 +1,5 @@
 <template>
-  <n-card title="考试列表">
+  <n-card title="所有考试">
     <n-space vertical size="large">
       <n-button-group>
         <ClassesSelect @selectUpdate="onSelectClasses"/>

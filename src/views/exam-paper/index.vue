@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import PageHeader from '@/components/page-header.vue'
 
-const indexPage = 'info'
+console.log()
 </script>
 
 <template>
-  <PageHeader :backTo="indexPage"/>
+  <PageHeader backTo="exam-paper-list"/>
   <router-view v-slot="{ Component }">
     <keep-alive>
       <component :is="Component" :key="$route.name"/>

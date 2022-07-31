@@ -70,6 +70,7 @@ declare module '@vue/runtime-core' {
     NTime: typeof import('naive-ui')['NTime']
     NTimePicker: typeof import('naive-ui')['NTimePicker']
     NTransfer: typeof import('naive-ui')['NTransfer']
+    PageHeader: typeof import('./../src/components/page-header.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SelectQ: typeof import('./../src/components/select-q.tsx')['default']

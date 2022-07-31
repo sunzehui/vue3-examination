@@ -1,25 +1,29 @@
 <template>
   <n-space vertical size="large">
-    <n-layout has-sider>
-      <n-layout-sider
-          collapse-mode="transform"
-          :collapsed-width="0"
-          :width="240"
-          show-trigger="arrow-circle"
-          content-style="padding: 4px;"
-          bordered
-          style="height: calc(100vh - 144px)"
-      >
-        <LeftList @update:value="handleSelectChange"/>
-      </n-layout-sider>
-      <n-layout-content style="height: calc(100vh - 144px)" content-style="padding: 24px;" ref="contentRef">
+    <n-layout>
+      <n-layout-content content-style="padding: 24px;" ref="contentRef">
         <n-space vertical size="large">
           <n-form
               ref="formRef"
-              :model="model"
+              :model="baseInfoModel"
               :disabled="false"
-              v-if="!examStore.isQListEmpty"
           >
+            <n-grid :cols="24" :x-gap="24">
+              <n-form-item-gi :span="12" label="试卷名称" path="name">
+                <n-input v-model:value="baseInfoModel.name" placeholder="试卷名称"/>
+              </n-form-item-gi>
+              <n-form-item-gi :span="12" label="试卷描述" path="desc">
+                <n-input
+                    v-model:value="baseInfoModel.desc"
+                    placeholder="试卷描述"
+                    type="textarea"
+                    :autosize="{
+            minRows: 3,
+            maxRows: 5
+          }"
+                />
+              </n-form-item-gi>
+            </n-grid>
 
             <n-form-item
                 v-for="Q in choiceQ"
@@ -53,6 +57,12 @@
             </template>
             选择题目类型
           </n-popconfirm>
+
+        </n-space>
+
+        <n-space size="large" style="margin-top: 20px;" justify="end">
+          <n-button size="large">取消</n-button>
+          <n-button type="primary" size="large" @click="savePaper">确定</n-button>
         </n-space>
       </n-layout-content>
     </n-layout>
@@ -60,27 +70,23 @@
 </template>
 
 <script lang="ts" setup>
-import LeftList from '@/components/left-list.vue'
 import EditChoiceQ from '@/components/edit-choice-q.vue'
 import EditFillBlankQ from "@/components/edit-fillblank-q.vue";
 import {Add} from '@icon-park/vue-next'
 
 const contentRef = ref<typeof NLayoutContent | null>(null)
 const Qlist = ref<(typeof EditChoiceQ | typeof EditFillBlankQ)[]>([])
-const selectPaper = ref<string>()
-const handleSelectChange = (val: string) => {
-  selectPaper.value = val;
-}
 
 
-import {useExamStore} from "@/store/exam";
 import {QType, Question} from "@/types/api-exam-paper";
 import ChoiceQ from '@/components/choice-q.vue'
 import FillBlankQ from "@/components/fillblank-q";
-import {NLayoutContent} from "naive-ui";
-import {isNil, last} from "lodash";
-import {getIdFromKey} from "@/utils/tools";
+import {FormInst, NLayoutContent} from "naive-ui";
 import {v4 as uuidv4} from 'uuid';
+import {ApiAddQuestion2Paper, ApiGetExamPaper} from "@/apis/exam-paper";
+import {isNil} from "lodash";
+import {useExamStore} from "@/store/exam";
+
 
 const appendQ = (type: "fillblank" | 'choice') => {
   const component = {
@@ -101,31 +107,46 @@ const appendQ = (type: "fillblank" | 'choice') => {
   })
 }
 const model = ref<Question[]>([])
-const examStore = useExamStore();
 const choiceQ = ref<Question[]>([]);
 const fillBlankQ = ref<Question[]>([])
+const baseInfoModel = ref({
+  name: '',
+  desc: '',
+})
 
-const loadPaperQList = async () => {
-  const paperId = getIdFromKey(selectPaper.value as string);
-  if (isNil(paperId)) return;
-  await examStore.getExamPaper(paperId);
-  model.value = examStore.examQList;
+const handleQSave = async ({uid, qId}) => {
+  // remove dom from page
+  Qlist.value = unref(Qlist).filter(c => c.uid !== uid)
+  await ApiAddQuestion2Paper(paperId, qId);
+  await loadDetail()
+}
+
+const route = useRoute()
+const paperId = Number(route.params.id as string);
+if (!paperId) {
+  throw  new Error()
+}
+
+const loadDetail = async () => {
+  // 加载基础信息
+  const paperResult = await ApiGetExamPaper(+paperId)
+  baseInfoModel.value.name = paperResult.data.name;
+  baseInfoModel.value.desc = paperResult.data.desc;
+//  加载题目
+  model.value = paperResult.data.question;
   choiceQ.value = unref(model).filter((Q: Question) => Q.type === QType.choice);
   fillBlankQ.value = unref(model).filter((Q: Question) => Q.type === QType.fill_blank);
 }
-const handleQSave = (uid) => {
+onMounted(loadDetail)
 
-  // remove dom from page
-  Qlist.value = unref(Qlist).filter(c => c.uid !== uid)
-  loadPaperQList()
-}
-watchEffect(() => {
-  loadPaperQList()
-})
 defineExpose({
   EditChoiceQ, EditFillBlankQ
 })
+
+
+const formRef = ref<FormInst | null>(null)
 </script>
+
 
 <style scoped>
 

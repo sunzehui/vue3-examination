@@ -35,8 +35,7 @@
           placeholder="题目解析"
       />
       <n-space justify="end">
-        <n-button @click="saveChoiceQ">仅保存</n-button>
-        <n-button @click="saveChoiceQAndJoinPaper">保存并加入试卷</n-button>
+        <n-button @click="saveChoiceQ">保存</n-button>
       </n-space>
 
     </n-space>
@@ -80,7 +79,6 @@ const validate = () => {
   return true;
 }
 const buildQuestion = () => {
-
   return {
     type: QType.choice,
     resolution: unref(resolution),
@@ -89,33 +87,24 @@ const buildQuestion = () => {
   }
 }
 const saveChoiceQ = async () => {
+
   const Q = buildQuestion();
   const isValid = validate();
   if (!isValid) {
-    return
+    throw new Error()
   }
   const createResult = await ApiCreateQuestion(Q);
-  return createResult.data;
-}
-
-
-const saveChoiceQAndJoinPaper = async () => {
-  const createdQ = await saveChoiceQ();
-  const headQ = head(createdQ)
+  const headQ = head(createResult.data)
   if (!headQ) {
     throw new Error()
   }
-  const qId = headQ.id
-  const paperId = getIdFromKey(props.selectPaper as string);
-  if (isNil(paperId)) {
-    ElMessage.error('错误的试卷')
-    return;
-  }
-  const result = await ApiAddQuestion2Paper(paperId, qId);
 
-  emit('save', props.uid)
-  console.log(result)
+  const qId = headQ.id
+  emit('save', {qId, uid: props.uid})
+
+  return createResult.data;
 }
+
 </script>
 
 <style scoped>

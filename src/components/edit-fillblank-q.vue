@@ -44,8 +44,7 @@
           placeholder="题目解析"
       />
       <n-space justify="end">
-        <n-button @click="saveFBQ">仅保存</n-button>
-        <n-button @click="saveFBQAndJoinPaper">保存并加入试卷</n-button>
+        <n-button @click="saveFBQ">保存</n-button>
       </n-space>
     </n-space>
   </n-card>
@@ -88,8 +87,9 @@ const validate = () => {
   return true;
 }
 const buildQuestion = () => {
-  const answer = (unref(dInputValue)).map((content, pos) => ({content, pos}));
+  const answer = (unref(dInputValue)).map((item, pos) => ({content: item.content, pos}));
 
+  console.log(answer)
   return {
     type: QType.fill_blank,
     resolution: unref(resolution),
@@ -106,25 +106,16 @@ const saveFBQ = async () => {
     return
   }
   const createResult = await ApiCreateQuestion(Q);
-  return createResult.data;
-}
-
-const saveFBQAndJoinPaper = async () => {
-  const createdQ = await saveFBQ();
-  const headQ = head(createdQ)
+  const headQ = head(createResult.data)
   if (!headQ) {
     throw new Error()
   }
   const qId = headQ.id
-  const paperId = getIdFromKey(props.selectPaper as string);
-  if (isNil(paperId)) {
-    ElMessage.error('错误的试卷')
-    return;
-  }
-  const result = await ApiAddQuestion2Paper(paperId, qId);
+  emit('save', {qId, uid: props.uid})
 
-  emit('save', props.uid)
+  return createResult.data;
 }
+
 </script>
 
 <style scoped lang="scss">
