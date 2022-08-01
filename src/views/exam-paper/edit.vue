@@ -29,14 +29,39 @@
                 v-for="Q in choiceQ"
                 :key="Q.id"
             >
-              <ChoiceQ :q="Q"/>
+
+              <n-space vertical class="self-start">
+                <n-h3>选择题：</n-h3>
+              </n-space>
+              <ChoiceQ :q="Q">
+                <span>解析：{{ Q.resolution }}</span>
+                <n-button @click="removeQ(Q.id)">
+                  <n-icon>
+                    <Close/>
+                  </n-icon>
+                  删除
+                </n-button>
+              </ChoiceQ>
             </n-form-item>
 
             <n-form-item
                 v-for="Q in fillBlankQ"
                 :key="Q.id"
             >
-              <FillBlankQ :q="Q"/>
+              <n-space vertical class="self-start">
+                <n-h3>填空题：</n-h3>
+              </n-space>
+
+              <FillBlankQ :q="Q">
+                <span>解析：{{ Q.resolution }}</span>
+                <n-button @click="removeQ(Q.id)">
+                  <n-icon>
+                    <Close/>
+                  </n-icon>
+                  删除
+                </n-button>
+              </FillBlankQ>
+
             </n-form-item>
 
           </n-form>
@@ -72,7 +97,7 @@
 <script lang="ts" setup>
 import EditChoiceQ from '@/components/edit-choice-q.vue'
 import EditFillBlankQ from "@/components/edit-fillblank-q.vue";
-import {Add} from '@icon-park/vue-next'
+import {Add, Close} from '@icon-park/vue-next'
 
 const contentRef = ref<typeof NLayoutContent | null>(null)
 const Qlist = ref<(typeof EditChoiceQ | typeof EditFillBlankQ)[]>([])
@@ -83,9 +108,7 @@ import ChoiceQ from '@/components/choice-q.vue'
 import FillBlankQ from "@/components/fillblank-q";
 import {FormInst, NLayoutContent} from "naive-ui";
 import {v4 as uuidv4} from 'uuid';
-import {ApiAddQuestion2Paper, ApiGetExamPaper} from "@/apis/exam-paper";
-import {isNil} from "lodash";
-import {useExamStore} from "@/store/exam";
+import {ApiAddQuestion2Paper, ApiGetExamPaper, ApiRemoveQuestion2Paper} from "@/apis/exam-paper";
 
 
 const appendQ = (type: "fillblank" | 'choice') => {
@@ -142,9 +165,11 @@ onMounted(loadDetail)
 defineExpose({
   EditChoiceQ, EditFillBlankQ
 })
-
-
 const formRef = ref<FormInst | null>(null)
+
+const removeQ = (qId: number) => {
+  ApiRemoveQuestion2Paper(paperId, qId).then(loadDetail)
+}
 </script>
 
 

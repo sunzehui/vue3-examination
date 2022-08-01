@@ -89,7 +89,6 @@ const validate = () => {
 const buildQuestion = () => {
   const answer = (unref(dInputValue)).map((item, pos) => ({content: item.content, pos}));
 
-  console.log(answer)
   return {
     type: QType.fill_blank,
     resolution: unref(resolution),

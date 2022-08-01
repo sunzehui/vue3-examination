@@ -20,7 +20,7 @@ export function ApiGetExamDetail(examId: number): ApiResult<ExamRoom> {
     })
 }
 
-export function ApiSubmitExamRoom(examRoom: ExamRoom) {
+export function ApiCreateExamRoom(examRoom: ExamRoom) {
     return http.request({
         url: "exam-room",
         method: 'post',

@@ -50,4 +50,42 @@ export type Question = (
 }
     ) & QuestionBase;
 
+export type ExamineesPaperDto = (
+    | {
+    type: QType.choice;
+    answer: Choice[];
+}
+    | {
+    type: QType.fill_blank;
+    answer: FillBlank[];
+}
+    ) & {
+    qId: number;
+};
 
+
+interface AnswerRecord {
+    standAnswer: StandAnswer[];
+    userAnswer: UserAnswer[];
+    isAnswerTruly?: boolean;
+    qScore: number;
+    type: number;
+}
+
+export interface PaperResult {
+    answerRecord: AnswerRecord[];
+    totalScore: number;
+}
+
+interface StandAnswer {
+    id: number;
+    pos: string;
+    content: string;
+    score: number;
+}
+
+interface UserAnswer {
+    isAnswerTruly: boolean;
+    pos: string;
+    content: string;
+}

@@ -11,7 +11,7 @@
       </n-alert>
       <n-input type="textarea" v-model:value="content"
                ref="contentInputRef"
-               :validation-status="inputContentValidationStatus"/>
+      />
       <n-dynamic-input :max="10" :min="2" v-model:value="customValue" :on-create="handleChoiceCreate">
         <template #create-button-default>
           添加选项
@@ -45,12 +45,9 @@
 <script lang="ts" setup>
 import {ApiCreateQuestion} from "@/apis/question";
 import {QType} from "@/types/api-exam-paper";
-import {CreateQResult} from '@/types/api-question';
 import {TipsOne} from "@icon-park/vue-next";
-import {head, isEmpty, isNil, last} from "lodash";
-import {getIdFromKey} from "@/utils/tools";
+import {head, isEmpty,} from "lodash";
 import {ElMessage} from "element-plus";
-import {ApiAddQuestion2Paper} from "@/apis/exam-paper";
 
 const emit = defineEmits(['save'])
 const props = defineProps<{

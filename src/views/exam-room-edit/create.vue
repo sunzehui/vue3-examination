@@ -1,6 +1,5 @@
 <template>
   <n-card title="填写考试信息">
-
     <n-form
         ref="formRef"
         :model="model"
@@ -64,9 +63,8 @@
 import {ref} from 'vue'
 import {FormInst} from 'naive-ui'
 import {ApiGetMyExamPaper} from "@/apis/exam-paper";
-
 import {ApiFindMyClasses} from "@/apis/classes";
-import {ApiSubmitExamRoom} from "@/apis/exam-room";
+import {ApiCreateExamRoom} from "@/apis/exam-room";
 import dayjs from "dayjs";
 import {ElMessage} from "element-plus";
 
@@ -76,19 +74,22 @@ interface SelectOption {
 }
 
 const usePaperListOptions = ref<SelectOption[]>([])
-
-const paperListResult = await ApiGetMyExamPaper()
-usePaperListOptions.value = (paperListResult.data).map(v => ({
-  label: v.name, value: v.id
-}))
-
 const useClassesListOptions = ref<SelectOption[]>([])
 
-const classesListResult = await ApiFindMyClasses();
+async function init() {
+  const paperListResult = await ApiGetMyExamPaper()
+  usePaperListOptions.value = (paperListResult.data).map(v => ({
+    label: v.name, value: v.id
+  }))
 
-useClassesListOptions.value = (classesListResult.data).map(v => ({
-  label: v.name, value: v.id
-}))
+  const classesListResult = await ApiFindMyClasses();
+  useClassesListOptions.value = (classesListResult.data).map(v => ({
+    label: v.name, value: v.id
+  }))
+}
+
+onMounted(init);
+
 // 只能选择当前之后的时间
 const dateDisabled = (ts: number) => {
   return ts < Date.now() - 86400000
@@ -114,7 +115,7 @@ const submitExamRoom = (e: MouseEvent) => {
     console.log(unref(model).begin_time, unref(model).end_time)
 
     // @ts-ignore
-    ApiSubmitExamRoom({
+    ApiCreateExamRoom({
       ...unref(model),
       begin_time: dayjs(+unref(model).begin_time!).utc().format(),
       end_time: dayjs(+unref(model).end_time!).utc().format()

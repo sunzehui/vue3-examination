@@ -37,3 +37,4 @@ export type AnswerRecord = (ChoiceRecord | FillBlankRecord) & {
     qId: number;
 };
 
+export type RIdKeyAnswerRecord = Record<number, AnswerRecord[]>

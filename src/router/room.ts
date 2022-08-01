@@ -1,3 +1,5 @@
+import {RouteRecordRaw} from "vue-router";
+
 export default {
     name: 'exam',
     path: "/exam",
@@ -6,10 +8,17 @@ export default {
     children: [
         {
             name: "room",
-            path: "room/:id",
+            path: "room/:rid",
             alias: "在线考场",
-            component: () => import("@/views/examination/index.vue")
+            component: () => import("@/views/examination/index.vue"),
+            children: [
+                {
+                    name: 'question-panel',
+                    path: 'q/:idx',
+                    component: () => import('@/views/examination/question-panel.vue')
+                }
+            ]
         },
 
     ]
-}
+} as RouteRecordRaw

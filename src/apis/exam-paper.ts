@@ -1,6 +1,6 @@
 import {ApiResult} from "@/types/tools";
 import {http} from "@/plugins/axios";
-import {ExamPaper} from "@/types/api-exam-paper";
+import {ExamineesPaperDto, ExamPaper, PaperResult} from "@/types/api-exam-paper";
 
 export function ApiGetExamPaperList(): ApiResult<ExamPaper[]> {
     return http.request({
@@ -31,16 +31,36 @@ export function ApiGetExamPaper(id?: number)
 
 export function ApiAddQuestion2Paper(p_id: number, q_id: number) {
     return http.request({
-        url: `exam-paper/${p_id}/question`,
+        url: `exam-paper/${p_id}/question/add`,
         method: "patch",
         params: {q_id}
     })
 }
 
-export function ApiCreatePaper(createPaperReq) {
+export function ApiRemoveQuestion2Paper(p_id: number, q_id: number) {
+    return http.request({
+        url: `exam-paper/${p_id}/question/remove`,
+        method: "patch",
+        params: {q_id}
+    })
+}
+
+export function ApiCreatePaper(createPaperReq: any) {
     return http.request({
         url: "exam-paper",
         method: "post",
         data: createPaperReq
+    })
+}
+
+
+export function ApiSubmitPaper(paperId: number, roomId: number, userAnswer: ExamineesPaperDto[]): ApiResult<PaperResult> {
+    return http.request({
+        url: `exam-paper/${paperId}/submit`,
+        method: "post",
+        params: {
+            room_id: roomId
+        },
+        data: userAnswer
     })
 }

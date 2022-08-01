@@ -1,4 +1,4 @@
-import axios, {AxiosRequestConfig} from "axios";
+import axios, {AxiosError, AxiosRequestConfig} from "axios";
 import errorStore from "@/store/errorStore";
 import {ElLoading, ElMessage} from "element-plus";
 import {useLocalStorage} from "@vueuse/core";
@@ -26,8 +26,17 @@ export default class Axios {
     }
 
     public async request<T = any, D = Resp<T>>(config: AxiosRequestConfig): Promise<D> {
-        const response = await this.instance.request<D>(config)
-        return response.data;
+        try {
+            const response = await this.instance.request<D>(config)
+            return response.data;
+        } catch (e: unknown) {
+            if (axios.isAxiosError(e)) {
+                const response = get(e, 'response', null)
+                if (response)
+                    return response.data;
+            }
+            throw e;
+        }
     }
 
     private interceptors() {
@@ -38,7 +47,6 @@ export default class Axios {
     private interceptorsRequest() {
         this.instance.interceptors.request.use(
             (config: AxiosRequestConfig) => {
-
                 this.loading = this.loading ?? ElLoading.service({
                     background: "rgba(255,255,255,0.1)",
                     fullscreen: false
@@ -82,7 +90,7 @@ export default class Axios {
                 const {message} = data;
                 switch (status) {
                     case 422:
-                        errorStore().setErrors(error.response.data.errors);
+                        ElMessage.error(message)
                         break;
                     case 401:
                         ElMessage({type: "error", message: message ?? "没有操作权限"});

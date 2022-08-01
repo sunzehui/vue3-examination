@@ -25,7 +25,7 @@
             <n-card class="answer-panel">
               <div class="grid-card">
                 <template v-for="q in choiceQStatus">
-                  <div class="item" :class="statusMap[q.status]"></div>
+                  <div class="item" :class="{[statusMap[q.status]]:true,'on-active':q.idx==$route.params.idx}"></div>
                 </template>
               </div>
             </n-card>
@@ -37,7 +37,7 @@
             <n-card class="answer-panel">
               <div class="grid-card">
                 <template v-for="q in fillBlankQStatus">
-                  <div class="item" :class="statusMap[q.status]"></div>
+                  <div class="item" :class="{[statusMap[q.status]]:true,'on-active':q.idx==$route.params.idx}"></div>
                 </template>
               </div>
             </n-card>
@@ -89,6 +89,7 @@
 <script lang="ts" setup>
 import {useExamStore} from "@/store/exam";
 import {QStatus, QType} from "@/types/api-exam-paper";
+import {useDialog} from "naive-ui";
 
 const statusMap = {
   [QStatus.none]: "",
@@ -100,10 +101,12 @@ const examStore = useExamStore();
 const isQEmpty = computed(() => examStore.isQListEmpty)
 const choiceQStatus = ref();
 const fillBlankQStatus = ref();
-watch(() => examStore.userAnswerStatus, () => {
-  choiceQStatus.value = examStore.userAnswerStatus.filter(q => q.type === QType.choice)
-  fillBlankQStatus.value = examStore.userAnswerStatus.filter(q => q.type === QType.fill_blank)
+const route = useRoute()
 
+watch(() => examStore.userAnswerStatus(+route.params.rid), () => {
+  const answerStatus = examStore.userAnswerStatus(+route.params.rid);
+  choiceQStatus.value = answerStatus.filter(q => q.type === QType.choice)
+  fillBlankQStatus.value = answerStatus.filter(q => q.type === QType.fill_blank)
 }, {immediate: true})
 </script>
 
