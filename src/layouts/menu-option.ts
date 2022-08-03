@@ -31,67 +31,46 @@ const studentOpt = [
         icon: renderIcon(Home),
     },
     {
-        type: "group",
-        label: "个人信息",
-        key: "people",
-        children: [
-            {
-                label: () =>
-                    h(
-                        RouterLink,
-                        {
-                            to: {
-                                name: "exam-query",
-                            },
-                        },
-                        {default: () => "成绩查询"}
-                    ),
-                key: "score-query",
-                icon: renderIcon(EmotionHappy),
-            },
-            {
-                label: "成绩分析",
-                key: "score-analysis",
-                icon: renderIcon(Aiming),
-            },
-            {
-                label: () =>
-                    h(
-                        RouterLink,
-                        {
-                            to: {
-                                name: "class-panel",
-                            },
-                        },
-                        {default: () => "班级信息"}
-                    ),
-                key: "class-panel",
-                icon: renderIcon(EveryUser),
-            },
-            {
-                label: "账户信息",
-                key: "user-profile",
-                icon: renderIcon(UserPositioning),
-            },
-        ],
+        label: () =>
+            h(
+                RouterLink,
+                {
+                    to: {
+                        name: "class-panel",
+                    },
+                },
+                {default: () => "班级信息"}
+            ),
+        key: "class-panel",
+        icon: renderIcon(EveryUser),
     },
     {
-        type: "group",
-        label: "知识回顾",
-        key: "knowledge",
-        children: [
-            {
-                label: "错题记录",
-                key: "error-record",
-                icon: renderIcon(FileFailed),
-            },
-            {
-                label: "考试记录",
-                key: "exam-record",
-                icon: renderIcon(WritingFluently),
-            },
-        ],
+        label: "账户信息",
+        key: "user-profile",
+        icon: renderIcon(UserPositioning),
     },
+    {
+        label: () =>
+            h(
+                RouterLink,
+                {
+                    to: {
+                        name: "exam-query",
+                    },
+                },
+                {default: () => "成绩查询"}
+            ),
+        key: "score-query",
+        icon: renderIcon(EmotionHappy),
+    },
+    {
+        label: () => h(RouterLink, {
+            to: {name: "exam-analysis"}
+        }, {default: () => "成绩分析"}),
+        key: "score-analysis",
+        icon: renderIcon(Aiming),
+    },
+
 ] as MenuOption[];
 
 const teacherOpt = [
@@ -151,7 +130,7 @@ const teacherOpt = [
                         RouterLink,
                         {
                             to: {
-                                name: "exam-query",
+                                name: "exam-score",
                             },
                         },
                         {default: () => "成绩查询"}

@@ -9,7 +9,7 @@ import FillblankQ from "@/components/fillblank-q";
 import {ApiGetQuestion} from "@/apis/question";
 import {QType, Question} from "@/types/api-exam-paper";
 import {useExamStore} from "@/store/exam";
-import {isEmpty, isNil} from "lodash";
+import {get, isEmpty, isNil} from "lodash";
 
 const route = useRoute()
 const Q = ref<Question | null>(null)
@@ -25,17 +25,13 @@ const choiceQShow = computed(() => Q.value && Q.value.type === QType.choice)
 const fillBlankShow = computed(() => Q.value && Q.value.type === QType.fill_blank)
 
 watch(() => route.params.idx, async () => {
-  const val = +route.params.idx;
-  console.log(val)
+  const val = +get(route, 'params.idx', null);
   if (isNil(val) || val < 0) {
     // 不合法路径
     return;
   }
-  console.log(examStore.examQList)
   if (isEmpty(examStore.examQList)) return
   const qid = examStore.examQList[val].id
-  console.log(examStore.examQList[val])
-  console.log('ep', qid)
   await fetchQuestion(qid)
 }, {immediate: true})
 

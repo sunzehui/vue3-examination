@@ -40,7 +40,7 @@ export const useExamStore = defineStore('exam', {
             return result.data;
         },
         async updateFBQ(roomId: number, qId: number, item: FillBlank /*answer*/, input: string) {
-            const userAnswer = this.userAnswer[roomId] as AnswerRecord[]
+            const userAnswer = this.userAnswer[roomId] as AnswerRecord[] || []
             const oldQIdx = userAnswer.findIndex(Q => Q.qId === qId);
             const oldQ = userAnswer[oldQIdx] as FillBlankRecord;
             const thisAnswer = {

@@ -52,7 +52,8 @@ const localTime = computed(() => getLocalTimeUnix)
 const dialog = useDialog()
 
 const goExamRoom = (id: number) => {
-  const status = unref(thisTagStatus)
+  const status = TagStatus.on ?? unref(thisTagStatus)
+
   if (status === TagStatus.wait) {
     dialog.error({
       content: "考试未开始哦！请耐心等待！"

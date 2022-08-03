@@ -63,7 +63,28 @@ export default {
             name: "exam-query",
             path: "exam-query",
             alias: "成绩查询",
+            meta: {title: '成绩查询'},
+            redirect: {name: 'exam-score'},
             component: () => import("@/views/exam-query/index.vue"),
+            children: [
+                {
+                    name: 'exam-score',
+                    path: 'score',
+                    meta: {title: '分数查询'},
+                    component: () => import('@/views/exam-query/exam-score.vue')
+                },
+                {
+                    name: 'exam-record',
+                    path: 'record/:record_id',
+                    meta: {title: '考试记录'},
+                    component: () => import('@/views/exam-query/exam-record.vue')
+                }
+            ]
+        }, {
+            name: "exam-analysis",
+            path: "exam-analysis",
+            alias: "成绩分析",
+            component: () => import("@/views/exam-query/exam-analysis.vue"),
         },
         {
             name: "class-panel",

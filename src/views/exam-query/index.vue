@@ -1,12 +1,12 @@
+<script setup lang="ts">
+import PageHeader from '@/components/page-header.vue'
+
+const indexPage = 'exam-score'
+</script>
+
 <template>
-  <n-card title="卡片插槽示例">
-    <template #header-extra> #header-extra </template>
-    卡片内容
-    <template #footer> #footer </template>
-    <template #action> #action </template>
-  </n-card>
+  <PageHeader :backTo="indexPage"/>
+  <router-view v-slot="{ Component }">
+    <component :is="Component" :key="$route.name"/>
+  </router-view>
 </template>
-
-<script setup></script>
-
-<style scoped></style>

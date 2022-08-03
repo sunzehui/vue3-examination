@@ -22,17 +22,16 @@ const props = defineProps<{
   q: Partial<Question>,
   roomId: string
 }>()
-let Q = (props.q) || {}
-
+let Q = ref(props.q || {})
 watch(() => props.q, (val) => {
-  Q = val
+  Q.value = val
 })
 
 const examStore = useExamStore()
 
 const handleCheckBoxUpdate = (val: number[]) => {
-  if (!Q.id) throw new Error('q id not found')
-  examStore.updateCQ(+props.roomId, (Q).id, val);
+  if (!unref(Q).id) throw new Error('q id not found')
+  examStore.updateCQ(+props.roomId, unref(Q).id, val);
 }
 </script>
 

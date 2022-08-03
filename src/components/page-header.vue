@@ -33,11 +33,9 @@ const nameRoute = {
 }
 const getPathLabel = (path: string) => {
   const pathArray = path.split('/').slice(2)
-  console.log(pathArray)
   return pathArray.map(item => nameRoute[item as keyof typeof nameRoute]);
 }
 watch(() => route.name, (val) => {
-  console.log(val)
   handleBack.value = val === props.backTo ? '' : back2Info
 
   breadcrumb.value = getPathLabel(route.path)
