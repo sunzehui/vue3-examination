@@ -17,13 +17,20 @@ import {SanitizeExamRecord} from "@/types/api-record";
 import {get, map} from "lodash";
 import dayjs from "dayjs";
 import {getLocalTimeFormat} from "@/utils/tools";
+import {useUserStore} from "@/store/user";
+import {Role} from "@/types/api-user";
 
 const data = ref<SanitizeExamRecord[]>([])
 const columns = ref<DataTableColumns>([])
 const router = useRouter()
+const userStore = useUserStore()
 const go2Detail = (record_id: number) => {
   console.log(record_id)
   router.push({name: 'exam-record', params: {record_id}})
+}
+const go2ClassesList = (classes_id: number, room_id: number) => {
+  console.log(classes_id)
+  router.push({name: 'classes-record-list', query: {classes_id, room_id}})
 }
 
 async function init() {
@@ -31,10 +38,13 @@ async function init() {
   data.value = examRecordListResult.data.map(item => {
     return {
       id: item.id,
+      classes_id: item.exam_room.for_classes.id,
+      room_id: item.exam_room.id,
       exam_name: get(item, 'exam_room.name'),
       paper_name: get(item, 'exam_paper.name'),
       classes: `${get(item, 'exam_room.for_classes.name')}-${get(item, 'exam_room.for_classes.id')}`,
       score: item.score,
+      avgScore: parseFloat(item.avgScore).toFixed(2),
       begin_time: getLocalTimeFormat(get(item, 'exam_room.begin_time')),
       end_time: getLocalTimeFormat(get(item, 'exam_room.end_time'))
     }
@@ -61,10 +71,14 @@ async function init() {
       filter(value, row) {
         return ~row.classes.indexOf(value)
       }
-    }, {
+    }, userStore.role === Role.student ? {
       title: '分数',
       key: 'score',
       sorter: (row1, row2) => row1.score - row2.score
+    } : {
+      title: '平均分',
+      key: 'avgScore',
+      sorter: (row1, row2) => row1.avgScore - row2.avgScore
     },
     {
       title: "开考时间",
@@ -91,9 +105,9 @@ async function init() {
               strong: true,
               tertiary: true,
               size: 'small',
-              onClick: () => go2Detail(row.id)
+              onClick: () => userStore.role === Role.student ? go2Detail(row.id) : go2ClassesList(row.classes_id, row.room_id)
             },
-            {default: () => '查看'}
+            {default: () => userStore.role === Role.student ? '查看' : "查看班级"}
         )
       }
     }

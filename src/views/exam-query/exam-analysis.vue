@@ -1,5 +1,4 @@
 <template>
-
   <v-chart class="chart" :option="option"/>
 </template>
 
@@ -26,7 +25,9 @@ import {
 import VChart, {THEME_KEY} from 'vue-echarts';
 import {ref, defineComponent} from 'vue';
 import {UniversalTransition} from "echarts/features";
+import {ApiGetExamStatistic} from "@/apis/exam-record";
 
+ApiGetExamStatistic(10).then(console.log)
 use([
   TitleComponent,
   ToolboxComponent,

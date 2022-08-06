@@ -20,7 +20,12 @@ import {ApiFindMyClasses} from "@/apis/classes";
 
 const options = ref<nameOption[]>([]);
 const value = ref("");
-
+const setValueNone = () => {
+  value.value = ''
+}
+defineExpose({
+  setValueNone
+})
 onMounted(async () => {
   const classesListResult = await ApiFindMyClasses()
   const classesListData = classesListResult.data || [];

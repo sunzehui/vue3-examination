@@ -74,6 +74,20 @@ export default {
                     component: () => import('@/views/exam-query/exam-score.vue')
                 },
                 {
+                    name: 'classes-record-list',
+                    path: 'classes',
+                    meta: {title: '班级分数'},
+                    component: () => import('@/views/exam-query/classes-record-list.vue'),
+                    children: [
+                        {
+                            name: 'exam-record-inner',
+                            path: 'record/:record_id',
+                            meta: {title: '考试记录'},
+                            component: () => import('@/views/exam-query/exam-record.vue')
+                        }
+                    ]
+                },
+                {
                     name: 'exam-record',
                     path: 'record/:record_id',
                     meta: {title: '考试记录'},
@@ -110,5 +124,12 @@ export default {
                 }
             ]
         }
+        , {
+            name: 'user-profile',
+            path: 'mine',
+            meta: {title: "个人信息"},
+            component: () => import('@/views/user/index.vue')
+        }
     ]
+
 }

@@ -37,10 +37,10 @@ const getPathLabel = (path: string) => {
 }
 watch(() => route.name, (val) => {
   handleBack.value = val === props.backTo ? '' : back2Info
-
   breadcrumb.value = getPathLabel(route.path)
+  console.log(route.matched)
+
 }, {immediate: true})
-console.log(route.matched)
 </script>
 
 <style scoped>

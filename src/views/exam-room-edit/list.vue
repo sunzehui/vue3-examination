@@ -2,11 +2,11 @@
   <n-card title="所有考试">
     <n-space vertical size="large">
       <n-button-group>
-        <ClassesSelect @selectUpdate="onSelectClasses"/>
+        <ClassesSelect ref="classesSelectRef" @selectUpdate="onSelectClasses"/>
         <n-button type="primary" @click="$router.push({name:'exam-create'})">
           创建考试
         </n-button>
-        <n-button type="info" @click="loadExamRoom">
+        <n-button type="info" @click="resetList">
           刷新列表
         </n-button>
       </n-button-group>
@@ -28,6 +28,7 @@ import {ExamRoom} from "@/types/api-exam-room";
 import {getIdFromKey, getLocalTimeFormat, getLocalTimeUnix, getTime} from "@/utils/tools";
 import dayjs from "dayjs";
 import duration from 'dayjs/plugin/duration'
+import {select} from "rangeblock/dist/util/dom_helper";
 
 dayjs.extend(duration)
 
@@ -76,6 +77,16 @@ const tableData = computed(() => unref(examRoomList).map(item => {
 const loadExamRoom = async (classesId?: number) => {
   const examRoomResult = await ApiGetExamRoom(classesId)
   examRoomList.value = examRoomResult.data
+}
+const classesSelectRef = ref(null)
+const resetList = async () => {
+  await loadExamRoom()
+  if (!classesSelectRef) return;
+  if (!classesSelectRef.value) {
+    await nextTick()
+    return;
+  }
+  classesSelectRef.value.setValueNone()
 }
 const onSelectClasses = (val: string) => {
   const id = getIdFromKey(val);
