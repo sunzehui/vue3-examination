@@ -1,6 +1,7 @@
 import {http} from "@/plugins/axios";
 import {AxiosRequestConfig} from "axios";
-import {LoginResult} from "@/types/api-user";
+import {LoginResult, UserProfile} from "@/types/api-user";
+import {ApiResult} from "@/types/tools";
 
 interface IUser {
     username: string,
@@ -15,12 +16,21 @@ export function ApiLogin(user: IUser) {
     });
 }
 
-
-export function ApiRegister(user: IUser) {
-    return http.request<LoginResult>(<AxiosRequestConfig>{
-        url: `user/register`,
-        method: "POST",
-        data: user
+export function ApiGetUserProfile(): ApiResult<UserProfile> {
+    return http.request(<AxiosRequestConfig>{
+        url: `user/me`,
+        method: "GET",
     });
+}
+
+export function ApiUploadAvatar(file: File, fileName: string): ApiResult<UserProfile> {
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('name', fileName)
+    return http.request({
+        url: `user/avatar`,
+        method: "PATCH",
+        data: formData,
+    })
 }
 

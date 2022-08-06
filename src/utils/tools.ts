@@ -50,3 +50,7 @@ export function getTagStatus(start: string, end: string) {
     }
     return TagStatus.on;
 }
+
+export function getAvatarPath(url: string) {
+    return `/static/${url}`
+}

@@ -19,3 +19,20 @@ export interface UserInfo {
     role: Role;
 }
 
+interface JoinClasses {
+    id: number;
+    name: string;
+    create_time: string;
+}
+
+export interface UserProfile {
+    id: number;
+    username: string;
+    nickname: string;
+    create_time: string;
+    user_type: number;
+    avatar_url: string,
+    join_classes: JoinClasses[];
+    created_classes: any[];
+}
+

@@ -45,7 +45,16 @@ const studentOpt = [
         icon: renderIcon(EveryUser),
     },
     {
-        label: "账户信息",
+        label: () =>
+            h(
+                RouterLink,
+                {
+                    to: {
+                        name: "user-profile",
+                    },
+                },
+                {default: () => "个人信息"}
+            ),
         key: "user-profile",
         icon: renderIcon(UserPositioning),
     },
@@ -119,10 +128,6 @@ const teacherOpt = [
                     ),
                 key: "exam-paper",
                 icon: renderIcon(Aiming),
-            }, {
-                label: "题目管理",
-                key: "question-edit",
-                icon: renderIcon(Aiming),
             },
             {
                 label: () =>
@@ -160,15 +165,20 @@ const teacherOpt = [
                 key: "class-panel",
                 icon: renderIcon(EveryUser),
             }, {
-                label: "个人信息",
+                label: () =>
+                    h(
+                        RouterLink,
+                        {
+                            to: {
+                                name: "user-profile",
+                            },
+                        },
+                        {default: () => "个人信息"}
+                    ),
                 key: "user-info",
                 icon: renderIcon(Aiming),
             },
-            {
-                label: "考试记录",
-                key: "exam-record",
-                icon: renderIcon(UserPositioning),
-            },
+
         ]
     },
 

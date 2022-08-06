@@ -37,7 +37,10 @@
                 <Bell/>
               </span>
               <div class="avatar">
-                <img src="/images/xj.jpg"/>
+                <router-link :to="{name:'user-profile'}">
+                  <img :src="userStore.avatar"/>
+                </router-link>
+
               </div>
             </div>
           </n-layout-header>
@@ -67,6 +70,7 @@ watch(() => route.path, (value: string) => {
   activeKey.value = path[2] || 'exam-panel';
 }, {immediate: true})
 const userStore = useUserStore()
+userStore.getUserProfile()
 const clientType = userStore.roleFormat + '端'
 const isXlScreen = useMediaQuery('(min-width: 1000px)')
 watch(isXlScreen, () => {
