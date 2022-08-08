@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import {ApiGetExamRecord} from '@/apis/exam-record'
-import {DataTableColumns, NButton} from "naive-ui";
+import {DataTableColumns, NButton, NSpace} from "naive-ui";
 import {SanitizeExamRecord} from "@/types/api-record";
 import {get, map} from "lodash";
 import dayjs from "dayjs";
@@ -25,16 +25,19 @@ const columns = ref<DataTableColumns>([])
 const router = useRouter()
 const userStore = useUserStore()
 const go2Detail = (record_id: number) => {
-  console.log(record_id)
   router.push({name: 'exam-record', params: {record_id}})
 }
 const go2ClassesList = (classes_id: number, room_id: number) => {
-  console.log(classes_id)
   router.push({name: 'classes-record-list', query: {classes_id, room_id}})
 }
+const go2Analysis = (classes_id: number, room_id: number) => {
+  router.push({name: 'exam-analysis', query: {classes_id, room_id}})
+}
+
 
 async function init() {
   const examRecordListResult = await ApiGetExamRecord()
+  if (!(examRecordListResult.data) || !Array.isArray(examRecordListResult.data)) return;
   data.value = examRecordListResult.data.map(item => {
     return {
       id: item.id,
@@ -99,16 +102,43 @@ async function init() {
       title: '操作',
       key: 'actions',
       render(row) {
-        return h(
-            NButton,
-            {
-              strong: true,
-              tertiary: true,
-              size: 'small',
-              onClick: () => userStore.role === Role.student ? go2Detail(row.id) : go2ClassesList(row.classes_id, row.room_id)
-            },
-            {default: () => userStore.role === Role.student ? '查看' : "查看班级"}
-        )
+        if (userStore.role === Role.student) {
+          return h(
+              NButton,
+              {
+                strong: true,
+                tertiary: true,
+                size: 'small',
+                onClick: () => go2Detail(row.id)
+              },
+              {default: () => '查看'}
+          )
+        } else if (userStore.role === Role.teacher) {
+          return h(
+              NSpace, {}, [
+                h(
+                    NButton,
+                    {
+                      strong: true,
+                      tertiary: true,
+                      size: 'small',
+                      onClick: () => go2ClassesList(row.classes_id, row.room_id)
+                    },
+                    {default: () => "班级记录"}
+                ),
+                h(
+                    NButton,
+                    {
+                      strong: true,
+                      tertiary: true,
+                      size: 'small',
+                      onClick: () => go2Analysis(row.classes_id, row.room_id)
+                    },
+                    {default: () => "成绩分析"}
+                )
+              ]
+          )
+        }
       }
     }
   ]
@@ -122,6 +152,3 @@ const tableRef = ref(null)
 const table = tableRef;
 </script>
 
-<style scoped>
-
-</style>

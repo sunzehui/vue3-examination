@@ -30,7 +30,7 @@ declare module '@vue/runtime-core' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ExamCard: typeof import('./../src/components/exam-card.vue')['default']
     ExamRecord: typeof import('./../src/components/exam-record.vue')['default']
-    ExamRecordCompnent: typeof import('./../src/components/exam-record-compnent.vue')['default']
+    ExamRecordComponent: typeof import('./../src/components/exam-record-component.vue')['default']
     FillblankQ: typeof import('./../src/components/fillblank-q.tsx')['default']
     LeftList: typeof import('./../src/components/left-list.vue')['default']
     NAlert: typeof import('naive-ui')['NAlert']

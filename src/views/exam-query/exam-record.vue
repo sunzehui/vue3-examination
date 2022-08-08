@@ -3,5 +3,5 @@
 </template>
 
 <script setup lang="ts">
-import ExamRecordComp from '@/components/exam-record-compnent.vue'
+import ExamRecordComp from '@/components/exam-record-component.vue'
 </script>

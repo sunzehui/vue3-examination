@@ -86,6 +86,11 @@ export default {
                             component: () => import('@/views/exam-query/exam-record.vue')
                         }
                     ]
+                }, {
+                    name: "exam-analysis",
+                    path: "exam-analysis",
+                    alias: "成绩分析",
+                    component: () => import("@/views/exam-query/exam-analysis.vue"),
                 },
                 {
                     name: 'exam-record',
@@ -94,11 +99,6 @@ export default {
                     component: () => import('@/views/exam-query/exam-record.vue')
                 }
             ]
-        }, {
-            name: "exam-analysis",
-            path: "exam-analysis",
-            alias: "成绩分析",
-            component: () => import("@/views/exam-query/exam-analysis.vue"),
         },
         {
             name: "class-panel",

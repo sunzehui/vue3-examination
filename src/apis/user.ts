@@ -16,6 +16,15 @@ export function ApiLogin(user: IUser) {
     });
 }
 
+export function ApiRegister(user: IUser) {
+    return http.request<LoginResult>(<AxiosRequestConfig>{
+        url: `user/register`,
+        method: "POST",
+        data: user
+    });
+}
+
+
 export function ApiGetUserProfile(): ApiResult<UserProfile> {
     return http.request(<AxiosRequestConfig>{
         url: `user/me`,
