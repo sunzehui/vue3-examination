@@ -1,9 +1,7 @@
 <script lang="ts" setup>
 import useRegister from '@/composables/useRegister'
 import {defineRule, ErrorMessage, Field as VField, Form as VForm} from "vee-validate";
-import {useClassesStore} from "@/store/classes";
-import {ApiGetClassesListToRegister} from "@/apis/user";
-import {isEmpty, isNil} from "lodash";
+import {Role} from '@/types/api-user'
 
 defineRule('confirmed', (value, [other]) => {
   if (value !== other) {
@@ -12,7 +10,7 @@ defineRule('confirmed', (value, [other]) => {
   return true;
 })
 
-const {onSubmit, username, nickname, password, usernameRule, passwordRule, classes} = useRegister();
+const {onSubmit, username, userRole, nickname, password, usernameRule, passwordRule, classes} = useRegister();
 
 </script>
 
@@ -93,7 +91,22 @@ const {onSubmit, username, nickname, password, usernameRule, passwordRule, class
                 name="password2"
             ></ErrorMessage>
           </div>
-          <n-select v-if="classes.show" v-model:value="classes.select" :options="classes.list"/>
+          <div>
+            <label>身份：</label>
+            <n-radio-group v-model:value="userRole" name="role">
+              <n-radio-button
+                  :value="Role.student"
+                  label="我是学生"
+              />
+              <n-radio-button
+                  :value="Role.teacher"
+                  label="我是老师"
+              />
+            </n-radio-group>
+          </div>
+
+          <n-select v-if="userRole === Role.student" v-model:value="classes.select" :options="classes.list"/>
+
         </div>
 
         <div>

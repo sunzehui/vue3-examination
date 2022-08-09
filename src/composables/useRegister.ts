@@ -4,6 +4,7 @@ import {ApiGetClassesListToRegister, ApiLogin, ApiRegister} from "@/apis/user";
 import {useUserStore} from "@/store/user";
 import {useRouter} from "vue-router";
 import {isEmpty, isNil} from "lodash";
+import {Role} from "@/types/api-user";
 
 interface classesState {
     show: boolean,
@@ -15,7 +16,7 @@ export default function useRegister() {
     const username = ref("");
     const password = ref("");
     const nickname = ref('')
-
+    const userRole = ref(Role.student)
 
     const classes = reactive<classesState>({
         show: true,
@@ -70,10 +71,12 @@ export default function useRegister() {
             username: username.value,
             password: password.value,
             nickname: nickname.value,
-            classes: classes.select
+            classes: classes.select,
+            role: userRole.value
         };
         const registerResult = await ApiRegister(user)
         if (registerResult.statusCode !== 200) {
+            ElMessage.error('注册失败')
             return;
         }
         ElMessage.success("注册成功！");
@@ -89,6 +92,6 @@ export default function useRegister() {
     }
     onMounted(init)
     return {
-        onSubmit, classes, username, password, nickname, usernameRule, passwordRule
+        onSubmit, userRole, classes, username, password, nickname, usernameRule, passwordRule
     }
 }
