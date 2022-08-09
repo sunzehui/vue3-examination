@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import useRegister from '@/composables/useRegister'
 import {defineRule, ErrorMessage, Field as VField, Form as VForm} from "vee-validate";
+import {useClassesStore} from "@/store/classes";
+import {ApiGetClassesListToRegister} from "@/apis/user";
+import {isEmpty, isNil} from "lodash";
 
 defineRule('confirmed', (value, [other]) => {
   if (value !== other) {
@@ -8,7 +11,8 @@ defineRule('confirmed', (value, [other]) => {
   }
   return true;
 })
-const {onSubmit, username, password, usernameRule, passwordRule} = useRegister();
+
+const {onSubmit, username, nickname, password, usernameRule, passwordRule, classes} = useRegister();
 
 </script>
 
@@ -26,6 +30,17 @@ const {onSubmit, username, password, usernameRule, passwordRule} = useRegister()
       <VForm class="mt-8 space-y-2" @submit="onSubmit">
         <div class="rounded-md shadow-sm space-y-3">
           <div>
+            <label class="sr-only">昵称</label>
+            <VField
+                v-model="nickname"
+                autocomplete="nickname"
+                class="exam-input"
+                name="nickname"
+                placeholder="昵称"
+                type="text"
+            />
+          </div>
+          <div>
             <label class="sr-only" for="email-address">手机号码/邮箱</label>
             <VField
                 id="email-address"
@@ -42,6 +57,7 @@ const {onSubmit, username, password, usernameRule, passwordRule} = useRegister()
                 name="email"
             ></ErrorMessage>
           </div>
+
           <div class="relative">
             <label class="sr-only" for="password">密码</label>
             <VField
@@ -77,6 +93,7 @@ const {onSubmit, username, password, usernameRule, passwordRule} = useRegister()
                 name="password2"
             ></ErrorMessage>
           </div>
+          <n-select v-if="classes.show" v-model:value="classes.select" :options="classes.list"/>
         </div>
 
         <div>

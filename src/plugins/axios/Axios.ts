@@ -16,6 +16,12 @@ function getToken() {
     return get(unref(user), 'token.value');
 }
 
+function isTimeout(error: any) {
+    const errorMessage = error.message;
+    const errorCode = error.code;
+    return (errorCode === 'ECONNABORTED' && errorMessage.includes("timeout"))
+}
+
 export default class Axios {
     private instance;
     private loading: any;
@@ -81,6 +87,10 @@ export default class Axios {
             },
             (error) => {
                 this.loading.close();
+                if (isTimeout(error)) {
+                    ElMessage.error('连接超时！')
+                    return Promise.reject(error);
+                }
                 if (!error.response) {
                     return Promise.reject(error)
                 }
@@ -109,6 +119,7 @@ export default class Axios {
                             ElMessage({type: "error", message: message ?? "服务器错误"});
                         }
                 }
+                console.log(error)
                 return Promise.reject(error);
             }
         );

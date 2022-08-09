@@ -24,6 +24,12 @@ export function ApiRegister(user: IUser) {
     });
 }
 
+export function ApiGetClassesListToRegister(): ApiResult<{ id: number, name: string }[]> {
+    return http.request({
+        url: `classes/anonymous`,
+        method: 'get'
+    })
+}
 
 export function ApiGetUserProfile(): ApiResult<UserProfile> {
     return http.request(<AxiosRequestConfig>{

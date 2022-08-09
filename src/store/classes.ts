@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import {
     ApiFindClassesList,
-    ApiFindClassesStudent,
+    ApiFindClassesStudent, ApiFindMyClasses,
 } from "@/apis/classes";
 import {ClassesResult} from "@/types/api-classes";
 
@@ -17,6 +17,11 @@ export const useClassesStore = defineStore("classes", {
             this.classesList = list.data;
             return this.classesList;
         },
+        async getMineClassesList() {
+            const list = await ApiFindMyClasses();
+            this.classesList = list.data;
+            return this.classesList;
+        }
     },
     getters: {
         getClassesStudent: () => {

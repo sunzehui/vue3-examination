@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useClassesStore } from "@/store/classes";
-import { get, head, isEmpty, isNil } from "lodash";
-import { ClassesResult, nameOption } from "@/types/api-classes";
-import { ElMessage } from "element-plus";
-import { getIdFromKey } from "@/utils/tools";
+import {ref} from "vue";
+import {useClassesStore} from "@/store/classes";
+import {get, head, isEmpty, isNil} from "lodash";
+import {ClassesResult, nameOption} from "@/types/api-classes";
+import {ElMessage} from "element-plus";
+import {getIdFromKey} from "@/utils/tools";
 
 const classesStore = useClassesStore();
 const options = ref<nameOption[]>([]);
@@ -36,7 +36,7 @@ const onSelectClasses = (val: string) => {
 };
 
 onMounted(async () => {
-  const classesList = await classesStore.getClassesList();
+  const classesList = await classesStore.getMineClassesList();
   options.value = classesStore.nameOption;
   await fetchFirstClasses(classesList);
 });
@@ -44,7 +44,7 @@ onMounted(async () => {
 <template>
   <n-layout>
     <n-layout-header embedded style="padding: 24px; display: flex">
-      <ClassesSelect @selectUpdate="onSelectClasses" />
+      <ClassesSelect @selectUpdate="onSelectClasses"/>
       <n-button @click="$router.push('join')">加入班级</n-button>
     </n-layout-header>
 
@@ -64,10 +64,10 @@ onMounted(async () => {
 
       <n-card hoverable title="学生列表">
         <n-data-table
-          :border="true"
-          :columns="columns"
-          :data="classesDetail.users"
-          :max-height="550"
+            :border="true"
+            :columns="columns"
+            :data="classesDetail.users"
+            :max-height="550"
         />
       </n-card>
     </n-layout-content>

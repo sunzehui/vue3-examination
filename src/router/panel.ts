@@ -128,7 +128,7 @@ export default {
             name: 'user-profile',
             path: 'mine',
             meta: {title: "个人信息"},
-            component: () => import('@/views/user/index.vue')
+            component: () => import('@/views/user/login.vue')
         }
     ]
 

@@ -1,13 +1,43 @@
 import {ref} from "vue";
 import {ElMessage} from "element-plus";
-import {ApiLogin, ApiRegister} from "@/apis/user";
+import {ApiGetClassesListToRegister, ApiLogin, ApiRegister} from "@/apis/user";
 import {useUserStore} from "@/store/user";
 import {useRouter} from "vue-router";
+import {isEmpty, isNil} from "lodash";
+
+interface classesState {
+    show: boolean,
+    list: { label: string, value: number }[],
+    select: number | null
+}
 
 export default function useRegister() {
     const username = ref("");
     const password = ref("");
+    const nickname = ref('')
+
+
+    const classes = reactive<classesState>({
+        show: true,
+        list: [],
+        select: null
+    })
+
+    async function init() {
+        const classesListResult = await ApiGetClassesListToRegister();
+        const classesList = classesListResult.data;
+        if (isNil(classesList) || isEmpty(classesList)) {
+            classes.show = false
+            return;
+        }
+        classes.list = classesListResult.data.map(item => ({
+            label: item.name,
+            value: item.id
+        }));
+    }
+
     const userStore = useUserStore()
+
 
     const router = useRouter();
 
@@ -39,6 +69,8 @@ export default function useRegister() {
         const user = {
             username: username.value,
             password: password.value,
+            nickname: nickname.value,
+            classes: classes.select
         };
         const registerResult = await ApiRegister(user)
         if (registerResult.statusCode !== 200) {
@@ -55,7 +87,8 @@ export default function useRegister() {
             path: "/panel",
         });
     }
+    onMounted(init)
     return {
-        onSubmit, username, password, usernameRule, passwordRule
+        onSubmit, classes, username, password, nickname, usernameRule, passwordRule
     }
 }

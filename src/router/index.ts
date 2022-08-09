@@ -20,7 +20,7 @@ export default {
             meta: {
                 publicRoute: true
             },
-            component: () => import("@/views/register/index.vue"),
+            component: () => import("@/views/user/register.vue"),
         },
     ],
 } as RouteRecordRaw;
