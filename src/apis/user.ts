@@ -38,6 +38,14 @@ export function ApiGetUserProfile(): ApiResult<UserProfile> {
     });
 }
 
+export function ApiUpdateProfile(user: any): ApiResult<UserProfile> {
+    return http.request({
+        url: 'user',
+        method: 'patch',
+        data: user
+    })
+}
+
 export function ApiUploadAvatar(file: File, fileName: string): ApiResult<UserProfile> {
     const formData = new FormData()
     formData.append('file', file)
