@@ -1,8 +1,8 @@
 <template>
   <n-card title="个人信息">
-    <n-space justify="center" :size="60" class="w-full grid grid-cols-2">
+    <div class="w-full grid grid-cols-2 gap-x-10">
       <div
-          class="relative avatar-box"
+          class="relative avatar-box justify-self-end"
           v-if="user"
       >
         <n-avatar
@@ -14,6 +14,7 @@
 
       <el-descriptions
           title="我的资料"
+          class="justify-self-start"
           :column="1"
           size="large"
           border
@@ -103,11 +104,13 @@
           {{ user.id }}
         </el-descriptions-item>
 
-
       </el-descriptions>
 
+      <div class="col-start-2">
+        <n-button size="large" @click="logout">退出</n-button>
+      </div>
 
-    </n-space>
+    </div>
 
   </n-card>
 </template>
@@ -120,20 +123,21 @@ import {
   User as IconUser,
   Key
 } from '@element-plus/icons-vue'
-import {ApiGetUserProfile, ApiUploadAvatar} from "@/apis/user";
 import {UserProfile} from "@/types/api-user";
 import {Role} from "@/types/api-user";
 import {getLocalTimeFormat} from "@/utils/tools";
 import {get} from "lodash";
+import {useUserStore} from "@/store/user";
 
+const userStore = useUserStore()
 const user = ref<UserProfile>()
 const join_classesOpt = ref<any>([])
 const create_classesOpt = ref<any>([])
+
 onMounted(async () => {
-  const userResult = await ApiGetUserProfile()
-  const userData = userResult.data;
-  console.log(userData)
+  const userData = userStore.userProfile;
   user.value = userData
+  // mapping description list
   join_classesOpt.value = userData.join_classes.map(item => ({
     label: item.name,
     value: item.id
@@ -142,8 +146,9 @@ onMounted(async () => {
     label: item.name,
     value: item.id
   }))
-
 })
+
+// upload avatar
 const fileInputRef = ref(null)
 const uploadAvatar = async () => {
   if (fileInputRef.value === null) {
@@ -153,8 +158,11 @@ const uploadAvatar = async () => {
   if (fileChoice === null) return;
   const file = get(fileChoice, 'files[0]', null) as (File | null);
   if (file === null) return;
-  await ApiUploadAvatar(file, file.name)
+  await userStore.uploadAvatar(file, file.name)
+}
 
+const logout = async () => {
+  await userStore.logout()
 }
 </script>
 

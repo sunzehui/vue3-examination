@@ -1,5 +1,5 @@
 <template>
-  <n-card>
+  <n-card v-if="!examStore.isQListEmpty">
     <n-space style="height: 600px">
       <router-view/>
     </n-space>

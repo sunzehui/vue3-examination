@@ -2,15 +2,15 @@ import {defineStore} from "pinia";
 import {useLocalStorage} from "@vueuse/core";
 import {get, isNil, now} from "lodash";
 import {LoginResult, UserProfile,} from "@/types/api-user";
-import {ApiGetUserProfile} from "@/apis/user";
+import {ApiGetUserProfile, ApiUploadAvatar} from "@/apis/user";
 import {getAvatarPath} from "@/utils/tools";
-
+import router from '@/router/register'
 
 export const useUserStore = defineStore("user", {
     state: () => {
         return {
-            user: useLocalStorage('user', {} as LoginResult),
-            userProfile: useLocalStorage("userProfile", {} as UserProfile)
+            user: useLocalStorage('user', {} as Partial<LoginResult>),
+            userProfile: useLocalStorage("userProfile", {} as Partial<UserProfile>)
         }
     },
     actions: {
@@ -22,6 +22,17 @@ export const useUserStore = defineStore("user", {
         async getUserProfile() {
             const result = await ApiGetUserProfile()
             this.userProfile = result.data;
+        },
+        async uploadAvatar(file: File, fileName: string) {
+            const result = await ApiUploadAvatar(file, fileName);
+            if (result.statusCode === 200) {
+                await this.getUserProfile()
+            }
+        },
+        async logout() {
+            this.userProfile = {};
+            this.user = {}
+            await router.push({name: "login"})
         }
     },
     getters: {
@@ -34,16 +45,16 @@ export const useUserStore = defineStore("user", {
             return tokenVal !== "" && tokenExp > Date.now();
         },
         username: (state) => {
-            return state.user.userInfo.username;
+            return get(state, 'user.userInfo.username');
         },
         token: (state) => {
-            return state.user.token.value;
+            return get(state, 'user.token.value');
         },
         role: (state) => {
-            return state.user.userInfo.role;
+            return get(state, 'user.userInfo.role');
         },
         roleFormat: state => {
-            return state.user.userInfo.role === 1 ? '教师' : '学生'
+            return get(state, 'user.userInfo.role') === 1 ? '教师' : '学生'
         },
         avatar: state => {
             return getAvatarPath(get(state, 'userProfile.avatar_url', 'default_avatar.png'))
