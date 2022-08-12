@@ -5,9 +5,21 @@ import {ExamRoom} from "@/types/api-exam-room";
 import {ElMessage} from "element-plus";
 import {useRouter} from 'vue-router'
 import {Role} from '@/types/api-user'
+import {useSocket} from "@/composables/useSocket";
+import {Resp} from "@/types/api";
 
-
+const {socket} = useSocket()
 const router = useRouter();
+
+const interval = setInterval(() => {
+  socket.emit('findAllExamClock', (examRoomResult: Resp<ExamRoom[]>) => {
+    examRoomList.value = (examRoomResult.data)
+    console.log(examRoomResult.data)
+  })
+}, 3000)
+onUnmounted(() => {
+  clearInterval(interval)
+})
 
 const go2CreateExam = () => {
   router.push({name: 'exam-create'});

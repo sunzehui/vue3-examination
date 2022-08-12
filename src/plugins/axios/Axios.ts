@@ -4,12 +4,8 @@ import {ElLoading, ElMessage} from "element-plus";
 import {useLocalStorage} from "@vueuse/core";
 import {get} from "lodash";
 
+import {Resp} from '@/types/api'
 
-export interface Resp<D = any> {
-    data: D,
-    message: string,
-    statusCode: number;
-}
 
 function getToken() {
     const user = useLocalStorage('user', {})
