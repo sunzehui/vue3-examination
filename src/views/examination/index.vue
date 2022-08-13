@@ -22,45 +22,69 @@
 <script setup lang="ts">
 import {useExamStore} from "@/store/exam";
 import {get, isNil,} from "lodash";
-
-import {useLocalStorage} from "@vueuse/core";
-import {Ref} from "vue";
 import {useDialog} from "naive-ui";
+import {MaybeRef} from "@vueuse/core";
 
 const route = useRoute();
 const examStore = useExamStore();
 const router = useRouter()
-const lastInputQ: Ref<null | number> = useLocalStorage('lastInputQ', null)
-const examRoomId = computed(() => get(route, 'params.rid', null));
-let now_idx = 0
+let now_idx = ref(0)
 
-await examStore.getExamPaperByRoomId(unref(examRoomId));
-const go2Q = (idx: number) => {
+const examRoomId = computed(() => get(route, 'params.rid', null));
+examStore.getExamPaperByRoomId(unref(examRoomId));
+
+const isEnd = computed(() => unref(now_idx) + 1 >= unref(examStore.examQList).length)
+const isStart = computed(() => unref(now_idx) <= 0)
+const {socket} = useSocket()
+socket.on('answerRecordUpdate', (res) => {
+  examStore.updateRecord(res)
+})
+
+const go2Q = (idxOrRef: MaybeRef<number>) => {
+  const idx = unref(idxOrRef)
+  console.log({idx})
   router.push({name: 'question-panel', params: {idx}})
 }
-const isEnd = ref(false)
-const isStart = ref(false)
-
 const initPageIndex = () => {
-  const val = route.params.idx as string || unref(lastInputQ)
-  let idx = Number(val)
-  // 首次进入跳转到上次题目记录，否则跳转到第一题
-  if (isNaN(idx)) {
+  const idx = Number(route.params.idx)
+  const isValid = checkIdxValidate(idx)
+  if (!isValid) {
     go2Q(0)
-  } else {
-    go2Q(idx)
-    now_idx = idx
+    return
   }
+  go2Q(idx)
+  now_idx.value = idx
 }
+
+onMounted(async () => {
+  socket.emit('enterExamRoom', {
+    examRoomId: unref(examRoomId)
+  }, (res: any) => {
+    examStore.updateRecord(res.data)
+  })
+  await initPageIndex()
+})
 
 const goNextQ = (step: -1 | 1) => {
   const qList = examStore.examQList
-  const nextQ = unref(qList)[now_idx + step];
+  const nextQ = unref(qList)[unref(now_idx) + step];
   if (nextQ) {
-    now_idx += step
+    now_idx.value += step
     go2Q(now_idx)
   }
 }
+const checkIdxValidate = (idx: number): boolean => {
+  if (isNil(idx) || isNaN(idx)) return false;
+  return !(idx < 0 || idx >= examStore.examQList.length);
+}
+// 监听题目变化，防止越界等非法路径
+const unWatchRoute = watch(() => route.params.idx, (val) => {
+  const isValid = checkIdxValidate(+val)
+  if (!isValid) {
+    go2Q(0)
+  }
+}, {immediate: true})
+
 const dialog = useDialog()
 const submitPaper = async () => {
   unWatchRoute()
@@ -85,24 +109,7 @@ const submitPaper = async () => {
     })
   }
 }
-onMounted(async () => {
-  await initPageIndex()
-})
 
-
-const unWatchRoute = watch(() => route.params.idx, (val) => {
-  const idx = +val;
-  if (isNil(idx) || isNaN(idx)) return;
-  console.log(idx)
-  if (idx < 0) {
-    go2Q(0);
-    return
-  }
-  const qList = examStore.examQList;
-  isEnd.value = idx + 1 >= unref(qList).length
-  isStart.value = idx <= 0
-  lastInputQ.value = idx;
-}, {immediate: true})
 </script>
 
 <style scoped>

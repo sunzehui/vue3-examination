@@ -1,22 +1,31 @@
 import {defineStore} from "pinia";
 import {ApiGetExamDetail} from "@/apis/exam-room";
 import {ApiGetExamPaper, ApiSubmitPaper} from "@/apis/exam-paper";
-import {filter, get, isEmpty, isNil, keyBy, map, sortBy} from "lodash";
+import {cloneDeep, filter, get, isEmpty, isNil, keyBy, map, sortBy} from "lodash";
 import {ExamineesPaperDto, ExamPaper, FillBlank, QStatus, QType, Question} from "@/types/api-exam-paper";
 import {AnswerRecord, ChoiceRecord, ExamRoom, FillBlankRecord, RIdKeyAnswerRecord} from "@/types/api-exam-room";
 import {useLocalStorage} from "@vueuse/core";
 import {useUserStore} from "@/store/user";
 import {Role} from "@/types/api-user";
+import {useSocket} from "@/composables/useSocket";
 
 const userStore = useUserStore()
 
+enum RecordActionType {
+    get,
+    set,
+}
+
 export const useExamStore = defineStore('exam', {
     state() {
+        const {socket} = useSocket()
+
         return {
             exam_id: null,
             examPaper: {} as ExamPaper,
             examRoom: {} as ExamRoom,
-            userAnswer: useLocalStorage('userAnswer', {} as RIdKeyAnswerRecord)
+            userAnswer: {} as RIdKeyAnswerRecord,
+            server: socket
         }
     },
     actions: {
@@ -38,6 +47,16 @@ export const useExamStore = defineStore('exam', {
             const result = await ApiGetExamPaper(examPaperId)
             this.examPaper = result.data;
             return result.data;
+        },
+        async recordAnswer2Server(data: any) {
+            this.server.emit("userAnswerRecord", {
+                action: RecordActionType.set,
+                examRoomId: this.examRoom.id,
+                data
+            })
+        },
+        async updateRecord(result: any) {
+            this.userAnswer = result
         },
         async updateFBQ(roomId: number, qId: number, item: FillBlank /*answer*/, input: string) {
             const userAnswer = this.userAnswer[roomId] as AnswerRecord[] || []
@@ -66,7 +85,13 @@ export const useExamStore = defineStore('exam', {
                 }
                 (userAnswer[oldQIdx] as FillBlankRecord) = oldQ;
             }
-            this.userAnswer[roomId] = userAnswer
+
+            // set [roomid,userid] and result to server
+            // refresh userAnswer
+            const _userAnswer = cloneDeep(this.userAnswer);
+
+            _userAnswer[roomId] = userAnswer
+            await this.recordAnswer2Server(_userAnswer)
         },
         async updateCQ(roomId: number, id: number, answer: number[]) {
             const userAnswer = this.userAnswer[roomId] as AnswerRecord[] || []
@@ -81,8 +106,10 @@ export const useExamStore = defineStore('exam', {
             } else {
                 userAnswer.push(thisAnswer);
             }
-            this.userAnswer[roomId] = userAnswer
 
+            const _userAnswer = cloneDeep(this.userAnswer);
+            _userAnswer[roomId] = userAnswer
+            await this.recordAnswer2Server(_userAnswer)
         },
         async submitPaper(roomId: number) {
             const paperId = this.examPaper.id;
@@ -125,7 +152,6 @@ export const useExamStore = defineStore('exam', {
                     return map(rightAnswer, 'id');
                 }
             }
-
         },
         userAnswerStatus(state) {
             return (rid: number) => {
@@ -161,5 +187,5 @@ export const useExamStore = defineStore('exam', {
             }
 
         }
-    }
+    },
 })

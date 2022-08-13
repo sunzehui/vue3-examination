@@ -1,5 +1,5 @@
 export enum TagStatus {
-  on,
-  wait,
-  off,
+    on = 0,
+    wait = 1,
+    off = 2,
 }

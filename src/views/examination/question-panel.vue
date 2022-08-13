@@ -31,7 +31,8 @@ watch(() => route.params.idx, async () => {
     return;
   }
   if (isEmpty(examStore.examQList)) return
-  const qid = examStore.examQList[val].id
+  const qid = get(examStore, `examQList[${val}].id`)
+  if (!qid) return
   await fetchQuestion(qid)
 }, {immediate: true})
 
