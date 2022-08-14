@@ -1,25 +1,3 @@
-<template>
-  <n-card title="所有考试">
-    <n-space vertical size="large">
-      <n-button-group>
-        <ClassesSelect ref="classesSelectRef" @selectUpdate="onSelectClasses"/>
-        <n-button type="primary" @click="$router.push({name:'exam-create'})">
-          创建考试
-        </n-button>
-        <n-button type="info" @click="resetList">
-          刷新列表
-        </n-button>
-      </n-button-group>
-
-      <n-data-table
-          :columns="columns"
-          :data="tableData"
-          :max-height="444"
-      />
-    </n-space>
-  </n-card>
-</template>
-
 <script setup lang="ts">
 import {ApiGetExamRoom} from "@/apis/exam-room";
 import ClassesSelect from '@/components/classes-select.vue'
@@ -28,7 +6,6 @@ import {ExamRoom} from "@/types/api-exam-room";
 import {getIdFromKey, getLocalTimeFormat, getLocalTimeUnix, getTime} from "@/utils/tools";
 import dayjs from "dayjs";
 import duration from 'dayjs/plugin/duration'
-import {select} from "rangeblock/dist/util/dom_helper";
 
 dayjs.extend(duration)
 
@@ -53,26 +30,25 @@ const columns = [
     title: '创建时间',
     key: 'createTime'
   },
-
 ]
 const examRoomList = ref<ExamRoom[]>([]);
 
-const tableData = computed(() => unref(examRoomList).map(item => {
-          const [startTime, startTimeUnix] = getTime(item.begin_time)
-          const [endTime, endTimeUnix] = getTime(item.end_time)
-          const dateRange = `${startTime} - ${endTime}`
+const tableData = computed(() =>
+    unref(examRoomList).map(item => {
+      const [startTime, startTimeUnix] = getTime(item.begin_time)
+      const [endTime, endTimeUnix] = getTime(item.end_time)
+      const dateRange = `${startTime} - ${endTime}`
 
-          const timeTotal = dayjs.duration(endTimeUnix - startTimeUnix, 'milliseconds').asMinutes() + '分钟'
-          const createTime = getLocalTimeFormat(item.create_time);
-          return {
-            name: item.name,
-            usageClasses: item?.for_classes?.name || '未知',
-            dateRange,
-            timeTotal,
-            createTime,
-          }
-        }
-    )
+      const timeTotal = dayjs.duration(endTimeUnix - startTimeUnix, 'milliseconds').asMinutes() + '分钟'
+      const createTime = getLocalTimeFormat(item.create_time);
+      return {
+        name: item.name,
+        usageClasses: item?.for_classes?.name || '未知',
+        dateRange,
+        timeTotal,
+        createTime,
+      }
+    })
 )
 const loadExamRoom = async (classesId?: number) => {
   const examRoomResult = await ApiGetExamRoom(classesId)
@@ -100,6 +76,26 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
+<template>
+  <n-card title="所有考试">
+    <n-space vertical size="large">
+      <n-button-group>
+        <ClassesSelect ref="classesSelectRef" @selectUpdate="onSelectClasses"/>
+        <n-button type="primary" @click="$router.push({name:'exam-create'})">
+          创建考试
+        </n-button>
+        <n-button type="info" @click="resetList">
+          刷新列表
+        </n-button>
+      </n-button-group>
 
-</style>
+      <n-data-table
+          :columns="columns"
+          :data="tableData"
+          :max-height="444"
+      />
+    </n-space>
+  </n-card>
+</template>
+
+

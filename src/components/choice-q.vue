@@ -1,3 +1,22 @@
+<script setup lang="ts">
+import {Question} from "@/types/api-exam-paper";
+import {useExamStore} from "@/store/exam";
+
+const examStore = useExamStore()
+
+const props = defineProps<{
+  q: Partial<Question>,
+  roomId: number
+}>()
+let Q = computed(() => props.q)
+
+const handleCheckBoxUpdate = (val: number[]) => {
+  const q = unref(Q)
+  if (!(q).id) throw new Error('q id not found')
+  examStore.updateCQ(+props.roomId, (q).id, val);
+}
+</script>
+
 <template>
   <n-space justify="center" vertical>
       <span class="text-lg">
@@ -13,28 +32,3 @@
     <slot/>
   </n-space>
 </template>
-
-<script setup lang="ts">
-import {Question} from "@/types/api-exam-paper";
-import {useExamStore} from "@/store/exam";
-
-const props = defineProps<{
-  q: Partial<Question>,
-  roomId: string
-}>()
-let Q = ref(props.q || {})
-watch(() => props.q, (val) => {
-  Q.value = val
-})
-
-const examStore = useExamStore()
-
-const handleCheckBoxUpdate = (val: number[]) => {
-  if (!unref(Q).id) throw new Error('q id not found')
-  examStore.updateCQ(+props.roomId, unref(Q).id, val);
-}
-</script>
-
-<style scoped>
-
-</style>

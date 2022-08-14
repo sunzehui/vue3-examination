@@ -4,7 +4,6 @@ import {ApiGetExamPaper, ApiSubmitPaper} from "@/apis/exam-paper";
 import {cloneDeep, filter, get, isEmpty, isNil, keyBy, map, sortBy} from "lodash";
 import {ExamineesPaperDto, ExamPaper, FillBlank, QStatus, QType, Question} from "@/types/api-exam-paper";
 import {AnswerRecord, ChoiceRecord, ExamRoom, FillBlankRecord, RIdKeyAnswerRecord} from "@/types/api-exam-room";
-import {useLocalStorage} from "@vueuse/core";
 import {useUserStore} from "@/store/user";
 import {Role} from "@/types/api-user";
 import {useSocket} from "@/composables/useSocket";
@@ -56,7 +55,7 @@ export const useExamStore = defineStore('exam', {
             })
         },
         async updateRecord(result: any) {
-            this.userAnswer = result
+            this.userAnswer = result || []
         },
         async updateFBQ(roomId: number, qId: number, item: FillBlank /*answer*/, input: string) {
             const userAnswer = this.userAnswer[roomId] as AnswerRecord[] || []
@@ -115,8 +114,7 @@ export const useExamStore = defineStore('exam', {
             const paperId = this.examPaper.id;
             const thisAnswer = this.userAnswer[roomId] as ExamineesPaperDto[]
             if (isNil(thisAnswer)) throw new Error('cant find record');
-            const result = await ApiSubmitPaper(paperId, roomId, thisAnswer);
-            return result;
+            return await ApiSubmitPaper(paperId, roomId, thisAnswer);
         }
 
     },
@@ -155,7 +153,7 @@ export const useExamStore = defineStore('exam', {
         },
         userAnswerStatus(state) {
             return (rid: number) => {
-
+                // 分析学生已作答题目，得出所有题目状态
                 const allQ =
                     sortBy(get(state, 'examPaper.question', null), 'type') as (Question & { status: QStatus })[];
                 if (!allQ) return []
@@ -163,22 +161,31 @@ export const useExamStore = defineStore('exam', {
                 return allQ.map((q, idx) => {
                     let status = QStatus.none;
                     const useAnswerCount = get(recordQById[q.id], 'answer.length')
+                    // 如果题目作答记录不存在，立即返回none
                     if (!useAnswerCount) {
                         return {
                             ...q, status, idx
                         }
                     }
-                    const everyAnswerEmpty = (recordQById[q.id].answer as FillBlankRecord['answer']).every(a => a.content === '')
+
                     if (q.type === QType.choice) {
+                        // 选择题只需要选中一个即为已作答
                         status = useAnswerCount > 0 ? QStatus.complete : QStatus.none
                     } else if (q.type === QType.fill_blank) {
-                        status = useAnswerCount === 0 ? QStatus.none : QStatus.half;
-                        if (everyAnswerEmpty) {
+                        const answer = recordQById[q.id].answer as FillBlankRecord['answer']
+                        const everyAnswerFill = answer.every(a => a.content !== '')
+                        const someAnswerFill = answer.some(a => a.content !== '')
+
+                        if (everyAnswerFill) {
+                            // 填空题已作答的条件是：所有空位已填充答案
+                            status = QStatus.complete
+                        } else if (someAnswerFill) {
+                            // 填空题未完全做完的条件是：部分空位已填充答案
+                            status = QStatus.half
+                        } else {
                             status = QStatus.none
                         }
-                        if (q.answer.length === useAnswerCount) {
-                            status = QStatus.complete
-                        }
+
                     }
                     return {
                         ...q, status, idx

@@ -1,11 +1,11 @@
 <template>
   <ChoiceQ :q="Q" :roomId="roomId" v-if="choiceQShow" :key="Q.id"/>
-  <FillblankQ :q="Q" :roomId="roomId" v-if="fillBlankShow" :key="Q.id"/>
+  <FillBlankQ :q="Q" :roomId="roomId" v-if="fillBlankShow" :key="Q.id"/>
 </template>
 
 <script lang="ts" setup>
 import ChoiceQ from '@/components/choice-q.vue';
-import FillblankQ from "@/components/fillblank-q";
+import FillBlankQ from "@/components/fillblank-q";
 import {ApiGetQuestion} from "@/apis/question";
 import {QType, Question} from "@/types/api-exam-paper";
 import {useExamStore} from "@/store/exam";
@@ -13,7 +13,7 @@ import {get, isEmpty, isNil} from "lodash";
 
 const route = useRoute()
 const Q = ref<Question | null>(null)
-const roomId = route.params.rid;
+const roomId = Number(route.params.rid);
 const fetchQuestion = async (id: number) => {
   if (isNaN(id)) return;
   const questionResult = await ApiGetQuestion(id)
@@ -37,7 +37,7 @@ watch(() => route.params.idx, async () => {
 }, {immediate: true})
 
 defineExpose({
-  ChoiceQ, FillblankQ
+  ChoiceQ, FillBlankQ
 })
 </script>
 

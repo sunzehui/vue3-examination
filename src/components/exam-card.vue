@@ -34,7 +34,6 @@ import {Role} from '@/types/api-user'
 import {isNil} from "lodash";
 import {TagStatus} from "@/enum/tag-status";
 import {useDialog} from "naive-ui";
-import {useExamStore} from "@/store/exam";
 
 const router = useRouter()
 const props = defineProps<{
@@ -48,13 +47,11 @@ watch(() => props.exam, (val) => {
   thisTagStatus.value = getTagStatus(val.begin_time, val.end_time)
 }, {immediate: true})
 
-const examStore = useExamStore()
 const localTime = computed(() => getLocalTimeUnix)
 const dialog = useDialog()
 
 const goExamRoom = (id: number) => {
   const status = unref(thisTagStatus)
-  const {socket} = useSocket()
 
   if (status === TagStatus.wait) {
     dialog.error({

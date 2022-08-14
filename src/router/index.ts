@@ -11,7 +11,7 @@ export default {
             meta: {
                 publicRoute: true
             },
-            component: () => import("@/views/login/index.vue"),
+            component: () => import("@/views/user/login.vue"),
         },
         {
             name: "register",
