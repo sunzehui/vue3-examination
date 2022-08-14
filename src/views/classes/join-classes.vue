@@ -10,22 +10,18 @@ import {get, isEmpty} from "lodash";
 const searchInput = ref("")
 const originData = ref<ClassesResult[]>([]);
 // 展示过滤后的data
-const sanitizedData = ref<ClassesResult[]>([]);
-
-const filterClasses = () => {
+const sanitizedData = computed(() => {
   const oData = unref(originData)
-  if (isEmpty(oData)) return;
-  sanitizedData.value = oData.filter(c => c.name.includes(unref(searchInput)))
-}
+  if (isEmpty(oData)) return [];
+  return oData.filter(c => c.name.includes(unref(searchInput)))
+});
 
 const loadData = async () => {
   const result = await ApiFindClassesList()
   originData.value = result.data
-  sanitizedData.value = result.data;
 }
 
 watchEffect(() => loadData());
-
 
 const createColumns = (): (DataTableColumn | { render: (row: any) => any })[] => {
   return [
@@ -70,9 +66,6 @@ const columns = createColumns()
           v-model:value="searchInput"
           :style="{ width: '50%' }"
           placeholder="班级名称" size="large"/>
-      <n-button ghost size="large" type="primary" @click="filterClasses">
-        搜索
-      </n-button>
     </n-input-group>
   </n-card>
 
