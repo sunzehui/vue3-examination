@@ -1,3 +1,3 @@
-import {Resp} from "@/plugins/axios/Axios";
+import {Resp} from "@/types/api";
 
 export type ApiResult<T> = Promise<Resp<T>>

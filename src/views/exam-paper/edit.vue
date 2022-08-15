@@ -1,3 +1,85 @@
+<script lang="ts" setup>
+import EditChoiceQ from '@/components/edit-choice-q.vue'
+import EditFillBlankQ from "@/components/edit-fillblank-q.vue";
+import {Add, Close} from '@icon-park/vue-next'
+import {QType, Question} from "@/types/api-exam-paper";
+import ChoiceQ from '@/components/choice-q.vue'
+import FillBlankQ from "@/components/fillblank-q";
+import {FormInst, NLayoutContent} from "naive-ui";
+import {v4 as uuid} from 'uuid';
+import {ApiAddQuestion2Paper, ApiGetExamPaper, ApiRemoveQuestion2Paper} from "@/apis/exam-paper";
+import {Component} from "vue";
+
+interface QListComponent {
+  uid: string,
+  type: null | Component
+}
+
+const route = useRoute()
+const paperId = Number(route.params.id as string);
+if (!paperId) {
+  throw  new Error()
+}
+const contentRef = ref<typeof NLayoutContent | null>(null)
+const Qlist = ref<QListComponent[]>([])
+
+const model = ref<Question[]>([])
+const choiceQ = ref<Question[]>([]);
+const fillBlankQ = ref<Question[]>([])
+const baseInfoModel = ref({
+  name: '',
+  desc: '',
+})
+
+const appendQ = (type: QType) => {
+  const component: QListComponent = {
+    uid: uuid(),
+    type: null
+  }
+  if (type === QType.fill_blank) {
+    component.type = EditFillBlankQ
+  } else if (type === QType.choice) {
+    component.type = EditChoiceQ
+  }
+  Qlist.value.push(component)
+  // 添加后滚动到最底部
+  nextTick(() => {
+    contentRef.value?.scrollTo({
+      top: Number.MAX_SAFE_INTEGER,
+      behavior: 'smooth'
+    });
+  })
+}
+
+const handleQSave = async ({uid, qId}: Record<any, string>) => {
+  // remove dom from page
+  Qlist.value = unref(Qlist).filter(c => c.uid !== uid)
+  await ApiAddQuestion2Paper(paperId, +qId);
+  await loadDetail()
+}
+
+const loadDetail = async () => {
+  // 加载基础信息
+  const paperResult = await ApiGetExamPaper(+paperId)
+  baseInfoModel.value.name = paperResult.data.name;
+  baseInfoModel.value.desc = paperResult.data.desc;
+  //  加载题目
+  model.value = paperResult.data.question;
+  choiceQ.value = unref(model).filter((Q: Question) => Q.type === QType.choice);
+  fillBlankQ.value = unref(model).filter((Q: Question) => Q.type === QType.fill_blank);
+}
+onMounted(loadDetail)
+
+defineExpose({
+  EditChoiceQ, EditFillBlankQ
+})
+const formRef = ref<FormInst | null>(null)
+
+const removeQ = (qId: number) => {
+  ApiRemoveQuestion2Paper(paperId, qId).then(loadDetail)
+}
+</script>
+
 <template>
   <n-space vertical size="large">
     <n-layout>
@@ -70,8 +152,9 @@
           </template>
 
 
-          <n-popconfirm positive-text="选择题" negative-text="填空题" :show-icon="false" @positive-click="appendQ('choice')"
-                        @negative-click="appendQ('fillblank')">
+          <n-popconfirm positive-text="选择题" negative-text="填空题" :show-icon="false"
+                        @positive-click="appendQ(QType.choice)"
+                        @negative-click="appendQ(QType.fill_blank)">
             <template #trigger>
               <n-button style="width: 100%" dashed>
                 <n-icon>
@@ -93,86 +176,3 @@
     </n-layout>
   </n-space>
 </template>
-
-<script lang="ts" setup>
-import EditChoiceQ from '@/components/edit-choice-q.vue'
-import EditFillBlankQ from "@/components/edit-fillblank-q.vue";
-import {Add, Close} from '@icon-park/vue-next'
-
-const contentRef = ref<typeof NLayoutContent | null>(null)
-const Qlist = ref<(typeof EditChoiceQ | typeof EditFillBlankQ)[]>([])
-
-
-import {QType, Question} from "@/types/api-exam-paper";
-import ChoiceQ from '@/components/choice-q.vue'
-import FillBlankQ from "@/components/fillblank-q";
-import {FormInst, NLayoutContent} from "naive-ui";
-import {v4 as uuidv4} from 'uuid';
-import {ApiAddQuestion2Paper, ApiGetExamPaper, ApiRemoveQuestion2Paper} from "@/apis/exam-paper";
-
-
-const appendQ = (type: "fillblank" | 'choice') => {
-  const component = {
-    uid: uuidv4(),
-    type: null
-  }
-  if (type === 'fillblank') {
-    component.type = EditFillBlankQ
-  } else if (type === 'choice') {
-    component.type = EditChoiceQ
-  }
-  Qlist.value.push(component)
-  nextTick(() => {
-    contentRef.value?.scrollTo({
-      top: Number.MAX_SAFE_INTEGER,
-      behavior: 'smooth'
-    });
-  })
-}
-const model = ref<Question[]>([])
-const choiceQ = ref<Question[]>([]);
-const fillBlankQ = ref<Question[]>([])
-const baseInfoModel = ref({
-  name: '',
-  desc: '',
-})
-
-const handleQSave = async ({uid, qId}) => {
-  // remove dom from page
-  Qlist.value = unref(Qlist).filter(c => c.uid !== uid)
-  await ApiAddQuestion2Paper(paperId, qId);
-  await loadDetail()
-}
-
-const route = useRoute()
-const paperId = Number(route.params.id as string);
-if (!paperId) {
-  throw  new Error()
-}
-
-const loadDetail = async () => {
-  // 加载基础信息
-  const paperResult = await ApiGetExamPaper(+paperId)
-  baseInfoModel.value.name = paperResult.data.name;
-  baseInfoModel.value.desc = paperResult.data.desc;
-//  加载题目
-  model.value = paperResult.data.question;
-  choiceQ.value = unref(model).filter((Q: Question) => Q.type === QType.choice);
-  fillBlankQ.value = unref(model).filter((Q: Question) => Q.type === QType.fill_blank);
-}
-onMounted(loadDetail)
-
-defineExpose({
-  EditChoiceQ, EditFillBlankQ
-})
-const formRef = ref<FormInst | null>(null)
-
-const removeQ = (qId: number) => {
-  ApiRemoveQuestion2Paper(paperId, qId).then(loadDetail)
-}
-</script>
-
-
-<style scoped>
-
-</style>

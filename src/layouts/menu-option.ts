@@ -40,7 +40,7 @@ const studentOpt = [
                 },
                 {default: () => "班级信息"}
             ),
-        key: "class-panel",
+        key: "info",
         icon: renderIcon(EveryUser),
     },
     {
@@ -68,7 +68,7 @@ const studentOpt = [
                 },
                 {default: () => "成绩查询"}
             ),
-        key: "score-query",
+        key: "exam-score",
         icon: renderIcon(EmotionHappy),
     },
 
@@ -77,7 +77,7 @@ const studentOpt = [
 const teacherOpt = [
     {
         label: "考试管理",
-        key: "exam-manage",
+        key: "exam-paper",
         icon: renderIcon(Home),
         children: [
             {
@@ -105,7 +105,7 @@ const teacherOpt = [
                         },
                         {default: () => "编辑考试"}
                     ),
-                key: "exam-room-edit",
+                key: "exam-list",
                 icon: renderIcon(Aiming),
             },
             {
@@ -119,7 +119,7 @@ const teacherOpt = [
                         },
                         {default: () => "编辑试卷"}
                     ),
-                key: "exam-paper",
+                key: "exam-paper-list",
                 icon: renderIcon(Aiming),
             },
             {
@@ -133,26 +133,14 @@ const teacherOpt = [
                         },
                         {default: () => "成绩查询"}
                     ),
-                key: "score-query",
+                key: "exam-score",
                 icon: renderIcon(EmotionHappy),
-            },
-            {
-                label: () =>
-                    h(
-                        RouterLink,
-                        {
-                            to: {name: "exam-analysis"},
-                        },
-                        {default: () => "成绩分析"}
-                    ),
-                key: "score-analysis",
-                icon: renderIcon(Aiming),
             },
         ],
     },
     {
         label: "信息管理",
-        key: "infomation",
+        key: "information",
         icon: renderIcon(Home),
         children: [
             {
@@ -166,7 +154,7 @@ const teacherOpt = [
                         },
                         {default: () => "班级信息"}
                     ),
-                key: "class-panel",
+                key: "info",
                 icon: renderIcon(EveryUser),
             },
             {
@@ -180,7 +168,7 @@ const teacherOpt = [
                         },
                         {default: () => "个人信息"}
                     ),
-                key: "user-info",
+                key: "user-profile",
                 icon: renderIcon(Aiming),
             },
         ],

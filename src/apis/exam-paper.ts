@@ -9,7 +9,7 @@ export function ApiGetExamPaperList(): ApiResult<ExamPaper[]> {
     })
 }
 
-export function ApiGetMyExamPaper() {
+export function ApiGetMyExamPaper(): ApiResult<ExamPaper[]> {
     return http.request({
         url: "exam-paper/mine",
         method: 'get'

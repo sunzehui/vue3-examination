@@ -15,17 +15,12 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {nameOption} from "@/types/api-classes";
-import {useClassesStore} from "@/store/classes";
 import {ApiFindMyClasses} from "@/apis/classes";
 
 const options = ref<nameOption[]>([]);
 const value = ref("");
-const setValueNone = () => {
-  value.value = ''
-}
-defineExpose({
-  setValueNone
-})
+
+
 onMounted(async () => {
   const classesListResult = await ApiFindMyClasses()
   const classesListData = classesListResult.data || [];
@@ -33,6 +28,13 @@ onMounted(async () => {
     label: `${item.name}-${item.id}`, value: `${item.name}-${item.id}`
   }));
 });
+
+const setValueNone = () => {
+  value.value = ''
+}
+defineExpose({
+  setValueNone
+})
 </script>
 
 <style scoped>

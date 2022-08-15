@@ -1,3 +1,21 @@
+<script lang="ts" setup>
+import menuOptions from "./menu-option";
+import {Bell} from "@element-plus/icons-vue";
+import {useMediaQuery} from "@vueuse/core";
+import {useRoute} from 'vue-router'
+import {useUserStore} from "@/store/user";
+
+const inverted = ref(false);
+const collapsed = ref(false);
+const isXlScreen = useMediaQuery('(min-width: 1000px)')
+const responsivePos = computed(() => unref(isXlScreen) ? 'static' : 'absolute')
+
+const userStore = useUserStore()
+const route = useRoute()
+userStore.getUserProfile()
+const clientType = userStore.roleFormat + '端'
+const activeKey = computed(() => route.name || 'exam-panel')
+</script>
 <template>
   <n-space class="main-layout" vertical>
     <n-layout>
@@ -11,6 +29,7 @@
             :native-scrollbar="false"
             :position="responsivePos"
             :show-collapsed-content="false"
+            :collapsed="responsivePos==='absolute'"
             :trigger-style="{ transform: 'scale(2) translateX(25%)' }"
             :width="240"
             bordered
@@ -53,34 +72,6 @@
   </n-space>
 </template>
 
-<script lang="ts" setup>
-import menuOptions from "./menu-option";
-import {Bell} from "@element-plus/icons-vue";
-import {useMediaQuery} from "@vueuse/core";
-import {useRoute} from 'vue-router'
-import {useUserStore} from "@/store/user";
-
-const route = useRoute()
-const responsivePos = ref("static")
-const inverted = ref(false);
-const collapsed = ref(false);
-const activeKey = ref<string | null>("exam-panel");
-watch(() => route.path, (value: string) => {
-  const path = value.split("/")
-  activeKey.value = path[2] || 'exam-panel';
-}, {immediate: true})
-const userStore = useUserStore()
-userStore.getUserProfile()
-const clientType = userStore.roleFormat + '端'
-const isXlScreen = useMediaQuery('(min-width: 1000px)')
-watch(isXlScreen, () => {
-  if (!isXlScreen.value) {
-    responsivePos.value = 'absolute'
-  } else {
-    responsivePos.value = 'static'
-  }
-}, {immediate: true})
-</script>
 
 <style lang="scss" scoped>
 .sidebar__menu-container {

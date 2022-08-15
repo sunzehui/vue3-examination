@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import {ElLoading} from 'element-plus'
-import {io} from 'socket.io-client'
 
 const loadingInstance = ElLoading.service({
   background: 'rgba(255,255,255,.5)',

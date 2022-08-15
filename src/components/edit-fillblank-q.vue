@@ -1,3 +1,79 @@
+<script setup lang="ts">
+import {TipsOne} from "@icon-park/vue-next";
+import {ElMessage} from "element-plus";
+import {head, isEmpty} from "lodash";
+import {QType} from "@/types/api-exam-paper";
+import {ApiCreateQuestion} from "@/apis/question";
+import {toReactive} from "@vueuse/core";
+
+interface DInputType {
+  content: string
+}
+
+const props = defineProps<{
+  selectPaper: String,
+  uid: String
+}>()
+const emit = defineEmits(['save'])
+
+const state = reactive({
+  resolution: '',
+  score: 2,
+  dInputValue: [] as DInputType[],
+  content: ''
+})
+
+const createDInputValue = (): DInputType => {
+  return {
+    content: ""
+  }
+}
+
+const validate = () => {
+  const {content, dInputValue} = state
+
+  if (isEmpty(content)) {
+    ElMessage.error("请输入内容")
+    return false;
+  } else if (dInputValue.length < 1) {
+    ElMessage.error("最少挖一个空！")
+    return false
+  }
+  return true;
+}
+const buildQuestion = () => {
+  const {dInputValue, resolution, content, score} = state
+  const answer = dInputValue.map((item, pos) => ({content: item.content, pos}));
+
+  return {
+    type: QType.fill_blank,
+    resolution,
+    content,
+    score,
+    answer
+  }
+}
+
+const saveFBQ = async () => {
+  const Q = buildQuestion();
+  const isValid = validate();
+  if (!isValid) {
+    return
+  }
+  const createResult = await ApiCreateQuestion(Q);
+  const headQ = head(createResult.data)
+  if (!headQ) {
+    throw new Error()
+  }
+
+  emit('save', {qId: headQ.id, uid: props.uid})
+  return createResult.data;
+}
+
+const {content, score, resolution, dInputValue} = toReactive(state)
+</script>
+
+
 <template>
   <n-card title="填空题">
     <n-space vertical>
@@ -49,81 +125,3 @@
     </n-space>
   </n-card>
 </template>
-
-<script setup lang="ts">
-import {Close, TipsOne} from "@icon-park/vue-next";
-import * as rb from "rangeblock"
-import {ElMessage} from "element-plus";
-import {head, isEmpty, isNil, omit, sortedUniqBy, uniqBy} from "lodash";
-import {FillBlank, QType} from "@/types/api-exam-paper";
-import {v4 as uuidv4} from 'uuid';
-import {ApiCreateQuestion} from "@/apis/question";
-import {getIdFromKey} from "@/utils/tools";
-import {ApiAddQuestion2Paper} from "@/apis/exam-paper";
-
-const createDInputValue = () => {
-  return {
-    content: ""
-  }
-}
-
-const resolution = ref('')
-const props = defineProps<{
-  selectPaper: String,
-  uid: String
-}>()
-const emit = defineEmits(['save'])
-const score = ref(2)
-const dInputValue = ref<string[]>([])
-const content = ref('')
-const validate = () => {
-  if (isEmpty(unref(content))) {
-    ElMessage.error("请输入内容")
-    return false;
-  } else if (unref(dInputValue).length < 1) {
-    ElMessage.error("最少挖一个空！")
-    return false
-  }
-  return true;
-}
-const buildQuestion = () => {
-  const answer = (unref(dInputValue)).map((item, pos) => ({content: item.content, pos}));
-
-  return {
-    type: QType.fill_blank,
-    resolution: unref(resolution),
-    content: unref(content),
-    score: unref(score),
-    answer
-  }
-}
-
-const saveFBQ = async () => {
-  const Q = buildQuestion();
-  const isValid = validate();
-  if (!isValid) {
-    return
-  }
-  const createResult = await ApiCreateQuestion(Q);
-  const headQ = head(createResult.data)
-  if (!headQ) {
-    throw new Error()
-  }
-  const qId = headQ.id
-  emit('save', {qId, uid: props.uid})
-
-  return createResult.data;
-}
-
-</script>
-
-<style scoped lang="scss">
-.form-item-group {
-}
-
-</style>
-<style>
-.text-select {
-  color: red
-}
-</style>

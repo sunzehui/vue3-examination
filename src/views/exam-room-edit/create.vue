@@ -1,3 +1,80 @@
+<script lang="ts" setup>
+import {ref} from 'vue'
+import {FormInst} from 'naive-ui'
+import {ApiGetMyExamPaper} from "@/apis/exam-paper";
+import {ApiFindMyClasses} from "@/apis/classes";
+import {ApiCreateExamRoom} from "@/apis/exam-room";
+import dayjs from "dayjs";
+import {ElMessage} from "element-plus";
+import rules from './createFormRule'
+import {ExamPaper} from "@/types/api-exam-paper";
+
+interface SelectOption {
+  label: string,
+  value: number
+}
+
+const model = ref({
+  name: null,
+  desc: null,
+  begin_time: null,
+  end_time: null,
+  exam_paper_id: null,
+  classes_ids: null,
+})
+const paperListData = ref<ExamPaper[]>([])
+const usePaperListOptions = computed(() =>
+    unref(paperListData).map(v => ({
+      label: v.name, value: v.id
+    }))
+)
+const useClassesListOptions = ref<SelectOption[]>([])
+const formRef = ref<FormInst | null>(null)
+
+async function init() {
+  const result = await ApiGetMyExamPaper()
+  paperListData.value = result.data;
+
+  const classesListResult = await ApiFindMyClasses();
+  useClassesListOptions.value = (classesListResult.data).map(v => ({
+    label: v.name, value: v.id
+  }))
+}
+
+
+// 只能选择当前之后的时间
+const dateDisabled = (ts: number) => {
+  return ts < Date.now() - 86400000
+}
+const submitExamRoom = (e: MouseEvent) => {
+  e.preventDefault()
+  formRef.value?.validate((errors) => {
+    if (errors) {
+      return
+    }
+    const {begin_time, end_time} = unref(model)
+    if (!(begin_time && end_time)) return;
+    const now = +dayjs()
+
+    if (begin_time < now || end_time < now) {
+      ElMessage.error("不可选择之前时间")
+      return;
+    }
+    if (begin_time >= end_time) {
+      ElMessage.error("结束时间不能小于开始时间")
+      return;
+    }
+    // @ts-ignore
+    ApiCreateExamRoom({
+      ...unref(model),
+      begin_time: dayjs(begin_time).utc().format(),
+      end_time: dayjs(end_time).utc().format()
+    })
+  })
+}
+
+onMounted(init);
+</script>
 <template>
   <n-card title="填写考试信息">
     <n-form
@@ -59,112 +136,3 @@
   </n-card>
 </template>
 
-<script lang="ts" setup>
-import {ref} from 'vue'
-import {FormInst} from 'naive-ui'
-import {ApiGetMyExamPaper} from "@/apis/exam-paper";
-import {ApiFindMyClasses} from "@/apis/classes";
-import {ApiCreateExamRoom} from "@/apis/exam-room";
-import dayjs from "dayjs";
-import {ElMessage} from "element-plus";
-
-interface SelectOption {
-  label: string,
-  value: number
-}
-
-const usePaperListOptions = ref<SelectOption[]>([])
-const useClassesListOptions = ref<SelectOption[]>([])
-
-async function init() {
-  const paperListResult = await ApiGetMyExamPaper()
-  usePaperListOptions.value = (paperListResult.data).map(v => ({
-    label: v.name, value: v.id
-  }))
-
-  const classesListResult = await ApiFindMyClasses();
-  useClassesListOptions.value = (classesListResult.data).map(v => ({
-    label: v.name, value: v.id
-  }))
-}
-
-onMounted(init);
-
-// 只能选择当前之后的时间
-const dateDisabled = (ts: number) => {
-  return ts < Date.now() - 86400000
-}
-const submitExamRoom = (e: MouseEvent) => {
-  e.preventDefault()
-  formRef.value?.validate((errors) => {
-    if (errors) {
-      return
-    }
-    const now = +dayjs()
-
-    // @ts-ignore
-    if (unref(model).begin_time < now || unref(model).end_time < now) {
-      ElMessage.error("不可选择之前时间")
-      return;
-    }
-    // @ts-ignore
-    if (unref(model).begin_time >= unref(model).end_time) {
-      ElMessage.error("结束时间不能小于开始时间")
-      return;
-    }
-    console.log(unref(model).begin_time, unref(model).end_time)
-
-    // @ts-ignore
-    ApiCreateExamRoom({
-      ...unref(model),
-      begin_time: dayjs(+unref(model).begin_time!).utc().format(),
-      end_time: dayjs(+unref(model).end_time!).utc().format()
-    }).then(console.log)
-  })
-}
-const rules = {
-  name: {
-    required: true,
-    trigger: ['blur', 'input'],
-    message: '请输入 考试名称'
-  },
-  desc: {
-    required: true,
-    trigger: ['blur', 'input'],
-    message: '请输入 通知内容'
-  },
-  use_exam_paper: {
-    required: true,
-    trigger: ['blur', 'change'],
-    message: '请选择 使用试卷'
-  },
-  classes_id: {
-    type: 'array',
-    required: true,
-    trigger: ['blur', 'change'],
-    message: '请选择 使用班级'
-  },
-  begin_time: {
-    type: 'number',
-    required: true,
-    trigger: ['blur', 'change'],
-    message: '请输入 开始时间'
-  },
-  end_time: {
-    type: 'number',
-    required: true,
-    trigger: ['blur', 'change'],
-    message: '请输入 结束时间'
-  },
-}
-const model = ref({
-  name: null,
-  desc: null,
-  begin_time: null,
-  end_time: null,
-  exam_paper_id: null,
-  classes_ids: null,
-})
-
-const formRef = ref<FormInst | null>(null)
-</script>

@@ -1,22 +1,3 @@
-<template>
-  <v-chart class="chart" :option="option"/>
-  <n-card>
-    <n-grid cols="2">
-      <n-gi>
-        <n-h3 v-if="scoreMax">最高分：{{ scoreMax.user_name }} - {{ scoreMax.score }}分</n-h3>
-        <n-h3 v-if="scoreMin">最低分：{{ scoreMin.user_name }} - {{ scoreMin.score }}分</n-h3>
-      </n-gi>
-      <n-gi>
-        <n-h3>平均分：{{ scoreAvg }}</n-h3>
-        <n-h3>标准差：{{ scoreSD }}</n-h3>
-      </n-gi>
-    </n-grid>
-    <n-space vertical :size="12">
-      <n-data-table ref="table" :columns="columns" :data="data"/>
-    </n-space>
-  </n-card>
-</template>
-
 <script setup lang="ts">
 import {use} from "echarts/core";
 import {CanvasRenderer} from "echarts/renderers";
@@ -41,12 +22,25 @@ import {get} from "lodash";
 import _ from "lodash";
 import {getScoreSD} from "@/utils/tools";
 
-const recordData = ref<any>([])
+use([
+  TitleComponent,
+  ToolboxComponent,
+  TooltipComponent,
+  GridComponent,
+  LegendComponent,
+  MarkLineComponent,
+  MarkPointComponent,
+  LineChart,
+  CanvasRenderer,
+  UniversalTransition,
+]);
 
+const recordData = ref<any>([])
 const data = ref<any[]>([]);
 const columns = ref<DataTableColumns>([]);
 const route = useRoute();
 const allScore = ref<any>([]);
+
 watchEffect(() => {
   allScore.value = unref(recordData).map((item) => item.score);
 });
@@ -55,7 +49,6 @@ function getDataList(groupData: { number: Array<any> }, totalStu: number) {
   let dataList: Record<any, number>[] = [];
   Object.entries(groupData).map((item) => {
     const scoreNum = item[1].length;
-    console.log('s', scoreNum, totalStu)
     const freq = scoreNum / totalStu;
     dataList.push({
       scoreRange: +item[0],
@@ -66,7 +59,6 @@ function getDataList(groupData: { number: Array<any> }, totalStu: number) {
   return dataList;
 }
 
-
 async function init() {
   const room_id = Number(route.query.room_id);
   const classes_id = Number(route.query.classes_id);
@@ -74,7 +66,6 @@ async function init() {
       room_id,
       classes_id
   );
-
   recordData.value = examRecordListResult.data.map((item) => {
     return {
       id: item.id,
@@ -82,13 +73,13 @@ async function init() {
       score: item.score,
     };
   });
-  const groupData = _(unref(recordData))
+  const recordList = unref(recordData)
+  const groupData = _(recordList)
       .groupBy((item) => item.score)
       .value() as { number: Array<any> };
+  const totalStu = recordList.length;
 
-  const totalStu = unref(recordData).length;
-  data.value = getDataList(unref(groupData), totalStu);
-
+  data.value = getDataList(groupData, totalStu);
   columns.value = [
     {
       title: "分数段",
@@ -108,59 +99,21 @@ async function init() {
 }
 
 onMounted(init);
+
+// 分数统计以及绘制表格
 const tableRef = ref(null);
+const scoreGroup = computed(() => _(unref(allScore)).groupBy((item) => item).value());
 const scoreRange = computed(() => _(unref(scoreGroup)).keys().value());
-const scoreStuNum = computed(() =>
-    _(unref(scoreGroup))
-        .map((item) => item.length)
-        .value()
-);
-
-const scoreMax = computed(() => {
-  return _(unref(recordData)).maxBy('score');
-})
-
-
-const scoreMin = computed(() => {
-  return _(unref(recordData)).minBy('score');
-})
-
-const scoreAvg = computed(() => {
-  return _(unref(recordData)).meanBy('score');
-})
-
-const scoreSD = computed(() => {
-  return getScoreSD(allScore.value)
-})
-
-
-const table = tableRef;
-const otherScore = ref([]);
-
-const scoreGroup = computed(() =>
-    _(unref(otherScore))
-        .groupBy((item) => item)
-        .value()
-);
-onMounted(async () => {
-  const classesId = Number(route.query.classes_id)
-  const scoreResult = await ApiGetExamStatistic(classesId);
-  otherScore.value = scoreResult.data.other;
-  _(unref(scoreGroup)).keys().map(Number).value();
+const scoreStuNum = computed(() => {
+  console.log(unref(scoreGroup))
+  return _(unref(scoreGroup)).map((item) => item.length).value()
 });
+const scoreMax = computed(() => _(unref(recordData)).maxBy('score'))
+const scoreMin = computed(() => _(unref(recordData)).minBy('score'))
+const scoreAvg = computed(() => _(unref(recordData)).meanBy('score'))
+const scoreSD = computed(() => getScoreSD(allScore.value))
+const table = tableRef;
 
-use([
-  TitleComponent,
-  ToolboxComponent,
-  TooltipComponent,
-  GridComponent,
-  LegendComponent,
-  MarkLineComponent,
-  MarkPointComponent,
-  LineChart,
-  CanvasRenderer,
-  UniversalTransition,
-]);
 const option = ref({
   title: {
     text: "分数统计",
@@ -197,11 +150,6 @@ const option = ref({
       name: "人数",
       type: "line",
       data: scoreStuNum,
-      markPoint: {
-        // aAxis index
-        // yAxis value
-        data: [{name: "周最低", value: 2, xAxis: 2, yAxis: 2}],
-      },
       markLine: {
         data: [
           {type: "average", name: "Avg"},
@@ -215,7 +163,7 @@ const option = ref({
               symbol: "circle",
               label: {
                 position: "start",
-                formatter: "Max",
+                formatter: "最高分",
               },
               type: "max",
               name: "最高点",
@@ -228,4 +176,21 @@ const option = ref({
 });
 </script>
 
-<style scoped></style>
+<template>
+  <v-chart class="chart" :option="option"/>
+  <n-card>
+    <n-grid cols="2">
+      <n-gi>
+        <n-h3 v-if="scoreMax">最高分：{{ scoreMax.user_name }} - {{ scoreMax.score }}分</n-h3>
+        <n-h3 v-if="scoreMin">最低分：{{ scoreMin.user_name }} - {{ scoreMin.score }}分</n-h3>
+      </n-gi>
+      <n-gi>
+        <n-h3>平均分：{{ scoreAvg }}</n-h3>
+        <n-h3>标准差：{{ scoreSD }}</n-h3>
+      </n-gi>
+    </n-grid>
+    <n-space vertical :size="12">
+      <n-data-table ref="table" :columns="columns" :data="data"/>
+    </n-space>
+  </n-card>
+</template>

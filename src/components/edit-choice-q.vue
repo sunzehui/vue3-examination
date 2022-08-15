@@ -1,3 +1,67 @@
+<script lang="ts" setup>
+import {ApiCreateQuestion} from "@/apis/question";
+import {QType} from "@/types/api-exam-paper";
+import {TipsOne} from "@icon-park/vue-next";
+import {head, isEmpty,} from "lodash";
+import {ElMessage} from "element-plus";
+import {toReactive} from "@vueuse/core";
+
+const emit = defineEmits(['save'])
+const props = defineProps<{
+  selectPaper: String
+  uid: String
+}>()
+const state = reactive({
+  content: "",
+  resolution: '',
+  customValue: []
+})
+const handleChoiceCreate = () => {
+  return {
+    is_answer: false,
+    content: '',
+    score: 0
+  }
+}
+
+const validate = () => {
+  const {content, customValue} = state;
+  if (isEmpty(content)) {
+    ElMessage.error("请输入内容")
+    return false;
+  } else if (customValue.length < 2) {
+    ElMessage.error("最少输入两个选项")
+    return false
+  }
+  return true;
+}
+const buildQuestion = () => {
+  const {resolution, customValue, content} = state;
+  return {
+    type: QType.choice,
+    resolution: resolution,
+    content: content,
+    answer: customValue
+  }
+}
+const saveChoiceQ = async () => {
+  const Q = buildQuestion();
+  const isValid = validate();
+  if (!isValid) {
+    throw new Error()
+  }
+  const createResult = await ApiCreateQuestion(Q);
+  const headQ = head(createResult.data)
+  if (!headQ) {
+    throw new Error()
+  }
+  const qId = headQ.id
+  emit('save', {qId, uid: props.uid})
+  return createResult.data;
+}
+const {resolution, content, customValue} = toReactive(state)
+</script>
+
 <template>
   <n-card title="选择题">
     <n-space vertical>
@@ -42,68 +106,3 @@
   </n-card>
 </template>
 
-<script lang="ts" setup>
-import {ApiCreateQuestion} from "@/apis/question";
-import {QType} from "@/types/api-exam-paper";
-import {TipsOne} from "@icon-park/vue-next";
-import {head, isEmpty,} from "lodash";
-import {ElMessage} from "element-plus";
-
-const emit = defineEmits(['save'])
-const props = defineProps<{
-  selectPaper: String
-  uid: String
-}>()
-const content = ref('')
-const resolution = ref('')
-const handleChoiceCreate = () => {
-  return {
-    is_answer: false,
-    content: '',
-    score: 0
-  }
-}
-
-const customValue = ref([])
-const validate = () => {
-  if (isEmpty(unref(content))) {
-    ElMessage.error("请输入内容")
-    return false;
-  } else if (unref(customValue).length < 2) {
-    ElMessage.error("最少输入两个选项")
-    return false
-  }
-  return true;
-}
-const buildQuestion = () => {
-  return {
-    type: QType.choice,
-    resolution: unref(resolution),
-    content: unref(content),
-    answer: unref(customValue)
-  }
-}
-const saveChoiceQ = async () => {
-
-  const Q = buildQuestion();
-  const isValid = validate();
-  if (!isValid) {
-    throw new Error()
-  }
-  const createResult = await ApiCreateQuestion(Q);
-  const headQ = head(createResult.data)
-  if (!headQ) {
-    throw new Error()
-  }
-
-  const qId = headQ.id
-  emit('save', {qId, uid: props.uid})
-
-  return createResult.data;
-}
-
-</script>
-
-<style scoped>
-
-</style>

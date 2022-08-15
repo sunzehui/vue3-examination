@@ -1,5 +1,5 @@
 import {http} from "@/plugins/axios";
-import {Resp} from "@/plugins/axios/Axios";
+import {Resp} from '@/types/api'
 import {ClassesResult} from "@/types/api-classes";
 
 type ApiResult<T> = Promise<Resp<T>>

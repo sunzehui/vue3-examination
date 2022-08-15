@@ -1,7 +1,7 @@
 import {FillBlank, QType} from "@/types/api-exam-paper";
 
 export interface CreateQuestion {
-    type: QType.choice,
+    type: QType,
     resolution: string,
     content: string,
     answer: (Choice | FillBlank)[]

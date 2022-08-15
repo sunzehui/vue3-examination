@@ -34,7 +34,6 @@
     "mockjs": "^1.1.0",
     "pinia": "^2.0.14",
     "prismjs": "^1.28.0",
-    "rangeblock": "^1.2.0",
     "rollup": ">=2.50.0 <3.0.0",
     "socket.io-client": "^4.5.1",
     "type-fest": "^2.16.0",
