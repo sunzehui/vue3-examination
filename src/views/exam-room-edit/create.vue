@@ -127,7 +127,7 @@ onMounted(init);
         <n-gi :span="24">
           <div style="display: flex; justify-content: flex-end">
             <n-button round type="primary" @click="submitExamRoom">
-              验证
+              保存
             </n-button>
           </div>
         </n-gi>

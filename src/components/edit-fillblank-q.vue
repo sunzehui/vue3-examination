@@ -70,7 +70,6 @@ const saveFBQ = async () => {
   return createResult.data;
 }
 
-const {content, score, resolution, dInputValue} = toReactive(state)
 </script>
 
 
@@ -85,18 +84,18 @@ const {content, score, resolution, dInputValue} = toReactive(state)
         </template>
         <span>在此输入问题题干,在分割线下填写答案</span>
       </n-alert>
-      <n-input type="textarea" v-model:value="content"/>
+      <n-input type="textarea" v-model:value="state.content"/>
       <n-space justify="start" class="items-center">
         <span>分值：</span>
         <n-input-number
-            v-model:value="score"
+            v-model:value="state.score"
             style="margin-right: 12px; width: 160px"
         />
       </n-space>
       <n-divider/>
 
       <n-dynamic-input
-          v-model:value="dInputValue"
+          v-model:value="state.dInputValue"
           show-sort-button
           placeholder="请输入"
           :on-create="createDInputValue"
@@ -112,10 +111,9 @@ const {content, score, resolution, dInputValue} = toReactive(state)
           </div>
         </template>
       </n-dynamic-input>
-      <pre>{{ JSON.stringify(dInputValue, null, 2) }}</pre>
 
       <n-input
-          v-model:value="resolution"
+          v-model:value="state.resolution"
           type="textarea"
           placeholder="题目解析"
       />

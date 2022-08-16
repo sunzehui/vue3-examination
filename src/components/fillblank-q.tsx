@@ -28,20 +28,18 @@ export default defineComponent({
         }
 
         return () => (
-            <NSpace vertical class="text-lg flex flex-col gap-2 ">
+            <NSpace vertical class="text-lg flex flex-col gap-2">
                 <span>{unref(Q).content}</span>
                 {
                     blankPos.map(
                         (item, idx) =>
-                            <>
-                                <NFormItem>
-                                    <sapn>第{Number(item.pos) + 1}空：</sapn>
-                                    <NInput placeholder={item.content ?? ""}
-                                            value={examStore.thisBlankContent(+route.params.rid, unref(Q).id, item.id)}
-                                            onInput={(input) => handleBlankInput(omit(item, 'content'), input)}
-                                            style={{width: '300px'}}/>
-                                </NFormItem>
-                            </>
+                            <NSpace>
+                                <sapn>第{Number(item.pos) + 1}空：</sapn>
+                                <NInput placeholder={item.content ?? ""}
+                                        value={examStore.thisBlankContent(+route.params.rid, unref(Q).id, item.id)}
+                                        onInput={(input) => handleBlankInput(omit(item, 'content'), input)}
+                                        style={{width: '300px'}}/>
+                            </NSpace>
                     )
                 }
                 {slots.default?.()}

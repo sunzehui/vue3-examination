@@ -49,7 +49,7 @@ const activeKey = computed(() => route.name || 'exam-panel')
           />
         </n-layout-sider>
         <n-layout>
-          <n-layout-header :inverted="inverted" bordered class="main-header">
+          <n-layout-header :inverted="inverted" bordered class="main-header shadow-lg">
             <h1>在线考试系统-{{ clientType }}</h1>
             <div class="right-bar">
               <span class="notify">

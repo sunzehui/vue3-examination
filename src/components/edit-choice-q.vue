@@ -59,7 +59,6 @@ const saveChoiceQ = async () => {
   emit('save', {qId, uid: props.uid})
   return createResult.data;
 }
-const {resolution, content, customValue} = toReactive(state)
 </script>
 
 <template>
@@ -73,10 +72,10 @@ const {resolution, content, customValue} = toReactive(state)
         </template>
         下方输入题目，点击 + 添加选项，按照 [ 是否答案、 分值、 选项内容 ] 添加
       </n-alert>
-      <n-input type="textarea" v-model:value="content"
+      <n-input type="textarea" v-model:value="state.content"
                ref="contentInputRef"
       />
-      <n-dynamic-input :max="10" :min="2" v-model:value="customValue" :on-create="handleChoiceCreate">
+      <n-dynamic-input :max="10" :min="2" v-model:value="state.customValue" :on-create="handleChoiceCreate">
         <template #create-button-default>
           添加选项
         </template>

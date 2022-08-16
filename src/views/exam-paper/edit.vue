@@ -8,7 +8,6 @@ import FillBlankQ from "@/components/fillblank-q";
 import {FormInst, NLayoutContent} from "naive-ui";
 import {v4 as uuid} from 'uuid';
 import {ApiAddQuestion2Paper, ApiGetExamPaper, ApiRemoveQuestion2Paper} from "@/apis/exam-paper";
-import {Component} from "vue";
 
 interface QListComponent {
   uid: string,
@@ -112,9 +111,6 @@ const removeQ = (qId: number) => {
                 :key="Q.id"
             >
 
-              <n-space vertical class="self-start">
-                <n-h3>选择题：</n-h3>
-              </n-space>
               <ChoiceQ :q="Q">
                 <span>解析：{{ Q.resolution }}</span>
                 <n-button @click="removeQ(Q.id)">
@@ -130,10 +126,6 @@ const removeQ = (qId: number) => {
                 v-for="Q in fillBlankQ"
                 :key="Q.id"
             >
-              <n-space vertical class="self-start">
-                <n-h3>填空题：</n-h3>
-              </n-space>
-
               <FillBlankQ :q="Q">
                 <span>解析：{{ Q.resolution }}</span>
                 <n-button @click="removeQ(Q.id)">
