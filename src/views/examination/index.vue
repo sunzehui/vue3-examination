@@ -1,24 +1,3 @@
-<template>
-  <n-card v-if="!examStore.isQListEmpty">
-    <n-space style="height: 600px">
-      <router-view/>
-    </n-space>
-    <n-space justify="end">
-      <n-button v-show="isEnd" type="warning" @click="submitPaper">检查无误，提交</n-button>
-      <n-button :disabled="isStart" type="primary" @click="goNextQ(-1)">上一题</n-button>
-      <n-button :disabled="isEnd" type="primary" @click="goNextQ(1)">下一题</n-button>
-    </n-space>
-  </n-card>
-
-  <n-empty class="mt-20" description="老师未添加题目" v-if="examStore.isQListEmpty">
-    <template #extra>
-      <n-button size="small" @click="$router.push({name:'exam-panel'})">
-        返回面板
-      </n-button>
-    </template>
-  </n-empty>
-</template>
-
 <script setup lang="ts">
 import {useExamStore} from "@/store/exam";
 import {get, isNil,} from "lodash";
@@ -111,7 +90,24 @@ const submitPaper = async () => {
 }
 
 </script>
+<template>
+  <n-card v-if="!examStore.isQListEmpty">
+    <n-space style="height: calc(100vh - 240px)">
+      <router-view/>
+    </n-space>
+    <n-space justify="end">
+      <n-button v-show="isEnd" type="warning" @click="submitPaper">检查无误，提交</n-button>
+      <n-button :disabled="isStart" type="primary" @click="goNextQ(-1)">上一题</n-button>
+      <n-button :disabled="isEnd" type="primary" @click="goNextQ(1)">下一题</n-button>
+    </n-space>
+  </n-card>
 
-<style scoped>
+  <n-empty class="mt-20" description="老师未添加题目" v-if="examStore.isQListEmpty">
+    <template #extra>
+      <n-button size="small" @click="$router.push({name:'exam-panel'})">
+        返回面板
+      </n-button>
+    </template>
+  </n-empty>
+</template>
 
-</style>

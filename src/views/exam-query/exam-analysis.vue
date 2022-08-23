@@ -47,11 +47,12 @@ watchEffect(() => {
 
 function getDataList(groupData: { number: Array<any> }, totalStu: number) {
   let dataList: Record<any, number>[] = [];
+  console.log({groupData})
   Object.entries(groupData).map((item) => {
     const scoreNum = item[1].length;
     const freq = scoreNum / totalStu;
     dataList.push({
-      scoreRange: +item[0],
+      scoreRange: item[0],
       scoreNum,
       freq,
     });
@@ -75,8 +76,8 @@ async function init() {
   });
   const recordList = unref(recordData)
   const groupData = _(recordList)
-      .groupBy((item) => item.score)
-      .value() as { number: Array<any> };
+      .groupBy((item) => parseInt('' + (item.score) / 10, 10) + '0')
+      .value();
   const totalStu = recordList.length;
 
   data.value = getDataList(groupData, totalStu);
@@ -102,16 +103,17 @@ onMounted(init);
 
 // 分数统计以及绘制表格
 const tableRef = ref(null);
-const scoreGroup = computed(() => _(unref(allScore)).groupBy((item) => item).value());
+const scoreGroup = computed(() => _(unref(allScore)).groupBy((item) => {
+  return parseInt('' + (item) / 10, 10) + '0'
+}).value());
 const scoreRange = computed(() => _(unref(scoreGroup)).keys().value());
 const scoreStuNum = computed(() => {
-  console.log(unref(scoreGroup))
   return _(unref(scoreGroup)).map((item) => item.length).value()
 });
 const scoreMax = computed(() => _(unref(recordData)).maxBy('score'))
 const scoreMin = computed(() => _(unref(recordData)).minBy('score'))
 const scoreAvg = computed(() => _(unref(recordData)).meanBy('score'))
-const scoreSD = computed(() => getScoreSD(allScore.value))
+const scoreSD = computed(() => getScoreSD(allScore.value).toFixed(2))
 const table = tableRef;
 
 const option = ref({
@@ -150,27 +152,6 @@ const option = ref({
       name: "人数",
       type: "line",
       data: scoreStuNum,
-      markLine: {
-        data: [
-          {type: "average", name: "Avg"},
-          [
-            {
-              symbol: "none",
-              x: "90%",
-              yAxis: "max",
-            },
-            {
-              symbol: "circle",
-              label: {
-                position: "start",
-                formatter: "最高分",
-              },
-              type: "max",
-              name: "最高点",
-            },
-          ],
-        ],
-      },
     },
   ],
 });
@@ -181,8 +162,8 @@ const option = ref({
   <n-card>
     <n-grid cols="2">
       <n-gi>
-        <n-h3 v-if="scoreMax">最高分：{{ scoreMax.user_name }} - {{ scoreMax.score }}分</n-h3>
-        <n-h3 v-if="scoreMin">最低分：{{ scoreMin.user_name }} - {{ scoreMin.score }}分</n-h3>
+        <n-h3 v-if="scoreMax">最高分：{{ scoreMax.user_name }} {{ scoreMax.score }}分</n-h3>
+        <n-h3 v-if="scoreMin">最低分：{{ scoreMin.user_name }} {{ scoreMin.score }}分</n-h3>
       </n-gi>
       <n-gi>
         <n-h3>平均分：{{ scoreAvg }}</n-h3>
