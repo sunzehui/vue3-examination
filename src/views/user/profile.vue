@@ -1,3 +1,58 @@
+<script setup lang="ts">
+import {
+  OfficeBuilding,
+  Tickets,
+  Present,
+  User as IconUser,
+  Key
+} from '@element-plus/icons-vue'
+import {UserProfile} from "@/types/api-user";
+import {Role} from "@/types/api-user";
+import {getLocalTimeFormat} from "@/utils/tools";
+import {get, isEmpty} from "lodash";
+import {useUserStore} from "@/store/user";
+
+const userStore = useUserStore()
+userStore.getUserProfile()
+const user = ref<Partial<UserProfile>>({})
+const join_classesOpt = ref<any>([])
+const create_classesOpt = ref<any>([])
+
+onMounted(async () => {
+  const userData = userStore.userProfile;
+  user.value = userData
+  if (!(userData.join_classes && userData.created_classes)) {
+    return;
+  }
+  // mapping description list
+  join_classesOpt.value = userData.join_classes.map(item => ({
+    label: item.name,
+    value: item.id
+  }))
+  create_classesOpt.value = userData.created_classes.map(item => ({
+    label: item.name,
+    value: item.id
+  }))
+})
+
+// upload avatar
+const fileInputRef = ref(null)
+const uploadAvatar = async () => {
+  if (fileInputRef.value === null) {
+    await nextTick()
+  }
+  const fileChoice = unref(fileInputRef)
+  if (fileChoice === null) return;
+  const file = get(fileChoice, 'files[0]', null) as (File | null);
+  if (file === null) return;
+  await userStore.uploadAvatar(file, file.name)
+}
+
+const logout = async () => {
+  await userStore.logout()
+}
+</script>
+
 <template>
   <n-card title="个人信息">
     <div class="w-full grid grid-cols-2 gap-x-10">
@@ -114,57 +169,6 @@
 
   </n-card>
 </template>
-
-<script setup lang="ts">
-import {
-  OfficeBuilding,
-  Tickets,
-  Present,
-  User as IconUser,
-  Key
-} from '@element-plus/icons-vue'
-import {UserProfile} from "@/types/api-user";
-import {Role} from "@/types/api-user";
-import {getLocalTimeFormat} from "@/utils/tools";
-import {get} from "lodash";
-import {useUserStore} from "@/store/user";
-
-const userStore = useUserStore()
-const user = ref<UserProfile>()
-const join_classesOpt = ref<any>([])
-const create_classesOpt = ref<any>([])
-
-onMounted(async () => {
-  const userData = userStore.userProfile;
-  user.value = userData
-  // mapping description list
-  join_classesOpt.value = userData.join_classes.map(item => ({
-    label: item.name,
-    value: item.id
-  }))
-  create_classesOpt.value = userData.created_classes.map(item => ({
-    label: item.name,
-    value: item.id
-  }))
-})
-
-// upload avatar
-const fileInputRef = ref(null)
-const uploadAvatar = async () => {
-  if (fileInputRef.value === null) {
-    await nextTick()
-  }
-  const fileChoice = unref(fileInputRef)
-  if (fileChoice === null) return;
-  const file = get(fileChoice, 'files[0]', null) as (File | null);
-  if (file === null) return;
-  await userStore.uploadAvatar(file, file.name)
-}
-
-const logout = async () => {
-  await userStore.logout()
-}
-</script>
 
 <style scoped lang="scss">
 .mask {

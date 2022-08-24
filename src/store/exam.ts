@@ -160,22 +160,26 @@ export const useExamStore = defineStore('exam', {
                 const recordQById = keyBy(get(state, ['userAnswer', rid]), 'qId');
                 return allQ.map((q, idx) => {
                     let status = QStatus.none;
-                    const useAnswerCount = get(recordQById[q.id], 'answer.length')
-                    // 如果题目作答记录不存在，立即返回none
-                    if (!useAnswerCount) {
+                    const userAnswerCount = get(recordQById[q.id], 'answer.length')
+                    if (!userAnswerCount) {
+                        // 如果题目作答记录不存在，立即返回none
                         return {
                             ...q, status, idx
+                        }
+                    } else if (userAnswerCount < q.answer.length && q.type === QType.fill_blank) {
+                        // 作答数量小于总数，填空题状态未做完
+                        return {
+                            ...q, status: QStatus.half, idx
                         }
                     }
 
                     if (q.type === QType.choice) {
                         // 选择题只需要选中一个即为已作答
-                        status = useAnswerCount > 0 ? QStatus.complete : QStatus.none
+                        status = userAnswerCount > 0 ? QStatus.complete : QStatus.none
                     } else if (q.type === QType.fill_blank) {
-                        const answer = recordQById[q.id].answer as FillBlankRecord['answer']
+                        const answer = unref(recordQById[q.id].answer as FillBlankRecord['answer'])
                         const everyAnswerFill = answer.every(a => a.content !== '')
                         const someAnswerFill = answer.some(a => a.content !== '')
-
                         if (everyAnswerFill) {
                             // 填空题已作答的条件是：所有空位已填充答案
                             status = QStatus.complete

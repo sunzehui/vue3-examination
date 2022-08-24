@@ -9,15 +9,19 @@ import router from '@/router/register'
 export const useUserStore = defineStore("user", {
     state: () => {
         return {
-            user: useLocalStorage('user', {} as Partial<LoginResult>),
+            user: useLocalStorage('user', {} as LoginResult | {}),
             userProfile: useLocalStorage("userProfile", {} as Partial<UserProfile>)
         }
     },
     actions: {
-        setUser(user: LoginResult) {
-            this.user.userInfo = user.userInfo;
-            this.user.token = user.token;
-            this.user.token.expires = now() + user.token.expires * 1000;
+        setUser(_user: LoginResult) {
+            this.user = {
+                userInfo: _user.userInfo,
+                token: {..._user.token, expires: now() + _user.token.expires * 1000},
+            };
+            // this.user.userInfo = user.userInfo;
+            // this.user.token = user.token;
+            // this.user.token.expires = now() + user.token.expires * 1000;
         },
         async getUserProfile() {
             const result = await ApiGetUserProfile()
