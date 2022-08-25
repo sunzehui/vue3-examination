@@ -4,10 +4,8 @@ import {
     Aiming,
     EmotionHappy,
     EveryUser,
-    FileFailed,
     Home,
     UserPositioning,
-    WritingFluently,
 } from "@icon-park/vue-next";
 import {h} from "vue";
 import {renderIcon} from "@/utils/tools";

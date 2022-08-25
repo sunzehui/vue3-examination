@@ -2,7 +2,7 @@ import axios, {AxiosError, AxiosRequestConfig} from "axios";
 import errorStore from "@/store/errorStore";
 import {ElLoading, ElMessage} from "element-plus";
 import {useLocalStorage} from "@vueuse/core";
-import {get} from "lodash";
+import {get} from "lodash-es";
 
 import {Resp} from '@/types/api'
 

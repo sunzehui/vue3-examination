@@ -3,7 +3,7 @@ import {DataTableColumn, NButton} from 'naive-ui'
 import {ApiFindClassesList, ApiJoinClass} from "@/apis/classes";
 import ClassesAction from "@/components/classes-action";
 import {ClassesResult} from "@/types/api-classes";
-import {get, isEmpty} from "lodash";
+import {get, isEmpty} from "lodash-es";
 
 
 // 列表搜索

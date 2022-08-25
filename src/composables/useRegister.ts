@@ -3,7 +3,7 @@ import {ElMessage} from "element-plus";
 import {ApiGetClassesListToRegister, ApiLogin, ApiRegister} from "@/apis/user";
 import {useUserStore} from "@/store/user";
 import {useRouter} from "vue-router";
-import {isEmpty, isNil} from "lodash";
+import {isEmpty, isNil} from "lodash-es";
 import {Role} from "@/types/api-user";
 
 interface classesState {

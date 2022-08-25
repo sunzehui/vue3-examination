@@ -14,7 +14,7 @@ import {ApiGetExamPaper} from "@/apis/exam-paper";
 import {renderIcon} from "@/utils/tools";
 import {NewspaperFolding} from "@icon-park/vue-next";
 import {ExamPaper} from "@/types/api-exam-paper";
-import {head} from "lodash";
+import {head} from "lodash-es";
 
 const emit = defineEmits(['update:value'])
 

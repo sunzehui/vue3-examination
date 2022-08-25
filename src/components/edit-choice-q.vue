@@ -2,9 +2,8 @@
 import {ApiCreateQuestion} from "@/apis/question";
 import {QType} from "@/types/api-exam-paper";
 import {TipsOne} from "@icon-park/vue-next";
-import {head, isEmpty,} from "lodash";
+import {head, isEmpty,} from "lodash-es";
 import {ElMessage} from "element-plus";
-import {toReactive} from "@vueuse/core";
 
 const emit = defineEmits(['save'])
 const props = defineProps<{

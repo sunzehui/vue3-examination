@@ -5,7 +5,7 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import {TagStatus} from "@/enum/tag-status";
 import {FillBlank, QType, Question} from "@/types/api-exam-paper";
-import {head, last, mean} from "lodash";
+import {head, last, mean} from 'lodash-es';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

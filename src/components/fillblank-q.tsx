@@ -2,7 +2,7 @@ import {defineComponent, PropType} from "vue";
 import {NFormItem, NInput, NSpace} from "naive-ui";
 import {FillBlank, Question} from "@/types/api-exam-paper";
 import {useExamStore} from "@/store/exam";
-import {omit} from "lodash";
+import {omit} from "lodash-es";
 
 export default defineComponent({
     name: "FillBlankQ",

@@ -9,7 +9,7 @@ import FillBlankQ from "@/components/fillblank-q";
 import {ApiGetQuestion} from "@/apis/question";
 import {QType, Question} from "@/types/api-exam-paper";
 import {useExamStore} from "@/store/exam";
-import {get, isEmpty, isNil} from "lodash";
+import {get, isEmpty, isNil} from "lodash-es";
 
 const route = useRoute()
 const Q = ref<Question | null>(null)

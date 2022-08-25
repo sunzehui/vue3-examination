@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import {ref} from "vue";
 import {useClassesStore} from "@/store/classes";
-import {get, head, isEmpty, isNil} from "lodash";
+import {get, head, isEmpty, isNil} from "lodash-es";
 import {ClassesResult, nameOption} from "@/types/api-classes";
 import {ElMessage} from "element-plus";
 import {getIdFromKey} from "@/utils/tools";

@@ -31,7 +31,7 @@
 import {ExamRoom} from "@/types/api-exam-room";
 import {getLocalTimeUnix, getTagStatus} from "@/utils/tools";
 import {Role} from '@/types/api-user'
-import {isNil} from "lodash";
+import {isNil} from "lodash-es";
 import {TagStatus} from "@/enum/tag-status";
 import {useDialog} from "naive-ui";
 

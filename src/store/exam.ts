@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import {ApiGetExamDetail} from "@/apis/exam-room";
 import {ApiGetExamPaper, ApiSubmitPaper} from "@/apis/exam-paper";
-import {cloneDeep, filter, get, isEmpty, isNil, keyBy, map, sortBy} from "lodash";
+import {cloneDeep, filter, get, isEmpty, isNil, keyBy, map, sortBy} from "lodash-es";
 import {ExamineesPaperDto, ExamPaper, FillBlank, QStatus, QType, Question} from "@/types/api-exam-paper";
 import {AnswerRecord, ChoiceRecord, ExamRoom, FillBlankRecord, RIdKeyAnswerRecord} from "@/types/api-exam-room";
 import {useUserStore} from "@/store/user";

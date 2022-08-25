@@ -1,14 +1,15 @@
 <script lang="ts" setup>
 import ClassesSelect from "@/components/classes-select.vue";
-import { ApiGetExamRoom } from "@/apis/exam-room";
-import { ExamRoom } from "@/types/api-exam-room";
-import { useRouter } from "vue-router";
-import { Role } from "@/types/api-user";
-import { useSocket } from "@/composables/useSocket";
-import { Resp } from "@/types/api";
-import { useRequest } from "vue-request";
-import { last } from "lodash";
-const { socket } = useSocket();
+import {ApiGetExamRoom} from "@/apis/exam-room";
+import {ExamRoom} from "@/types/api-exam-room";
+import {useRouter} from "vue-router";
+import {Role} from "@/types/api-user";
+import {useSocket} from "@/composables/useSocket";
+import {Resp} from "@/types/api";
+import {useRequest} from "vue-request";
+import {last} from "lodash-es";
+
+const {socket} = useSocket();
 
 const interval = setInterval(() => {
   socket.emit("findAllExamClock", (examRoomResult: Resp<ExamRoom[]>) => {
@@ -21,7 +22,7 @@ onUnmounted(() => {
 
 const go2CreateExam = () => {
   const router = useRouter();
-  router.push({ name: "exam-create" });
+  router.push({name: "exam-create"});
 };
 const getExamRoomService = async () => {
   const result = await ApiGetExamRoom(unref(classesId));
@@ -30,7 +31,7 @@ const getExamRoomService = async () => {
 };
 
 const classesId = ref<undefined | number>();
-const { data: examList, mutate } = useRequest(getExamRoomService, {
+const {data: examList, mutate} = useRequest(getExamRoomService, {
   cacheKey: "examRoomList",
   cacheTime: 300000, // 5 minutes
   refreshDeps: [classesId],
@@ -42,11 +43,11 @@ const handleSelectClasses = async (val: string) => {
 
 <template>
   <n-scrollbar>
-    <ClassesSelect @selectUpdate="handleSelectClasses" />
+    <ClassesSelect @selectUpdate="handleSelectClasses"/>
     <n-button @click="go2CreateExam" v-role="Role.teacher">创建考试</n-button>
     <div class="card-container">
       <template v-for="exam in examList" :key="exam.id">
-        <ExamCard :exam="exam" />
+        <ExamCard :exam="exam"/>
       </template>
     </div>
   </n-scrollbar>

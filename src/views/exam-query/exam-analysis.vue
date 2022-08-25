@@ -15,11 +15,9 @@ import VChart from "vue-echarts";
 import {UniversalTransition} from "echarts/features";
 import {
   ApiGetClassesExamRecord,
-  ApiGetExamStatistic,
 } from "@/apis/exam-record";
 import {DataTableColumns} from "naive-ui";
-import {get} from "lodash";
-import _ from "lodash";
+import {get, groupBy, keys, maxBy, meanBy, minBy} from "lodash-es";
 import {getScoreSD} from "@/utils/tools";
 
 use([
@@ -103,16 +101,16 @@ onMounted(init);
 
 // 分数统计以及绘制表格
 const tableRef = ref(null);
-const scoreGroup = computed(() => _(unref(allScore)).groupBy((item) => {
+const scoreGroup = computed(() => groupBy((unref(allScore)), (item) => {
   return parseInt('' + (item) / 10, 10) + '0'
-}).value());
-const scoreRange = computed(() => _(unref(scoreGroup)).keys().value());
+}))
+const scoreRange = computed(() => keys((unref(scoreGroup))));
 const scoreStuNum = computed(() => {
-  return _(unref(scoreGroup)).map((item) => item.length).value()
+  return (unref(scoreGroup)).map((item) => item.length)
 });
-const scoreMax = computed(() => _(unref(recordData)).maxBy('score'))
-const scoreMin = computed(() => _(unref(recordData)).minBy('score'))
-const scoreAvg = computed(() => _(unref(recordData)).meanBy('score'))
+const scoreMax = computed(() => maxBy((unref(recordData)), 'score'))
+const scoreMin = computed(() => minBy((unref(recordData)), 'score'))
+const scoreAvg = computed(() => meanBy((unref(recordData)), 'score'))
 const scoreSD = computed(() => getScoreSD(allScore.value).toFixed(2))
 const table = tableRef;
 

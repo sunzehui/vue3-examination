@@ -3,10 +3,10 @@ import {
   ApiGetClassesExamRecord,
 } from "@/apis/exam-record";
 import {DataTableColumns, NButton} from "naive-ui";
-import {get, toNumber} from "lodash";
+import {get, toNumber} from "lodash-es";
 import dayjs from "dayjs";
 import {getLocalTimeFormat} from "@/utils/tools";
-import _ from "lodash";
+import {mean} from "lodash-es";
 import {getScoreSD} from "@/utils/tools";
 
 const data = ref<any[]>([]);
@@ -27,7 +27,7 @@ const scoreSD = computed(() => {
 });
 
 const scoreAvg = computed(() => {
-  return _.mean(unref(allScore));
+  return mean(unref(allScore));
 });
 
 async function init() {

@@ -2,7 +2,7 @@ import {ref} from "vue";
 import {useUserStore} from "@/store/user";
 import {useRouter} from "vue-router";
 import {ApiLogin} from "@/apis/user";
-import {isEmpty} from "lodash"
+import {isEmpty} from "lodash-es"
 
 export default function () {
     const username = ref("");

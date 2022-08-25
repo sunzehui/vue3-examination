@@ -9,7 +9,7 @@ import {
 import {UserProfile} from "@/types/api-user";
 import {Role} from "@/types/api-user";
 import {getLocalTimeFormat} from "@/utils/tools";
-import {get, isEmpty} from "lodash";
+import {get, isEmpty} from "lodash-es";
 import {useUserStore} from "@/store/user";
 
 const userStore = useUserStore()

@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import {TipsOne} from "@icon-park/vue-next";
 import {ElMessage} from "element-plus";
-import {head, isEmpty} from "lodash";
+import {head, isEmpty} from "lodash-es";
 import {QType} from "@/types/api-exam-paper";
 import {ApiCreateQuestion} from "@/apis/question";
-import {toReactive} from "@vueuse/core";
 
 interface DInputType {
   content: string

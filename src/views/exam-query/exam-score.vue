@@ -14,7 +14,7 @@
 import {ApiGetExamRecord} from '@/apis/exam-record'
 import {DataTableColumns, NButton, NSpace} from "naive-ui";
 import {SanitizeExamRecord} from "@/types/api-record";
-import {get, map} from "lodash";
+import {get, map} from "lodash-es";
 import dayjs from "dayjs";
 import {getLocalTimeFormat} from "@/utils/tools";
 import {useUserStore} from "@/store/user";

@@ -1,6 +1,6 @@
 import {defineStore} from "pinia";
 import {useLocalStorage} from "@vueuse/core";
-import {get, isNil, now} from "lodash";
+import {get, isNil, now} from "lodash-es";
 import {LoginResult, UserProfile,} from "@/types/api-user";
 import {ApiGetUserProfile, ApiUploadAvatar} from "@/apis/user";
 import {getAvatarPath} from "@/utils/tools";

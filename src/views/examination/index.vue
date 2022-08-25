@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useExamStore} from "@/store/exam";
-import {get, isNil,} from "lodash";
+import {get, isNil,} from "lodash-es";
 import {useDialog} from "naive-ui";
 import {MaybeRef} from "@vueuse/core";
 
