@@ -3,8 +3,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite --port 8080",
-    "build-js": "vite build",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vite build",
+    "tsc": "vue-tsc --noEmit",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -41,6 +41,7 @@
     "vee-validate": "^4.5.11",
     "vue": "^3.2.37",
     "vue-echarts": "^6.2.3",
+    "vue-request": "2.0.0-rc.3",
     "vue-router": "^4.1.1",
     "ws": "^8.8.0",
     "yup": "^0.32.11"

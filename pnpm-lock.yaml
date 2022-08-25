@@ -39,7 +39,6 @@ specifiers:
   pinia: ^2.0.14
   postcss: ^8.4.14
   prismjs: ^1.28.0
-  rangeblock: ^1.2.0
   rollup: '>=2.50.0 <3.0.0'
   rollup-plugin-visualizer: ^5.6.0
   sass: ^1.53.0
@@ -55,6 +54,7 @@ specifiers:
   vite-plugin-mock: ^2.9.6
   vue: ^3.2.37
   vue-echarts: ^6.2.3
+  vue-request: 2.0.0-rc.3
   vue-router: ^4.1.1
   vue-tsc: ^0.38.2
   webpack: ^5.73.0
@@ -88,7 +88,6 @@ dependencies:
   mockjs: r2.cnpmjs.org/mockjs/1.1.0
   pinia: 2.0.14_j6bzmzd4ujpabbp5objtwxyjp4
   prismjs: 1.28.0
-  rangeblock: registry.npmmirror.com/rangeblock/1.2.0
   rollup: registry.npmmirror.com/rollup/2.75.7
   socket.io-client: registry.npmmirror.com/socket.io-client/4.5.1
   type-fest: 2.16.0
@@ -96,6 +95,7 @@ dependencies:
   vee-validate: 4.5.11_vue@3.2.37
   vue: 3.2.37
   vue-echarts: registry.npmmirror.com/vue-echarts/6.2.3_echarts@5.3.3+vue@3.2.37
+  vue-request: registry.npmmirror.com/vue-request/2.0.0-rc.3_vue@3.2.37
   vue-router: 4.1.1_vue@3.2.37
   ws: 8.8.0
   yup: r2.cnpmjs.org/yup/0.32.11
@@ -5987,7 +5987,7 @@ packages:
         optional: true
     dependencies:
       vue: 3.2.37
-      vue-demi: registry.npmmirror.com/vue-demi/0.13.2_vue@3.2.37
+      vue-demi: registry.npmmirror.com/vue-demi/0.13.8_vue@3.2.37
 
   registry.npmmirror.com/debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/debug/-/debug-2.6.9.tgz}
@@ -6285,12 +6285,6 @@ packages:
     dev: false
     optional: true
 
-  registry.npmmirror.com/logez/1.0.0:
-    resolution: {integrity: sha512-ec50mXR8E8Rw1r9VhFaNwezPaJxG9bIkLlvllhnI3JAvkLbibLNAnThaEWuXlL18AsMMcxEcPvWip0PJzfyFEA==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/logez/-/logez-1.0.0.tgz}
-    name: logez
-    version: 1.0.0
-    dev: false
-
   registry.npmmirror.com/magic-string/0.25.9:
     resolution: {integrity: sha512-RmF0AsMzgt25qzqqLc1+MbHmhdx0ojF2Fvs4XnOqz2ZOBXzzkEwc/dJQZCYHAn7v1jbVOjAZfK8msRn4BxO4VQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/magic-string/-/magic-string-0.25.9.tgz}
     name: magic-string
@@ -6329,14 +6323,6 @@ packages:
       nanoid: registry.npmmirror.com/nanoid/3.3.4
       picocolors: registry.npmmirror.com/picocolors/1.0.0
       source-map-js: registry.npmmirror.com/source-map-js/1.0.2
-
-  registry.npmmirror.com/rangeblock/1.2.0:
-    resolution: {integrity: sha512-dcWmGBgGIcMUTNxbwGfBzCPtEp+DzxAtUXEB+HnuUQY9WA/MIvPAdSRqYKRb5QWPGvX/QPajT+yv37H/kMuR+w==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/rangeblock/-/rangeblock-1.2.0.tgz}
-    name: rangeblock
-    version: 1.2.0
-    dependencies:
-      logez: registry.npmmirror.com/logez/1.0.0
-    dev: false
 
   registry.npmmirror.com/resize-detector/0.3.0:
     resolution: {integrity: sha512-R/tCuvuOHQ8o2boRP6vgx8hXCCy87H1eY9V5imBYeVNyNVpuL9ciReSccLj2gDcax9+2weXy3bc8Vv+NRXeEvQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/resize-detector/-/resize-detector-0.3.0.tgz}
@@ -6435,6 +6421,23 @@ packages:
     dependencies:
       vue: 3.2.37
 
+  registry.npmmirror.com/vue-demi/0.13.8_vue@3.2.37:
+    resolution: {integrity: sha512-Vy1zbZhCOdsmvGR6tJhAvO5vhP7eiS8xkbYQSoVa7o6KlIy3W8Rc53ED4qI4qpeRDjv3mLfXSEpYU6Yq4pgXRg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-demi/-/vue-demi-0.13.8.tgz}
+    id: registry.npmmirror.com/vue-demi/0.13.8
+    name: vue-demi
+    version: 0.13.8
+    engines: {node: '>=12'}
+    hasBin: true
+    requiresBuild: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      vue: 3.2.37
+
   registry.npmmirror.com/vue-echarts/6.2.3_echarts@5.3.3+vue@3.2.37:
     resolution: {integrity: sha512-xHzUvgsgk/asJTcNa8iVVwoovZU3iEUHvmBa3bzbiP3Y6OMxM1YXsoWOKVmVVaUusGs4ob4pSwjwNy2FemAz9w==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-echarts/-/vue-echarts-6.2.3.tgz}
     id: registry.npmmirror.com/vue-echarts/6.2.3
@@ -6453,6 +6456,22 @@ packages:
       resize-detector: registry.npmmirror.com/resize-detector/0.3.0
       vue: 3.2.37
       vue-demi: registry.npmmirror.com/vue-demi/0.13.2_vue@3.2.37
+    dev: false
+
+  registry.npmmirror.com/vue-request/2.0.0-rc.3_vue@3.2.37:
+    resolution: {integrity: sha512-8ACVzScFWo7/rlUemRzti7J95ZtiH27/B/zaM6LnCOJwUoxE6zU8rRiuFIu40ZTbkHUSbNsvP1h6aY1a0Ig3Ew==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-request/-/vue-request-2.0.0-rc.3.tgz}
+    id: registry.npmmirror.com/vue-request/2.0.0-rc.3
+    name: vue-request
+    version: 2.0.0-rc.3
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^2.0.0 || >=3.0.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      vue: 3.2.37
+      vue-demi: registry.npmmirror.com/vue-demi/0.13.8_vue@3.2.37
     dev: false
 
   registry.npmmirror.com/ws/8.2.3:
