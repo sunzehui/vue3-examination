@@ -1,72 +1,81 @@
 <script lang="ts" setup>
-import {ref} from "vue";
 import {useClassesStore} from "@/store/classes";
-import {get, head, isEmpty, isNil} from "lodash-es";
-import {ClassesResult, nameOption} from "@/types/api-classes";
-import {ElMessage} from "element-plus";
+import {first, get} from "lodash-es";
+import {ClassesResult} from "@/types/api-classes";
 import {getIdFromKey} from "@/utils/tools";
+import {useRequest} from "vue-request";
+import {ApiFindClassesDetail, ApiFindClassesStudent, ApiFindMyClasses} from "@/apis/classes";
+import {MaybeRef} from "@vueuse/core";
+import ClassesSelect from '@/components/classes-select.vue'
 
 const classesStore = useClassesStore();
-const options = ref<nameOption[]>([]);
-const value = ref("");
-const columns = classesStore.studentColumn;
-const classesDetail = ref<ClassesResult | {}>({});
+const activeClasses = reactive<{ id: null | number, label: string, classes: ClassesResult | null }>({
+  id: null,
+  label: '',
+  classes: null
+});
 
-const fetchClasses = async (classesId: number) => {
-  const result = await classesStore.getClassesStudent(classesId);
-  if (isNil(result) || isEmpty(result)) return;
-  classesDetail.value = result;
-  return result;
-};
-const fetchFirstClasses = async (list: ClassesResult[]) => {
-  if (isEmpty(list)) {
-    return;
+const findMyClassesService = async () => {
+  const result = await ApiFindMyClasses();
+  return result.data || []
+}
+const {data: classesList} = useRequest(findMyClassesService, {
+  cacheKey: 'classesList',
+  cacheTime: 300000,
+  onSuccess(data) {
+    const headClasses = first(data) ?? null
+    if (!headClasses) return;
+    activeClasses.id = headClasses.id;
   }
-  const classesId = get(head(list), "id");
-  if (!classesId) return;
-  const result = (await fetchClasses(classesId)) as ClassesResult;
-  value.value = `${result.name}-${result.id}`;
+})
+const classesSelect = ref<typeof ClassesSelect | null>(null)
+const fetchStuListService = async (classesId: MaybeRef<number | null>) => {
+  const id = unref(classesId)
+  if (!id) throw new Error("id not found!")
+  const result = await ApiFindClassesStudent(id);
+  return result.data;
 };
+const {data: classesDetail} = useRequest(() => fetchStuListService(activeClasses.id), {
+  cacheKey: `stuList-${activeClasses.id}`,
+  cacheTime: 300000,
+  refreshDeps: [() => activeClasses.id],
+  ready: computed(() => !!unref(activeClasses.id)),
+  async onSuccess(data) {
+    if (!classesSelect.value) {
+      return
+    }
+    classesSelect.value.setActive(`${data.name}-${data.id}`)
+  }
+})
 const onSelectClasses = (val: string) => {
   const id = getIdFromKey(val);
   if (!id) {
     return;
   }
-  fetchClasses(id);
+  activeClasses.id = id;
 };
-
-onMounted(async () => {
-  const classesList = await classesStore.getMineClassesList();
-  options.value = classesStore.nameOption;
-  await fetchFirstClasses(classesList);
-});
 </script>
 <template>
   <n-layout>
     <n-layout-header embedded style="padding: 24px; display: flex">
-      <ClassesSelect @selectUpdate="onSelectClasses"/>
+      <ClassesSelect ref="classesSelect" @selectUpdate="onSelectClasses"/>
       <n-button @click="$router.push('join')">加入班级</n-button>
     </n-layout-header>
-
     <n-layout-content class="classes-layout-content">
       <n-card hoverable>
-        <n-descriptions label-placement="left" :title="classesDetail.name">
+        <n-descriptions label-placement="left" :title="get(classesDetail,'name')">
           <n-descriptions-item>
             <template #label>创建人（老师）</template>
             {{ get(classesDetail, "created_by.nickname", "未知") }}
           </n-descriptions-item>
-          <n-descriptions-item label="早午餐"> 苹果</n-descriptions-item>
-          <n-descriptions-item label="午餐"> 苹果</n-descriptions-item>
-          <n-descriptions-item label="晚餐"> 苹果</n-descriptions-item>
-          <n-descriptions-item label="夜宵"> 苹果</n-descriptions-item>
         </n-descriptions>
       </n-card>
 
       <n-card hoverable title="学生列表">
         <n-data-table
             :border="true"
-            :columns="columns"
-            :data="classesDetail.users"
+            :columns="classesStore.studentColumn"
+            :data="get(classesDetail,'users',[])"
             :max-height="550"
         />
       </n-card>

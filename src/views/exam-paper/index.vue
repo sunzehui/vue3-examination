@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import PageHeader from '@/components/page-header.vue'
-
-console.log()
 </script>
 
 <template>

@@ -45,7 +45,6 @@ watchEffect(() => {
 
 function getDataList(groupData: { number: Array<any> }, totalStu: number) {
   let dataList: Record<any, number>[] = [];
-  console.log({groupData})
   Object.entries(groupData).map((item) => {
     const scoreNum = item[1].length;
     const freq = scoreNum / totalStu;

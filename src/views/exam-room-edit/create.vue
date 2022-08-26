@@ -69,7 +69,7 @@ const submitExamRoom = (e: MouseEvent) => {
       ...unref(model),
       begin_time: dayjs(begin_time).utc().format(),
       end_time: dayjs(end_time).utc().format()
-    })
+    }).then(() => init)
   })
 }
 

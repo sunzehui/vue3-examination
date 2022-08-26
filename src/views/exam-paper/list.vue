@@ -20,13 +20,12 @@
 </template>
 
 <script setup lang="ts">
-import {ExamRoom} from "@/types/api-exam-room";
-
 import {getLocalTimeFormat} from "@/utils/tools";
 import dayjs from "dayjs";
 import duration from 'dayjs/plugin/duration'
 import {ApiGetMyExamPaper} from "@/apis/exam-paper";
 import {NButton} from "naive-ui";
+import {useRequest} from "vue-request";
 
 dayjs.extend(duration)
 const router = useRouter()
@@ -59,24 +58,26 @@ const columns = [
     }
   }
 ]
-const examRoomList = ref<ExamRoom[]>([]);
-
-const tableData = computed(() => unref(examRoomList).map(item => {
-          const createTime = getLocalTimeFormat(item.create_time);
-          return {
-            name: item.name,
-            id: item.id,
-            createTime,
+const tableData = computed(() => {
+      const _tableData = unref(examPaperList) ?? []
+      return _tableData.map(item => {
+            const createTime = getLocalTimeFormat(item.create_time);
+            return {
+              name: item.name,
+              id: item.id,
+              createTime,
+            }
           }
-        }
-    )
+      )
+    }
 )
-const loadExamRoom = async (classesId?: number) => {
-  const examRoomResult = await ApiGetMyExamPaper()
-  examRoomList.value = examRoomResult.data
+const loadExamPaperService = async () => {
+  const result = await ApiGetMyExamPaper()
+  return result.data
 }
-onMounted(async () => {
-  await loadExamRoom()
+const {data: examPaperList, runAsync} = useRequest(loadExamPaperService, {
+  cacheKey: 'exam-paper-list',
+  cacheTime: 300000,
 })
 </script>
 

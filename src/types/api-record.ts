@@ -31,6 +31,7 @@ export interface ExamRecord {
     user: User;
     exam_room: ExamRoom;
     exam_paper: ExamPaper;
+    classes: ForClasses
 }
 
 interface User {

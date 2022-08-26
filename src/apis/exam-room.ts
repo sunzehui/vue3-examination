@@ -1,14 +1,16 @@
 import {http} from "@/plugins/axios";
 import {ApiResult} from "@/types/tools";
 import {ExamRoom} from "@/types/api-exam-room";
+import {MaybeRef} from "@vueuse/core";
 
 // 查询所有考场
-export function ApiGetExamRoom(classesId?: number): ApiResult<ExamRoom[]> {
+export function ApiGetExamRoom(classesId?: MaybeRef<number | null>): ApiResult<ExamRoom[]> {
+    const id = unref(classesId)
     return http.request({
         url: "exam-room",
         method: "get",
         params: {
-            'classesId': classesId
+            'classesId': id
         }
     });
 }

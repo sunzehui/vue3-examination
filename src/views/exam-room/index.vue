@@ -7,38 +7,33 @@ import {Role} from "@/types/api-user";
 import {useSocket} from "@/composables/useSocket";
 import {Resp} from "@/types/api";
 import {useRequest} from "vue-request";
-import {last} from "lodash-es";
+import {getIdFromKey} from "@/utils/tools";
 
 const {socket} = useSocket();
-
 const interval = setInterval(() => {
   socket.emit("findAllExamClock", (examRoomResult: Resp<ExamRoom[]>) => {
     mutate(examRoomResult.data);
   });
 }, 3000);
-onUnmounted(() => {
-  clearInterval(interval);
-});
+onUnmounted(() => clearInterval(interval));
 
 const go2CreateExam = () => {
   const router = useRouter();
   router.push({name: "exam-create"});
 };
 const getExamRoomService = async () => {
-  const result = await ApiGetExamRoom(unref(classesId));
-  if (result.data) return result.data;
-  return [];
+  const result = await ApiGetExamRoom(classesId);
+  if (!result.data) return [];
+  return result.data;
 };
 
-const classesId = ref<undefined | number>();
+const classesId = ref<null | number>(null);
 const {data: examList, mutate} = useRequest(getExamRoomService, {
   cacheKey: "examRoomList",
   cacheTime: 300000, // 5 minutes
   refreshDeps: [classesId],
 });
-const handleSelectClasses = async (val: string) => {
-  classesId.value = Number(last(val.split("-")));
-};
+const handleSelectClasses = (val: string) => classesId.value = getIdFromKey(val)
 </script>
 
 <template>

@@ -15,9 +15,7 @@ examStore.getExamPaperByRoomId(unref(examRoomId));
 const isEnd = computed(() => unref(now_idx) + 1 >= unref(examStore.examQList).length)
 const isStart = computed(() => unref(now_idx) <= 0)
 const {socket} = useSocket()
-socket.on('answerRecordUpdate', (res) => {
-  examStore.updateRecord(res)
-})
+
 
 const go2Q = (idxOrRef: MaybeRef<number>) => {
   const idx = unref(idxOrRef)

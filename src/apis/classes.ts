@@ -4,8 +4,8 @@ import {ClassesResult} from "@/types/api-classes";
 
 type ApiResult<T> = Promise<Resp<T>>
 
-export function ApiFindClassesDetail(id: number) {
-    return http.request<null>({
+export function ApiFindClassesDetail(id: number): ApiResult<ClassesResult> {
+    return http.request({
         url: `classes/${id}`,
         method: "GET",
     });

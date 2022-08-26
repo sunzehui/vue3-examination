@@ -4,8 +4,6 @@ import {ApiCreatePaper} from "@/apis/exam-paper";
 import {get, isNil} from "lodash-es";
 import {useRouter} from 'vue-router'
 
-const router = useRouter()
-
 const baseInfoModel = ref({
   name: null,
   desc: null,
@@ -16,6 +14,7 @@ const savePaper = async () => {
   const paperResult = await ApiCreatePaper(unref(baseInfoModel))
   const paperId = get(paperResult, 'data.id')
   if (!isNil(paperId)) {
+    const router = useRouter()
     await router.push({name: "exam-paper-edit", params: {id: paperId}})
   }
 }

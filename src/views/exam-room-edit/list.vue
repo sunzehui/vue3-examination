@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import {ApiGetExamRoom} from "@/apis/exam-room";
 import ClassesSelect from '@/components/classes-select.vue'
-import {ExamRoom} from "@/types/api-exam-room";
-
-import {getIdFromKey, getLocalTimeFormat, getLocalTimeUnix, getTime} from "@/utils/tools";
+import {getIdFromKey, getLocalTimeFormat, getTime} from "@/utils/tools";
 import dayjs from "dayjs";
 import duration from 'dayjs/plugin/duration'
+import {useRequest} from "vue-request";
 
 dayjs.extend(duration)
 
@@ -31,33 +30,37 @@ const columns = [
     key: 'createTime'
   },
 ]
-const examRoomList = ref<ExamRoom[]>([]);
 
-const tableData = computed(() =>
-    unref(examRoomList).map(item => {
-      const [startTime, startTimeUnix] = getTime(item.begin_time)
-      const [endTime, endTimeUnix] = getTime(item.end_time)
-      const dateRange = `${startTime} - ${endTime}`
+const tableData = computed(() => {
+      const _tableData = unref(examRoomList) ?? []
+      return _tableData.map(item => {
+        const [startTime, startTimeUnix] = getTime(item.begin_time)
+        const [endTime, endTimeUnix] = getTime(item.end_time)
+        const dateRange = `${startTime} - ${endTime}`
 
-      const timeTotal = dayjs.duration(endTimeUnix - startTimeUnix, 'milliseconds').asMinutes() + '分钟'
-      const createTime = getLocalTimeFormat(item.create_time);
-      return {
-        name: item.name,
-        usageClasses: item?.for_classes?.name || '未知',
-        dateRange,
-        timeTotal,
-        createTime,
-      }
-    })
+        const timeTotal = dayjs.duration(endTimeUnix - startTimeUnix, 'milliseconds').asMinutes() + '分钟'
+        const createTime = getLocalTimeFormat(item.create_time);
+        return {
+          name: item.name,
+          usageClasses: item?.for_classes?.name || '未知',
+          dateRange,
+          timeTotal,
+          createTime,
+        }
+      })
+    }
 )
-const loadExamRoom = async (classesId?: number) => {
+const loadExamRoomService = async (classesId?: number) => {
   const examRoomResult = await ApiGetExamRoom(classesId)
-  examRoomList.value = examRoomResult.data
+  return examRoomResult.data
 }
-const classesSelectRef = ref(null)
+const classesId = ref();
+const {data: examRoomList, runAsync, loading} = useRequest(loadExamRoomService, {
+  refreshDeps: [classesId]
+})
+const classesSelectRef = ref<typeof ClassesSelect | null>(null)
 const resetList = async () => {
-  await loadExamRoom()
-  if (!classesSelectRef) return;
+  await runAsync()
   if (!classesSelectRef.value) {
     await nextTick()
     return;
@@ -69,11 +72,9 @@ const onSelectClasses = (val: string) => {
   if (!id) {
     return
   }
-  loadExamRoom(id);
+  classesId.value = id;
 }
-onMounted(async () => {
-  await loadExamRoom()
-})
+
 </script>
 
 <template>
@@ -93,6 +94,7 @@ onMounted(async () => {
           :columns="columns"
           :data="tableData"
           :max-height="444"
+          :loading="loading"
       />
     </n-space>
   </n-card>
