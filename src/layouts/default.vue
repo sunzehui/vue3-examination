@@ -9,7 +9,9 @@ const inverted = ref(false);
 const collapsed = ref(false);
 const isXlScreen = useMediaQuery('(min-width: 1000px)')
 const responsivePos = computed(() => unref(isXlScreen) ? 'static' : 'absolute')
-
+watch(isXlScreen, val => {
+  collapsed.value = !val;
+}, {immediate: true})
 const userStore = useUserStore()
 const route = useRoute()
 userStore.getUserProfile()
@@ -29,12 +31,14 @@ const activeKey = computed(() => route.name || 'exam-panel')
             :native-scrollbar="false"
             :position="responsivePos"
             :show-collapsed-content="false"
-            :collapsed="responsivePos==='absolute'"
             :trigger-style="{ transform: 'scale(2) translateX(25%)' }"
             :width="240"
             bordered
+            :collapsed="collapsed"
             class="sidebar__menu-container"
             collapse-mode="transform"
+            @collapse="collapsed = true"
+            @expand="collapsed = false"
             show-trigger
         >
           <n-space class="logo-wrap" justify="center">
@@ -42,10 +46,9 @@ const activeKey = computed(() => route.name || 'exam-panel')
           </n-space>
           <n-menu
               v-model:value="activeKey"
-              :collapsed="collapsed"
-              :collapsed-icon-size="0"
               :inverted="inverted"
               :options="menuOptions"
+
           />
         </n-layout-sider>
         <n-layout>
