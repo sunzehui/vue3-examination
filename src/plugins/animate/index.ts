@@ -1,3 +1,3 @@
-import 'animate.css'
+// import 'animate.css'
 
-export default () => {}
+export default () => {};
