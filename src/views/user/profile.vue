@@ -55,117 +55,120 @@ const logout = async () => {
 
 <template>
   <n-card title="个人信息">
-    <div class="w-full grid grid-cols-2 gap-x-10">
-      <div
-          class="relative avatar-box justify-self-end"
-          v-if="user"
-      >
-        <n-avatar
-            :src="`/static/${user.avatar_url}`" style="height: 400px;width: 400px;" round/>
-        <label class="mask" for="avatarUpload">
-        </label>
-        <input ref="fileInputRef" hidden type="file" id="avatarUpload" class="h-full w-full" @change="uploadAvatar">
-      </div>
+    <n-grid x-gap="12" :cols="3">
+      <n-gi class="flex items-center justify-end">
+        <div
+            class="relative avatar-box"
+            v-if="user"
+        >
+          <n-avatar
+              :src="`/static/${user.avatar_url}`" style="height: 400px;width: 400px;" round/>
+          <label class="mask" for="avatarUpload">
+          </label>
+          <input ref="fileInputRef" hidden type="file" id="avatarUpload" class="h-full w-full" @change="uploadAvatar">
+        </div>
+      </n-gi>
+      <n-gi span="2">
+        <el-descriptions
+            title="我的资料"
+            class="justify-self-start"
+            :column="1"
+            size="large"
+            border
+            v-if="user"
+        >
+          <el-descriptions-item>
+            <template #label>
+              <div class="cell-item">
+                <el-icon :style="{verticalAlign:'text-bottom'}">
+                  <IconUser/>
+                </el-icon>
+                用户名
+              </div>
+            </template>
+            {{ user.username }}
+          </el-descriptions-item>
 
-      <el-descriptions
-          title="我的资料"
-          class="justify-self-start"
-          :column="1"
-          size="large"
-          border
-          v-if="user"
-      >
-        <el-descriptions-item width="300px">
-          <template #label>
-            <div class="cell-item">
-              <el-icon :style="{verticalAlign:'text-bottom'}">
-                <IconUser/>
-              </el-icon>
-              用户名
-            </div>
-          </template>
-          {{ user.username }}
-        </el-descriptions-item>
+          <el-descriptions-item width="300px">
+            <template #label>
+              <div class="cell-item">
+                <el-icon :style="{verticalAlign:'text-bottom'}">
+                  <IconUser/>
+                </el-icon>
+                昵称
+              </div>
+            </template>
+            {{ user.nickname }}
+          </el-descriptions-item>
 
-        <el-descriptions-item width="300px">
-          <template #label>
-            <div class="cell-item">
-              <el-icon :style="{verticalAlign:'text-bottom'}">
-                <IconUser/>
-              </el-icon>
-              昵称
-            </div>
-          </template>
-          {{ user.nickname }}
-        </el-descriptions-item>
+          <el-descriptions-item>
+            <template #label>
+              <div class="cell-item">
+                <el-icon :style="{verticalAlign:'text-bottom'}">
+                  <tickets/>
+                </el-icon>
+                身份
+              </div>
+            </template>
+            <el-tag size="large" v-if="user.user_type===Role.teacher">老师</el-tag>
+            <el-tag size="large" v-if="user.user_type===Role.student">学生</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item v-if="user.user_type===Role.student">
+            <template #label>
+              <div class="cell-item">
+                <el-icon :style="{verticalAlign:'text-bottom'}">
+                  <office-building/>
+                </el-icon>
+                所在班级
+              </div>
+            </template>
 
-        <el-descriptions-item>
-          <template #label>
-            <div class="cell-item">
-              <el-icon :style="{verticalAlign:'text-bottom'}">
-                <tickets/>
-              </el-icon>
-              身份
-            </div>
-          </template>
-          <el-tag size="large" v-if="user.user_type===Role.teacher">老师</el-tag>
-          <el-tag size="large" v-if="user.user_type===Role.student">学生</el-tag>
-        </el-descriptions-item>
-        <el-descriptions-item v-if="user.user_type===Role.student">
-          <template #label>
-            <div class="cell-item">
-              <el-icon :style="{verticalAlign:'text-bottom'}">
-                <office-building/>
-              </el-icon>
-              所在班级
-            </div>
-          </template>
+            <n-select :value="join_classesOpt.map(item=>item.value)" multiple :options="join_classesOpt"/>
+          </el-descriptions-item>
+          <el-descriptions-item v-if="user.user_type===Role.teacher">
+            <template #label>
+              <div class="cell-item">
+                <el-icon :style="{verticalAlign:'text-bottom'}">
+                  <office-building/>
+                </el-icon>
+                我创建的班级
+              </div>
+            </template>
+            <n-select :value="create_classesOpt.map(item=>item.value)" multiple :options="create_classesOpt"/>
+          </el-descriptions-item>
 
-          <n-select :value="join_classesOpt.map(item=>item.value)" multiple :options="join_classesOpt"/>
-        </el-descriptions-item>
-        <el-descriptions-item v-if="user.user_type===Role.teacher">
-          <template #label>
-            <div class="cell-item">
-              <el-icon :style="{verticalAlign:'text-bottom'}">
-                <office-building/>
-              </el-icon>
-              我创建的班级
-            </div>
-          </template>
-          <n-select :value="create_classesOpt.map(item=>item.value)" multiple :options="create_classesOpt"/>
-        </el-descriptions-item>
+          <el-descriptions-item>
+            <template #label>
+              <div class="cell-item">
+                <el-icon :style="{verticalAlign:'text-bottom'}">
+                  <Present/>
+                </el-icon>
+                加入时间
+              </div>
+            </template>
+            {{ getLocalTimeFormat(user.create_time) }}
+          </el-descriptions-item>
 
-        <el-descriptions-item>
-          <template #label>
-            <div class="cell-item">
-              <el-icon :style="{verticalAlign:'text-bottom'}">
-                <Present/>
-              </el-icon>
-              加入时间
-            </div>
-          </template>
-          {{ getLocalTimeFormat(user.create_time) }}
-        </el-descriptions-item>
+          <el-descriptions-item>
+            <template #label>
+              <div class="cell-item">
+                <el-icon :style="{verticalAlign:'text-bottom'}">
+                  <Key/>
+                </el-icon>
+                uid
+              </div>
+            </template>
+            {{ user.id }}
+          </el-descriptions-item>
 
-        <el-descriptions-item>
-          <template #label>
-            <div class="cell-item">
-              <el-icon :style="{verticalAlign:'text-bottom'}">
-                <Key/>
-              </el-icon>
-              uid
-            </div>
-          </template>
-          {{ user.id }}
-        </el-descriptions-item>
+        </el-descriptions>
+      </n-gi>
+    </n-grid>
 
-      </el-descriptions>
+    <n-layout>
+      <n-button type="warning" size="large" @click="logout">退出</n-button>
+    </n-layout>
 
-      <div class="col-start-2">
-        <n-button size="large" @click="logout">退出</n-button>
-      </div>
-
-    </div>
 
   </n-card>
 </template>

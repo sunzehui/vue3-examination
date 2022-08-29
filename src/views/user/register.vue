@@ -138,7 +138,7 @@ const {onSubmit, username, userRole, nickname, password, usernameRule, passwordR
 }
 
 .on-active {
-  @apply focus:outline-white focus:ring-indigo-500 focus:border-indigo-500 focus:z-10;
+  @apply focus:ring-indigo-500 focus:border-indigo-500 focus:z-10;
 }
 
 .exam-input {

@@ -41,8 +41,8 @@ async function init() {
   data.value = examRecordListResult.data.map(item => {
     return {
       id: item.id,
-      classes_id: item.exam_room.for_classes.id,
-      room_id: item.exam_room.id,
+      classes_id: get(item, 'exam_room.for_classes.id'),
+      room_id: get(item, 'exam_room.id'),
       exam_name: get(item, 'exam_room.name'),
       paper_name: get(item, 'exam_paper.name'),
       classes: `${get(item, 'exam_room.for_classes.name')}-${get(item, 'exam_room.for_classes.id')}`,
