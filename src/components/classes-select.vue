@@ -16,12 +16,21 @@
 import {nameOption} from "@/types/api-classes";
 import {ApiFindMyClasses} from "@/apis/classes";
 import {useRequest} from "vue-request";
+import {useClassesStore} from "@/store/classes";
 
 const options = ref<nameOption[]>([]);
 const active = ref("");
+const classesStore = useClassesStore()
 const findMyClassesService = async () => {
+  if (classesStore.cachedList) {
+    return classesStore.cachedList
+  }
   const result = await ApiFindMyClasses();
-  return result.data || []
+  const classesList = result.data
+  classesStore.$patch({
+    classesList
+  })
+  return classesList || []
 }
 const {data: classesList} = useRequest(findMyClassesService, {
   onSuccess(data) {

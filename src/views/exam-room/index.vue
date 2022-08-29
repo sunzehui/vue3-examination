@@ -1,21 +1,11 @@
 <script lang="ts" setup>
 import ClassesSelect from "@/components/classes-select.vue";
 import {ApiGetExamRoom} from "@/apis/exam-room";
-import {ExamRoom} from "@/types/api-exam-room";
 import {useRouter} from "vue-router";
 import {Role} from "@/types/api-user";
-import {useSocket} from "@/composables/useSocket";
-import {Resp} from "@/types/api";
 import {useRequest} from "vue-request";
 import {getIdFromKey} from "@/utils/tools";
 
-const {socket} = useSocket();
-const interval = setInterval(() => {
-  socket.emit("findAllExamClock", (examRoomResult: Resp<ExamRoom[]>) => {
-    mutate(examRoomResult.data);
-  });
-}, 3000);
-onUnmounted(() => clearInterval(interval));
 
 const go2CreateExam = () => {
   const router = useRouter();
@@ -32,6 +22,7 @@ const {data: examList, mutate} = useRequest(getExamRoomService, {
   cacheKey: "examRoomList",
   cacheTime: 300000, // 5 minutes
   refreshDeps: [classesId],
+  pollingInterval: 3000,
 });
 const handleSelectClasses = (val: string) => classesId.value = getIdFromKey(val)
 </script>
@@ -45,6 +36,13 @@ const handleSelectClasses = (val: string) => classesId.value = getIdFromKey(val)
         <ExamCard :exam="exam"/>
       </template>
     </div>
+    <n-empty v-if="!(examList && examList.length)" description="老师未创建考试">
+      <template #extra>
+        <n-button size="small">
+          查看个人信息
+        </n-button>
+      </template>
+    </n-empty>
   </n-scrollbar>
 </template>
 

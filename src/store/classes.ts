@@ -1,9 +1,6 @@
 import {defineStore} from "pinia";
-import {
-    ApiFindClassesList,
-    ApiFindClassesStudent, ApiFindMyClasses,
-} from "@/apis/classes";
 import {ClassesResult} from "@/types/api-classes";
+import {isArray, isEmpty} from "lodash-es";
 
 export const useClassesStore = defineStore("classes", {
     state: () => {
@@ -12,6 +9,12 @@ export const useClassesStore = defineStore("classes", {
         };
     },
     getters: {
+        cachedList(state) {
+            const list = state.classesList
+            if (!isArray(list)) return null;
+            if (isEmpty(list)) return null;
+            return list;
+        },
         studentColumn() {
             return [
                 {
