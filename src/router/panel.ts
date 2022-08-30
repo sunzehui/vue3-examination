@@ -121,6 +121,12 @@ export default {
                     alias: '加入班级',
                     meta: {title: "加入班级"},
                     component: () => import("@/views/classes/join-classes.vue")
+                }, {
+                    name: 'create',
+                    path: "create",
+                    alias: '创建班级',
+                    meta: {title: "创建班级"},
+                    component: () => import("@/views/classes/create.vue")
                 }
             ]
         }

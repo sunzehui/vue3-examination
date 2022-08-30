@@ -7,6 +7,7 @@ import {useRequest} from "vue-request";
 import {ApiFindClassesDetail, ApiFindClassesStudent, ApiFindMyClasses} from "@/apis/classes";
 import {MaybeRef} from "@vueuse/core";
 import ClassesSelect from '@/components/classes-select.vue'
+import {Role} from '@/types/api-user'
 
 const classesStore = useClassesStore();
 const activeClasses = reactive<{ id: null | number, label: string, classes: ClassesResult | null }>({
@@ -59,7 +60,8 @@ const onSelectClasses = (val: string) => {
   <n-layout>
     <n-layout-header embedded style="padding: 24px; display: flex">
       <ClassesSelect ref="classesSelect" @selectUpdate="onSelectClasses"/>
-      <n-button @click="$router.push('join')">加入班级</n-button>
+      <n-button @click="$router.push('join')" v-role="Role.student">加入班级</n-button>
+      <n-button @click="$router.push('create')" v-role="Role.teacher">创建班级</n-button>
     </n-layout-header>
     <n-layout-content class="classes-layout-content">
       <n-card hoverable>

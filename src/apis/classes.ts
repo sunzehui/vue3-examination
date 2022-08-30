@@ -11,6 +11,21 @@ export function ApiFindClassesDetail(id: number): ApiResult<ClassesResult> {
     });
 }
 
+export function ApiFindAllStudent() {
+    return http.request({
+        url: `classes/student`,
+        method: 'get'
+    })
+}
+
+export function ApiCreateClasses(data: any) {
+    return http.request({
+        url: `classes`,
+        method: 'post',
+        data
+    })
+}
+
 export function ApiFindClassesStudent(id: number): ApiResult<ClassesResult> {
     return http.request({
         url: `classes/${id}/student`,

@@ -31,6 +31,25 @@ export const useClassesStore = defineStore("classes", {
                 },
             ];
         },
+        studentColumnForCreate() {
+            return [
+                {
+                    type: 'selection',
+                },
+                {
+                    title: "No",
+                    key: "id",
+                },
+                {
+                    title: "名称",
+                    key: "nickname",
+                },
+                {
+                    title: "创建时间",
+                    key: "create_time",
+                },
+            ];
+        },
         tableColumn() {
             return [
                 {
