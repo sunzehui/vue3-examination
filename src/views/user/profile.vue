@@ -55,29 +55,25 @@ const logout = async () => {
 
 <template>
   <n-card title="个人信息">
-    <n-grid x-gap="12" :cols="3">
-      <n-gi class="flex items-center justify-end">
-        <div
-            class="relative avatar-box"
-            v-if="user"
-        >
-          <n-avatar
-              :src="`/static/${user.avatar_url}`" style="height: 400px;width: 400px;" round/>
-          <label class="mask" for="avatarUpload">
-          </label>
-          <input ref="fileInputRef" hidden type="file" id="avatarUpload" class="h-full w-full" @change="uploadAvatar">
-        </div>
+    <n-grid x-gap="12" :cols="1">
+      <n-gi class="flex items-center justify-center" v-if="user">
+        <label for="avatarUpload">
+          <img class="rounded-full cursor-pointer bg-gray-100 h-[260px] w-[260px]"
+               :src="`/static/${user.avatar_url}`"/>
+        </label>
+        <input ref="fileInputRef" hidden type="file" id="avatarUpload" class="h-full w-full" @change="uploadAvatar">
       </n-gi>
-      <n-gi span="2">
+      <n-gi span="2"
+            v-if="user"
+      >
         <el-descriptions
             title="我的资料"
             class="justify-self-start"
             :column="1"
             size="large"
             border
-            v-if="user"
         >
-          <el-descriptions-item>
+          <el-descriptions-item :width="50">
             <template #label>
               <div class="cell-item">
                 <el-icon :style="{verticalAlign:'text-bottom'}">
@@ -89,7 +85,7 @@ const logout = async () => {
             {{ user.username }}
           </el-descriptions-item>
 
-          <el-descriptions-item width="300px">
+          <el-descriptions-item :width="50">
             <template #label>
               <div class="cell-item">
                 <el-icon :style="{verticalAlign:'text-bottom'}">
@@ -101,7 +97,7 @@ const logout = async () => {
             {{ user.nickname }}
           </el-descriptions-item>
 
-          <el-descriptions-item>
+          <el-descriptions-item :width="50">
             <template #label>
               <div class="cell-item">
                 <el-icon :style="{verticalAlign:'text-bottom'}">
@@ -113,7 +109,7 @@ const logout = async () => {
             <el-tag size="large" v-if="user.user_type===Role.teacher">老师</el-tag>
             <el-tag size="large" v-if="user.user_type===Role.student">学生</el-tag>
           </el-descriptions-item>
-          <el-descriptions-item v-if="user.user_type===Role.student">
+          <el-descriptions-item v-if="user.user_type===Role.student" :width="100">
             <template #label>
               <div class="cell-item">
                 <el-icon :style="{verticalAlign:'text-bottom'}">
@@ -125,7 +121,7 @@ const logout = async () => {
 
             <n-select :value="join_classesOpt.map(item=>item.value)" multiple :options="join_classesOpt"/>
           </el-descriptions-item>
-          <el-descriptions-item v-if="user.user_type===Role.teacher">
+          <el-descriptions-item v-if="user.user_type===Role.teacher" :width="50">
             <template #label>
               <div class="cell-item">
                 <el-icon :style="{verticalAlign:'text-bottom'}">
@@ -137,7 +133,7 @@ const logout = async () => {
             <n-select :value="create_classesOpt.map(item=>item.value)" multiple :options="create_classesOpt"/>
           </el-descriptions-item>
 
-          <el-descriptions-item>
+          <el-descriptions-item :width="50">
             <template #label>
               <div class="cell-item">
                 <el-icon :style="{verticalAlign:'text-bottom'}">
@@ -149,7 +145,7 @@ const logout = async () => {
             {{ getLocalTimeFormat(user.create_time) }}
           </el-descriptions-item>
 
-          <el-descriptions-item>
+          <el-descriptions-item :width="50">
             <template #label>
               <div class="cell-item">
                 <el-icon :style="{verticalAlign:'text-bottom'}">
@@ -165,7 +161,7 @@ const logout = async () => {
       </n-gi>
     </n-grid>
 
-    <n-layout>
+    <n-layout class="mt-2 float-right">
       <n-button type="warning" size="large" @click="logout">退出</n-button>
     </n-layout>
 
