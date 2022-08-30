@@ -65,6 +65,7 @@ declare module '@vue/runtime-core' {
     NSelect: typeof import('naive-ui')['NSelect']
     NSpace: typeof import('naive-ui')['NSpace']
     NTime: typeof import('naive-ui')['NTime']
+    NTooltip: typeof import('naive-ui')['NTooltip']
     PageHeader: typeof import('./../src/components/page-header.vue')['default']
     RecordChoiceQ: typeof import('./../src/components/record-choice-q.vue')['default']
     RecordFillblankQ: typeof import('./../src/components/record-fillblank-q.vue')['default']

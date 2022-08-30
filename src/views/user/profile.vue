@@ -57,11 +57,20 @@ const logout = async () => {
   <n-card title="个人信息">
     <n-grid x-gap="12" :cols="1">
       <n-gi class="flex items-center justify-center" v-if="user">
-        <label for="avatarUpload">
-          <img class="rounded-full cursor-pointer bg-gray-100 h-[260px] w-[260px]"
-               :src="`/static/${user.avatar_url}`"/>
-        </label>
-        <input ref="fileInputRef" hidden type="file" id="avatarUpload" class="h-full w-full" @change="uploadAvatar">
+        <n-tooltip trigger="hover">
+          <template #trigger>
+            <div>
+
+              <label for="avatarUpload">
+                <img class="rounded-full cursor-pointer bg-gray-100 h-[260px] w-[260px]"
+                     :src="`/static/${user.avatar_url}`"/>
+              </label>
+              <input ref="fileInputRef" hidden type="file" id="avatarUpload" class="h-full w-full"
+                     @change="uploadAvatar">
+            </div>
+          </template>
+          修改头像
+        </n-tooltip>
       </n-gi>
       <n-gi span="2"
             v-if="user"
