@@ -1,127 +1,133 @@
 <script lang="ts" setup>
-import useRegister from '@/composables/useRegister'
-import {defineRule, ErrorMessage, Field as VField, Form as VForm} from "vee-validate";
-import {Role} from '@/types/api-user'
+import useRegister from "@/composables/useRegister";
+import {
+  defineRule,
+  ErrorMessage,
+  Field as VField,
+  Form as VForm,
+} from "vee-validate";
+import { Role } from "@/types/api-user";
 
-defineRule('confirmed', (value, [other]) => {
+defineRule("confirmed", (value, [other]) => {
   if (value !== other) {
     return "两次输入的密码不一致！";
   }
   return true;
-})
+});
 
-const {onSubmit, username, userRole, nickname, password, usernameRule, passwordRule, classes} = useRegister();
-
+const {
+  onSubmit,
+  username,
+  userRole,
+  nickname,
+  password,
+  usernameRule,
+  passwordRule,
+  classes,
+} = useRegister();
 </script>
 
 <template>
-  <div class="min-h-full flex items-center justify-center px-4 sm:px-6 lg:px-8">
-    <div class="max-w-xs w-full space-y-6 -translate-y-1/3">
+  <div class="flex items-center justify-center min-h-full px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-xs space-y-6 -translate-y-1/3">
       <div>
-
-        <h3 class="text-3xl text-center font-bold">
+        <h3 class="text-3xl font-bold text-center">
           注册
-          <NDivider vertical/>
+          <NDivider vertical />
           在线考试系统
         </h3>
       </div>
       <VForm class="mt-8 space-y-2" @submit="onSubmit">
-        <div class="rounded-md shadow-sm space-y-3">
+        <div class="space-y-3 rounded-md shadow-sm">
           <div>
             <label class="sr-only">昵称</label>
             <VField
-                v-model="nickname"
-                autocomplete="nickname"
-                class="exam-input"
-                name="nickname"
-                placeholder="昵称"
-                type="text"
+              v-model="nickname"
+              autocomplete="nickname"
+              class="exam-input"
+              name="nickname"
+              placeholder="昵称"
+              type="text"
             />
           </div>
           <div>
             <label class="sr-only" for="email-address">手机号码/邮箱</label>
             <VField
-                id="email-address"
-                v-model="username"
-                :rules="usernameRule"
-                autocomplete="email"
-                class="exam-input"
-                name="email"
-                placeholder="手机号码/邮箱"
-                type="email"
+              id="email-address"
+              v-model="username"
+              :rules="usernameRule"
+              autocomplete="email"
+              class="exam-input"
+              name="email"
+              placeholder="手机号码/邮箱"
+              type="email"
             />
             <ErrorMessage
-                class="text-red-500 text-xs italic"
-                name="email"
+              class="text-xs italic text-red-500"
+              name="email"
             ></ErrorMessage>
           </div>
 
           <div class="relative">
             <label class="sr-only" for="password">密码</label>
             <VField
-                id="password"
-                v-model="password"
-                :rules="passwordRule"
-                autocomplete="current-password"
-                class="exam-input"
-                name="password"
-                placeholder="密码"
-                type="password"
+              id="password"
+              v-model="password"
+              :rules="passwordRule"
+              autocomplete="current-password"
+              class="exam-input"
+              name="password"
+              placeholder="密码"
+              type="password"
             />
 
             <ErrorMessage
-                class="text-red-500 text-xs italic"
-                name="password"
+              class="text-xs italic text-red-500"
+              name="password"
             ></ErrorMessage>
           </div>
           <div class="relative">
             <label class="sr-only" for="password2">重复密码</label>
             <VField
-                id="password2"
-                autocomplete="current-password"
-                class="exam-input"
-                name="password2"
-                placeholder="请再次输入密码"
-                rules="confirmed:@password"
-                type="password"
+              id="password2"
+              autocomplete="current-password"
+              class="exam-input"
+              name="password2"
+              placeholder="请再次输入密码"
+              rules="confirmed:@password"
+              type="password"
             />
 
             <ErrorMessage
-                class="text-red-500 text-xs italic"
-                name="password2"
+              class="text-xs italic text-red-500"
+              name="password2"
             ></ErrorMessage>
           </div>
           <div>
             <label>身份：</label>
             <n-radio-group v-model:value="userRole" name="role">
-              <n-radio-button
-                  :value="Role.student"
-                  label="我是学生"
-              />
-              <n-radio-button
-                  :value="Role.teacher"
-                  label="我是老师"
-              />
+              <n-radio-button :value="Role.student" label="我是学生" />
+              <n-radio-button :value="Role.teacher" label="我是老师" />
             </n-radio-group>
           </div>
 
-          <n-select v-if="userRole === Role.student" v-model:value="classes.select" :options="classes.list"/>
-
+          <n-select
+            v-if="userRole === Role.student"
+            v-model:value="classes.select"
+            :options="classes.list"
+          />
         </div>
 
         <div>
           <button
-              class="group relative w-full flex justify-center px-4 border border-transparent text-sm py-2.5 font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              type="submit"
+            class="group relative w-full flex justify-center px-4 border border-transparent text-sm py-2.5 font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            type="submit"
           >
             注册
           </button>
         </div>
-        <div class="w-full flex justify-center gap-x-5">
+        <div class="flex justify-center w-full gap-x-5">
           <router-link class="text-blue-400" to="/login"> 登录</router-link>
-          <router-link class="text-blue-400" to="/reset">
-            忘记密码
-          </router-link>
         </div>
       </VForm>
     </div>

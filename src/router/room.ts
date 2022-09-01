@@ -9,7 +9,7 @@ export default {
     {
       name: "room",
       path: "room/:rid",
-      alias: "在线考场",
+      props: true,
       component: () => import("@/views/examination/index.vue"),
       children: [
         {

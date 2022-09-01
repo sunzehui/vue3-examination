@@ -99,9 +99,6 @@ const eyeShow = ref(false);
         </div>
         <div class="flex justify-center w-full gap-x-5">
           <router-link to="/register" class="text-blue-400"> 注册 </router-link>
-          <router-link to="/reset" class="text-blue-400">
-            忘记密码
-          </router-link>
         </div>
       </VForm>
     </div>
