@@ -2,10 +2,10 @@
   <n-layout content-style="padding:2rem" v-if="paperData">
     <n-layout-header class="grid items-end grid-cols-2">
       <n-space class="flex items-end my-2">
-        <span class="text-2xl font-bold">{{ paperData.exam_room.name }}</span>
-        <span>{{ paperData.exam_paper.name }}</span>
+        <span class="text-2xl font-bold">{{ get(paperData, 'exam_room.name') }}</span>
+        <span>{{ get(paperData, 'exam_paper.name') }}</span>
       </n-space>
-      <span class="text-2xl text-center">得分：{{ paperData.score }}</span>
+      <span class="text-2xl text-center">得分：{{ get(paperData, 'score') }}</span>
       <n-alert :show-icon="false" class="col-span-2 mt-2 check-box">
         <n-checkbox checked/>
         ：正确答案并且已选<br/>
@@ -34,9 +34,8 @@
 
 <script lang="ts" setup>
 import {ApiGetExamRecord} from "@/apis/exam-record";
-import {ExamRecord} from "@/types/api-record";
+import {get} from 'lodash-es'
 import RecordChoiceQ from "@/components/record-choice-q.vue";
-import {ChoiceQAnswerRecord} from "@/types/api-record";
 import RecordFillblankQ from "@/components/record-fillblank-q.vue";
 import {QType} from "@/types/api-exam-paper";
 

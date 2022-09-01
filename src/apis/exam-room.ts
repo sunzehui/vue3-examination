@@ -15,6 +15,14 @@ export function ApiGetExamRoom(classesId?: MaybeRef<number | null>): ApiResult<E
     });
 }
 
+export function ApiEnterExamRoom(examRoomId: number, examPaperId?: number): ApiResult<ExamRoom> {
+    return http.request({
+        url: 'exam-record/enter',
+        method: 'post',
+        params: {room_id: examRoomId, paper_id: examPaperId}
+    })
+}
+
 export function ApiGetExamDetail(examId: number): ApiResult<ExamRoom> {
     return http.request({
         url: "exam-room/" + examId,

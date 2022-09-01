@@ -9,8 +9,11 @@ const examStore = useExamStore();
 const router = useRouter()
 let now_idx = ref(0)
 
-const examRoomId = computed(() => get(route, 'params.rid', null));
-examStore.getExamPaperByRoomId(unref(examRoomId));
+const props = defineProps<{
+  rid: string,
+  idx: string
+}>()
+examStore.getExamPaperByRoomId(+props.rid);
 
 const isEnd = computed(() => unref(now_idx) + 1 >= unref(examStore.examQList).length)
 const isStart = computed(() => unref(now_idx) <= 0)
@@ -19,11 +22,10 @@ const {socket} = useSocket()
 
 const go2Q = (idxOrRef: MaybeRef<number>) => {
   const idx = unref(idxOrRef)
-  console.log({idx})
   router.push({name: 'question-panel', params: {idx}})
 }
 const initPageIndex = () => {
-  const idx = Number(route.params.idx)
+  const idx = Number(props.idx)
   const isValid = checkIdxValidate(idx)
   if (!isValid) {
     go2Q(0)
@@ -35,7 +37,7 @@ const initPageIndex = () => {
 
 onMounted(async () => {
   socket.emit('enterExamRoom', {
-    examRoomId: unref(examRoomId)
+    examRoomId: props.rid
   }, (res: any) => {
     examStore.updateRecord(res.data)
   })
@@ -55,7 +57,7 @@ const checkIdxValidate = (idx: number): boolean => {
   return !(idx < 0 || idx >= examStore.examQList.length);
 }
 // 监听题目变化，防止越界等非法路径
-const unWatchRoute = watch(() => route.params.idx, (val) => {
+const unWatchRoute = watch(() => props.idx, (val) => {
   const isValid = checkIdxValidate(+val)
   if (!isValid) {
     go2Q(0)
@@ -65,14 +67,14 @@ const unWatchRoute = watch(() => route.params.idx, (val) => {
 const dialog = useDialog()
 const submitPaper = async () => {
   unWatchRoute()
-  const result = await examStore.submitPaper(unref(examRoomId));
+  const result = await examStore.submitPaper(+props.rid);
   if (result.statusCode === 200) {
     dialog.success({
       title: '提交成功',
       content: '得分：' + result.data.totalScore + '分',
       positiveText: '查看详情',
       onPositiveClick: () => {
-        console.log(1)
+        router.replace({name: 'exam-score'})
       }
     })
   } else if (result.statusCode === 422) {

@@ -34,7 +34,7 @@ export default defineComponent({
                     blankPos.map(
                         (item, idx) =>
                             <NSpace>
-                                <sapn>第{Number(item.pos) + 1}空：</sapn>
+                                <span>第{Number(item.pos)}空：</span>
                                 <NInput placeholder={item.content ?? ""}
                                         value={examStore.thisBlankContent(+route.params.rid, unref(Q).id, item.id)}
                                         onInput={(input) => handleBlankInput(omit(item, 'content'), input)}

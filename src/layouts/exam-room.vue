@@ -1,78 +1,76 @@
 <template>
   <n-space class="main-layout" vertical>
-    <n-layout>
-      <n-layout has-sider>
-        <Slider>
-          <n-empty v-if="isQEmpty"></n-empty>
-          <n-space v-if="!isQEmpty" align="start" vertical>
-            <h3 class="text-lg">选择题</h3>
-            <n-card class="answer-panel">
-              <div class="grid-card">
-                <template v-for="q in choiceQStatus">
-                  <div
-                      class="item"
-                      :class="{
+    <n-layout has-sider>
+      <Slider>
+        <n-empty v-if="isQEmpty"></n-empty>
+        <n-space v-if="!isQEmpty" align="start" vertical>
+          <h3 class="text-lg">选择题</h3>
+          <n-card class="answer-panel">
+            <div class="grid-card">
+              <template v-for="q in choiceQStatus">
+                <div
+                    class="item"
+                    :class="{
                       [statusMap[q.status]]: true,
                       'on-active': q.idx == $route.params.idx,
                     }"
-                  ></div>
-                </template>
-              </div>
-            </n-card>
-            <n-divider/>
-          </n-space>
-          <n-space v-if="!isQEmpty" align="start" vertical>
-            <h3 class="text-lg">填空题</h3>
-            <n-card class="answer-panel">
-              <div class="grid-card">
-                <template v-for="q in fillBlankQStatus">
-                  <div
-                      class="item"
-                      :class="{
+                ></div>
+              </template>
+            </div>
+          </n-card>
+          <n-divider/>
+        </n-space>
+        <n-space v-if="!isQEmpty" align="start" vertical>
+          <h3 class="text-lg">填空题</h3>
+          <n-card class="answer-panel">
+            <div class="grid-card">
+              <template v-for="q in fillBlankQStatus">
+                <div
+                    class="item"
+                    :class="{
                       [statusMap[q.status]]: true,
                       'on-active': q.idx == $route.params.idx,
                     }"
-                  ></div>
-                </template>
-              </div>
-            </n-card>
-            <n-divider/>
-          </n-space>
-          <n-alert v-if="!isQEmpty" :show-icon="false">
-            <span>tips:</span>
-            <div class="flex items-center gap-2 mt-2">
-              <div class="item on-active"></div>
-              题目正在作答
+                ></div>
+              </template>
             </div>
-            <div class="flex items-center gap-2 mt-4 mb-4">
-              <div class="item half"></div>
-              题目未完全做完
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="item complete"></div>
-              题目已作答
-            </div>
-          </n-alert>
-        </Slider>
-        <n-layout>
-          <n-layout-header :inverted="inverted" bordered class="main-header">
-            <div class="flex items-end">
-              <h1>{{ examStore.examRoom.name }}</h1>
-              <span>{{ examStore.examPaper.name }}</span>
-            </div>
+          </n-card>
+          <n-divider/>
+        </n-space>
+        <n-alert v-if="!isQEmpty" :show-icon="false">
+          <span>tips:</span>
+          <div class="flex items-center gap-2 mt-2">
+            <div class="item on-active"></div>
+            题目正在作答
+          </div>
+          <div class="flex items-center gap-2 mt-4 mb-4">
+            <div class="item half"></div>
+            题目未完全做完
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="item complete"></div>
+            题目已作答
+          </div>
+        </n-alert>
+      </Slider>
+      <n-layout>
+        <n-layout-header bordered class="main-header">
+          <div class="flex items-end">
+            <h1>{{ examStore.examRoom.name }}</h1>
+            <span>{{ examStore.examPaper.name }}</span>
+          </div>
 
-            <div class="right-bar">
-              <div class="avatar">
-                <router-link :to="{ name: 'user-profile' }">
-                  <img :src="userStore.avatar"/>
-                </router-link>
-              </div>
+          <div class="right-bar">
+            <div class="avatar">
+              <router-link :to="{ name: 'user-profile' }">
+                <img :src="userStore.avatar"/>
+              </router-link>
             </div>
-          </n-layout-header>
-          <n-layout-content class="main-content">
-            <router-view/>
-          </n-layout-content>
-        </n-layout>
+          </div>
+        </n-layout-header>
+        <n-layout-content class="main-content">
+          <router-view/>
+        </n-layout-content>
       </n-layout>
     </n-layout>
   </n-space>
