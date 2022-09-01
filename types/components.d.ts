@@ -24,7 +24,6 @@ declare module '@vue/runtime-core' {
     FillblankQ: typeof import('./../src/components/fillblank-q.tsx')['default']
     LeftList: typeof import('./../src/components/left-list.vue')['default']
     NAlert: typeof import('naive-ui')['NAlert']
-    NAvatar: typeof import('naive-ui')['NAvatar']
     NBreadcrumb: typeof import('naive-ui')['NBreadcrumb']
     NBreadcrumbItem: typeof import('naive-ui')['NBreadcrumbItem']
     NButton: typeof import('naive-ui')['NButton']

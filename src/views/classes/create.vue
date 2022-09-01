@@ -1,11 +1,8 @@
 <script lang="ts" setup>
 import {DataTableRowKey, NLayoutContent} from "naive-ui";
-import {ApiCreatePaper} from "@/apis/exam-paper";
 import {get, isNil} from "lodash-es";
-import {useRouter} from 'vue-router'
 import {useClassesStore} from "@/store/classes";
 import {useRequest} from "vue-request";
-import {MaybeRef} from "@vueuse/core";
 import {ApiCreateClasses, ApiFindAllStudent, ApiFindClassesStudent} from "@/apis/classes";
 
 const baseInfoModel = ref({
