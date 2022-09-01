@@ -71,6 +71,7 @@ declare module '@vue/runtime-core' {
     RecordFillblankQ: typeof import('./../src/components/record-fillblank-q.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Slider: typeof import('./../src/components/slider.vue')['default']
     SwitchTag: typeof import('./../src/components/switch-tag.tsx')['default']
   }
 }

@@ -2,22 +2,7 @@
   <n-space class="main-layout" vertical>
     <n-layout>
       <n-layout has-sider>
-        <n-layout-sider
-          :collapsed-trigger-style="{
-            transform: 'scale(2) translateX(90%)',
-          }"
-          :collapsed-width="0"
-          :native-scrollbar="false"
-          :position="responsivePos"
-          :show-collapsed-content="false"
-          :trigger-style="{ transform: 'scale(2) translateX(25%)' }"
-          :width="240"
-          bordered
-          class="sidebar__menu-container"
-          collapse-mode="transform"
-          show-trigger
-          content-style="padding:20px"
-        >
+        <Slider>
           <n-empty v-if="isQEmpty"></n-empty>
           <n-space v-if="!isQEmpty" align="start" vertical>
             <h3 class="text-lg">选择题</h3>
@@ -25,8 +10,8 @@
               <div class="grid-card">
                 <template v-for="q in choiceQStatus">
                   <div
-                    class="item"
-                    :class="{
+                      class="item"
+                      :class="{
                       [statusMap[q.status]]: true,
                       'on-active': q.idx == $route.params.idx,
                     }"
@@ -34,17 +19,16 @@
                 </template>
               </div>
             </n-card>
-            <n-divider />
+            <n-divider/>
           </n-space>
-
           <n-space v-if="!isQEmpty" align="start" vertical>
             <h3 class="text-lg">填空题</h3>
             <n-card class="answer-panel">
               <div class="grid-card">
                 <template v-for="q in fillBlankQStatus">
                   <div
-                    class="item"
-                    :class="{
+                      class="item"
+                      :class="{
                       [statusMap[q.status]]: true,
                       'on-active': q.idx == $route.params.idx,
                     }"
@@ -52,7 +36,7 @@
                 </template>
               </div>
             </n-card>
-            <n-divider />
+            <n-divider/>
           </n-space>
           <n-alert v-if="!isQEmpty" :show-icon="false">
             <span>tips:</span>
@@ -69,7 +53,7 @@
               题目已作答
             </div>
           </n-alert>
-        </n-layout-sider>
+        </Slider>
         <n-layout>
           <n-layout-header :inverted="inverted" bordered class="main-header">
             <div class="flex items-end">
@@ -80,13 +64,13 @@
             <div class="right-bar">
               <div class="avatar">
                 <router-link :to="{ name: 'user-profile' }">
-                  <img :src="userStore.avatar" />
+                  <img :src="userStore.avatar"/>
                 </router-link>
               </div>
             </div>
           </n-layout-header>
           <n-layout-content class="main-content">
-            <router-view />
+            <router-view/>
           </n-layout-content>
         </n-layout>
       </n-layout>
@@ -95,9 +79,10 @@
 </template>
 
 <script lang="ts" setup>
-import { useExamStore } from "@/store/exam";
-import { useUserStore } from "@/store/user";
-import { QStatus, QType } from "@/types/api-exam-paper";
+import {useExamStore} from "@/store/exam";
+import {useUserStore} from "@/store/user";
+import {QStatus, QType} from "@/types/api-exam-paper";
+import Slider from "@/components/slider.vue";
 
 const statusMap = {
   [QStatus.none]: "",
@@ -113,15 +98,15 @@ const route = useRoute();
 const userStore = useUserStore();
 
 watch(
-  () => examStore.userAnswerStatus(+route.params.rid),
-  () => {
-    const answerStatus = examStore.userAnswerStatus(+route.params.rid);
-    choiceQStatus.value = answerStatus.filter((q) => q.type === QType.choice);
-    fillBlankQStatus.value = answerStatus.filter(
-      (q) => q.type === QType.fill_blank
-    );
-  },
-  { immediate: true }
+    () => examStore.userAnswerStatus(+route.params.rid),
+    () => {
+      const answerStatus = examStore.userAnswerStatus(+route.params.rid);
+      choiceQStatus.value = answerStatus.filter((q) => q.type === QType.choice);
+      fillBlankQStatus.value = answerStatus.filter(
+          (q) => q.type === QType.fill_blank
+      );
+    },
+    {immediate: true}
 );
 </script>
 
