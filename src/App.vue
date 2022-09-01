@@ -11,13 +11,15 @@ const resolve = () => {
 </script>
 
 <template>
-  <n-dialog-provider>
-    <router-view #default="{ Component }">
-      <suspense @resolve="resolve">
-        <template #default>
-          <component :is="Component" />
-        </template>
-      </suspense>
-    </router-view>
-  </n-dialog-provider>
+  <el-config-provider>
+    <n-dialog-provider>
+      <router-view #default="{ Component }">
+        <suspense @resolve="resolve">
+          <template #default>
+            <component :is="Component" />
+          </template>
+        </suspense>
+      </router-view>
+    </n-dialog-provider>
+  </el-config-provider>
 </template>

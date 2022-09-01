@@ -3,21 +3,20 @@
     <n-layout>
       <n-layout has-sider>
         <n-layout-sider
-            :collapsed-trigger-style="{
+          :collapsed-trigger-style="{
             transform: 'scale(2) translateX(90%)',
           }"
-            :collapsed-width="0"
-            :inverted="inverted"
-            :native-scrollbar="false"
-            :position="responsivePos"
-            :show-collapsed-content="false"
-            :trigger-style="{ transform: 'scale(2) translateX(25%)' }"
-            :width="240"
-            bordered
-            class="sidebar__menu-container"
-            collapse-mode="transform"
-            show-trigger
-            content-style="padding:20px"
+          :collapsed-width="0"
+          :native-scrollbar="false"
+          :position="responsivePos"
+          :show-collapsed-content="false"
+          :trigger-style="{ transform: 'scale(2) translateX(25%)' }"
+          :width="240"
+          bordered
+          class="sidebar__menu-container"
+          collapse-mode="transform"
+          show-trigger
+          content-style="padding:20px"
         >
           <n-empty v-if="isQEmpty"></n-empty>
           <n-space v-if="!isQEmpty" align="start" vertical>
@@ -25,11 +24,17 @@
             <n-card class="answer-panel">
               <div class="grid-card">
                 <template v-for="q in choiceQStatus">
-                  <div class="item" :class="{[statusMap[q.status]]:true,'on-active':q.idx==$route.params.idx}"></div>
+                  <div
+                    class="item"
+                    :class="{
+                      [statusMap[q.status]]: true,
+                      'on-active': q.idx == $route.params.idx,
+                    }"
+                  ></div>
                 </template>
               </div>
             </n-card>
-            <n-divider/>
+            <n-divider />
           </n-space>
 
           <n-space v-if="!isQEmpty" align="start" vertical>
@@ -37,28 +42,32 @@
             <n-card class="answer-panel">
               <div class="grid-card">
                 <template v-for="q in fillBlankQStatus">
-                  <div class="item" :class="{[statusMap[q.status]]:true,'on-active':q.idx==$route.params.idx}"></div>
+                  <div
+                    class="item"
+                    :class="{
+                      [statusMap[q.status]]: true,
+                      'on-active': q.idx == $route.params.idx,
+                    }"
+                  ></div>
                 </template>
               </div>
             </n-card>
-            <n-divider/>
-
+            <n-divider />
           </n-space>
           <n-alert v-if="!isQEmpty" :show-icon="false">
             <span>tips:</span>
-            <div class="mt-2 flex gap-2 items-center">
+            <div class="flex items-center gap-2 mt-2">
               <div class="item on-active"></div>
               题目正在作答
             </div>
-            <div class="mb-4 mt-4 flex gap-2 items-center">
+            <div class="flex items-center gap-2 mt-4 mb-4">
               <div class="item half"></div>
               题目未完全做完
             </div>
-            <div class="flex gap-2 items-center">
+            <div class="flex items-center gap-2">
               <div class="item complete"></div>
               题目已作答
             </div>
-
           </n-alert>
         </n-layout-sider>
         <n-layout>
@@ -69,16 +78,15 @@
             </div>
 
             <div class="right-bar">
-              <span class="notify">
-                <Bell/>
-              </span>
               <div class="avatar">
-                <img src="/images/xj.jpg"/>
+                <router-link :to="{ name: 'user-profile' }">
+                  <img :src="userStore.avatar" />
+                </router-link>
               </div>
             </div>
           </n-layout-header>
           <n-layout-content class="main-content">
-            <router-view/>
+            <router-view />
           </n-layout-content>
         </n-layout>
       </n-layout>
@@ -87,27 +95,34 @@
 </template>
 
 <script lang="ts" setup>
-import {useExamStore} from "@/store/exam";
-import {QStatus, QType} from "@/types/api-exam-paper";
-import {useDialog} from "naive-ui";
+import { useExamStore } from "@/store/exam";
+import { useUserStore } from "@/store/user";
+import { QStatus, QType } from "@/types/api-exam-paper";
 
 const statusMap = {
   [QStatus.none]: "",
   [QStatus.half]: "half",
-  [QStatus.complete]: 'complete',
-  [QStatus["on-active"]]: "on-active"
-}
+  [QStatus.complete]: "complete",
+  [QStatus["on-active"]]: "on-active",
+};
 const examStore = useExamStore();
-const isQEmpty = computed(() => examStore.isQListEmpty)
+const isQEmpty = computed(() => examStore.isQListEmpty);
 const choiceQStatus = ref();
 const fillBlankQStatus = ref();
-const route = useRoute()
+const route = useRoute();
+const userStore = useUserStore();
 
-watch(() => examStore.userAnswerStatus(+route.params.rid), () => {
-  const answerStatus = examStore.userAnswerStatus(+route.params.rid);
-  choiceQStatus.value = answerStatus.filter(q => q.type === QType.choice)
-  fillBlankQStatus.value = answerStatus.filter(q => q.type === QType.fill_blank)
-}, {immediate: true})
+watch(
+  () => examStore.userAnswerStatus(+route.params.rid),
+  () => {
+    const answerStatus = examStore.userAnswerStatus(+route.params.rid);
+    choiceQStatus.value = answerStatus.filter((q) => q.type === QType.choice);
+    fillBlankQStatus.value = answerStatus.filter(
+      (q) => q.type === QType.fill_blank
+    );
+  },
+  { immediate: true }
+);
 </script>
 
 <style lang="scss" scoped>
@@ -176,7 +191,6 @@ watch(() => examStore.userAnswerStatus(+route.params.rid), () => {
 .answer-panel {
   .grid-card {
     @apply grid gap-4 grid-cols-5;
-
   }
 }
 
@@ -194,5 +208,4 @@ watch(() => examStore.userAnswerStatus(+route.params.rid), () => {
     @apply border-active border-2;
   }
 }
-
 </style>

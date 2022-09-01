@@ -19,7 +19,6 @@ export default function () {
     if (isEmpty(username)) {
       return "用户名不能为空！";
     }
-    return true;
     const isEmail = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
       username
     );
@@ -34,7 +33,6 @@ export default function () {
     if (typeof password !== "string") {
       return false;
     }
-    return true;
     const notEmpty = !isEmpty(password);
     const isValid = /(?=^.{6,}$).*$/.test(password);
     return notEmpty && isValid;
@@ -46,7 +44,7 @@ export default function () {
       password: unref(password),
     };
     const loginResult = await ApiLogin(user);
-    if (loginResult) {
+    if (loginResult.statusCode === 200) {
       userStore.setUser(loginResult.data);
       await router.push({
         name: "home",

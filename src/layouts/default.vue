@@ -1,80 +1,87 @@
 <script lang="ts" setup>
 import menuOptions from "./menu-option";
-import {Bell} from "@element-plus/icons-vue";
-import {useMediaQuery} from "@vueuse/core";
-import {useRoute} from 'vue-router'
-import {useUserStore} from "@/store/user";
+import { Bell } from "@element-plus/icons-vue";
+import { useMediaQuery } from "@vueuse/core";
+import { useRoute } from "vue-router";
+import { useUserStore } from "@/store/user";
 
 const inverted = ref(false);
 const collapsed = ref(false);
-const isXlScreen = useMediaQuery('(min-width: 1000px)')
-const responsivePos = computed(() => unref(isXlScreen) ? 'static' : 'absolute')
-watch(isXlScreen, val => {
-  collapsed.value = !val;
-}, {immediate: true})
-const userStore = useUserStore()
-const route = useRoute()
-userStore.getUserProfile()
-const clientType = userStore.roleFormat + '端'
-const activeKey = computed(() => route.name || 'exam-panel')
+const isXlScreen = useMediaQuery("(min-width: 1000px)");
+const responsivePos = computed(() =>
+  unref(isXlScreen) ? "static" : "absolute"
+);
+watch(
+  isXlScreen,
+  (val) => {
+    collapsed.value = !val;
+  },
+  { immediate: true }
+);
+const userStore = useUserStore();
+const route = useRoute();
+userStore.getUserProfile();
+const clientType = userStore.roleFormat + "端";
+const activeKey = computed(() => route.name || "exam-panel");
 </script>
 <template>
   <n-space class="main-layout" vertical>
     <n-layout>
       <n-layout has-sider>
         <n-layout-sider
-            :collapsed-trigger-style="{
+          :collapsed-trigger-style="{
             transform: 'scale(2) translateX(90%)',
           }"
-            :collapsed-width="0"
-            :inverted="inverted"
-            :native-scrollbar="false"
-            :position="responsivePos"
-            :show-collapsed-content="false"
-            :trigger-style="{ transform: 'scale(2) translateX(25%)' }"
-            :width="240"
-            bordered
-            :collapsed="collapsed"
-            class="sidebar__menu-container"
-            collapse-mode="transform"
-            @collapse="collapsed = true"
-            @expand="collapsed = false"
-            show-trigger
+          :collapsed-width="0"
+          :inverted="inverted"
+          :native-scrollbar="false"
+          :position="responsivePos"
+          :show-collapsed-content="false"
+          :trigger-style="{ transform: 'scale(2) translateX(25%)' }"
+          :width="240"
+          bordered
+          :collapsed="collapsed"
+          class="sidebar__menu-container"
+          collapse-mode="transform"
+          @collapse="collapsed = true"
+          @expand="collapsed = false"
+          show-trigger
         >
           <n-space class="logo-wrap" justify="center">
             Study Day Day Up
           </n-space>
           <n-menu
-              v-model:value="activeKey"
-              :inverted="inverted"
-              :options="menuOptions"
-
+            v-model:value="activeKey"
+            :inverted="inverted"
+            :options="menuOptions"
           />
         </n-layout-sider>
         <n-layout>
-          <n-layout-header :inverted="inverted" bordered class="main-header shadow-lg">
+          <n-layout-header
+            :inverted="inverted"
+            bordered
+            class="shadow-lg main-header"
+          >
             <h1>在线考试系统-{{ clientType }}</h1>
             <div class="right-bar">
               <span class="notify">
-                <Bell/>
+                <Bell />
               </span>
               <div class="avatar">
-                <router-link :to="{name:'user-profile'}">
-                  <img :src="userStore.avatar"/>
+                <router-link :to="{ name: 'user-profile' }">
+                  <img :src="userStore.avatar" />
                 </router-link>
-
               </div>
             </div>
           </n-layout-header>
           <n-layout-content class="main-content">
-            <router-view/>
+            <router-view />
           </n-layout-content>
         </n-layout>
       </n-layout>
     </n-layout>
   </n-space>
 </template>
-
 
 <style lang="scss" scoped>
 .sidebar__menu-container {
